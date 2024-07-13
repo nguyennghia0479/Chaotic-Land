@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerAirState : PlayerState
 {
+    private readonly float airMoveSpeed = .8f;
+
     public PlayerAirState(Player _player, PlayerStateMachine _stateMachine, string _animName) : base(_player, _stateMachine, _animName)
     {
     }
@@ -21,11 +23,21 @@ public class PlayerAirState : PlayerState
     public override void FixedUpdate()
     {
         base.FixedUpdate();
+
+        if (xInput != 0)
+        {
+            player.SetVelocity(xInput * player.MoveSpeed * airMoveSpeed, rb.velocity.y);
+        }
     }
 
     public override void Update()
     {
         base.Update();
+
+        if (player.IsWallDetected())
+        {
+            stateMachine.ChangeState(player.WallGrabState);
+        }
 
         if (player.IsGroundDetected())
         {

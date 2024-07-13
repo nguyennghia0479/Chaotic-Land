@@ -12,7 +12,7 @@ public class PlayerJumpState : PlayerState
     {
         base.Enter();
 
-        rb.AddForce(new Vector2(rb.velocity.x, player.JumpForce), ForceMode2D.Impulse);
+        player.AddForce(rb.velocity.x);
     }
 
     public override void Exit()

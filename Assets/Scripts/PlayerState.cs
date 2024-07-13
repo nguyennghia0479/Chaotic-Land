@@ -8,10 +8,15 @@ public class PlayerState
     protected PlayerStateMachine stateMachine;
     protected PlayerController controller;
     protected Rigidbody2D rb;
+    protected Animator anim;
     protected float stateTimer;
     protected float xInput;
+    protected float yInput;
     protected bool isJumping;
+    protected bool triggerCalled;
     private readonly string animName;
+
+    private const string Y_VELOCITY = "yVelocity";
 
     public PlayerState(Player _player, PlayerStateMachine _stateMachine, string _animName)
     {
@@ -23,15 +28,19 @@ public class PlayerState
     public virtual void Enter()
     {
         rb = player.Rb;
+        anim = player.Animator;
         controller = player.Controller;
         player.Animator.SetBool(animName, true);
+        triggerCalled = false;
     }
 
     public virtual void Update()
     {
         Vector2 moveDir = controller.GetMoveDirNormalized();
         xInput = moveDir.x;
-        player.Animator.SetFloat("yVelocity", rb.velocity.y);
+        yInput = moveDir.y;
+        player.Animator.SetFloat(Y_VELOCITY, rb.velocity.y);
+        stateTimer -= Time.deltaTime;
     }
 
     public virtual void FixedUpdate()
@@ -44,4 +53,8 @@ public class PlayerState
         player.Animator.SetBool(animName, false);
     }
 
+    public void AnimationTrigger()
+    {
+        triggerCalled = true;
+    }
 }
