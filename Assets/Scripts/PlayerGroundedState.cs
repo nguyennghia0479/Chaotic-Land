@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerGroundedState : PlayerState
 {
+    private bool isAttacking;
+
     public PlayerGroundedState(Player _player, PlayerStateMachine _stateMachine, string _animName) : base(_player, _stateMachine, _animName)
     {
     }
@@ -12,15 +14,28 @@ public class PlayerGroundedState : PlayerState
     {
         base.Enter();
 
-        controller.OnJumpAction += PlayerController_OnJumpAction;
+        if (controller != null)
+        {
+            controller.OnJumpAction += PlayerController_OnJumpAction;
+            controller.OnAttackAction += PlayerController_OnAttackAction;
+        }
+
         isJumping = false;
+        isAttacking = false;
     }
 
     public override void Exit()
     {
         base.Exit();
 
-        controller.OnJumpAction -= PlayerController_OnJumpAction;
+        if (controller != null)
+        {
+            controller.OnJumpAction -= PlayerController_OnJumpAction;
+            controller.OnAttackAction -= PlayerController_OnAttackAction;
+        }
+
+        isJumping = false;
+        isAttacking= false;
     }
 
     public override void FixedUpdate()
@@ -31,11 +46,20 @@ public class PlayerGroundedState : PlayerState
         {
             stateMachine.ChangeState(player.JumpState);
         }
+
+        if (isAttacking)
+        {
+            stateMachine.ChangeState(player.AttackState);
+        }
     }
 
     public override void Update()
     {
         base.Update();
+
+        if (!player.IsGroundDetected()) {
+            stateMachine.ChangeState(player.AirState);
+        }
     }
 
     private void PlayerController_OnJumpAction(object sender, System.EventArgs e)
@@ -43,5 +67,12 @@ public class PlayerGroundedState : PlayerState
         if (isJumping || !player.IsGroundDetected()) return;
 
         isJumping = true;
+    }
+
+    private void PlayerController_OnAttackAction(object sender, System.EventArgs e)
+    {
+        if (isAttacking) return;
+
+        isAttacking = true;
     }
 }
