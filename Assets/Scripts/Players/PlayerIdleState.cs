@@ -13,11 +13,18 @@ public class PlayerIdleState : PlayerGroundedState
         base.Enter();
 
         player.SetZeroVelocity();
+
+        if (player.IsSlopeDetected())
+        {
+            rb.gravityScale = 0;
+        }
     }
 
     public override void Exit()
     {
         base.Exit();
+
+        rb.gravityScale = 4;
     }
 
     public override void FixedUpdate()
@@ -32,7 +39,7 @@ public class PlayerIdleState : PlayerGroundedState
         if (xInput == player.FacingDir && player.IsWallDetected())
         {
             return;
-        }    
+        }
 
         if (xInput != 0)
         {
