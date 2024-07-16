@@ -6,11 +6,12 @@ public class Entity : MonoBehaviour
 {
     #region Variables
     [Header("Collision info")]
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundCheckDistance = .5f;
-    [SerializeField] private Transform wallCheck;
-    [SerializeField] private float wallCheckDistance = .5f;
-    [SerializeField] private LayerMask groundLayerMask;
+    [SerializeField] protected Transform groundCheck;
+    [SerializeField] protected float groundCheckDistance = .5f;
+    [SerializeField] protected Transform wallCheck;
+    [SerializeField] protected float wallCheckDistance = .5f;
+    [SerializeField] protected LayerMask groundLayerMask;
+    [SerializeField] protected LayerMask slopeLayerMask;
 
     protected Rigidbody2D rb;
     protected Animator animator;
@@ -74,6 +75,13 @@ public class Entity : MonoBehaviour
     public bool IsWallDetected()
     {
         RaycastHit2D hit = Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDistance, groundLayerMask);
+
+        return hit.collider != null;
+    }
+
+    public virtual bool IsSlopeDetected()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, slopeLayerMask);
 
         return hit.collider != null;
     }

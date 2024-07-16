@@ -84,6 +84,7 @@ public class Player : Entity
         base.FixedUpdate();
 
         stateMachine.CurrentState.FixedUpdate();
+        
     }
 
     #region public methods

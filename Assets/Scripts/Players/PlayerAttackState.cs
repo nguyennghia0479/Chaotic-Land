@@ -56,6 +56,7 @@ public class PlayerAttackState : PlayerState
     private void AttackVelocity()
     {
         int attackDir = player.FacingDir;
+        xInput = 0;
 
         if (xInput != 0)
         {

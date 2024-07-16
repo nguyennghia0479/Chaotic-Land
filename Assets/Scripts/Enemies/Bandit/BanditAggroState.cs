@@ -29,6 +29,7 @@ public class BanditAggroState : EnemyState
     public override void Exit()
     {
         base.Exit();
+        rb.gravityScale = 5;
     }
 
     public override void FixedUpdate()
@@ -37,15 +38,24 @@ public class BanditAggroState : EnemyState
         
         AggroController();
 
-        if (!bandit.IsGroundDetected())
+        if (!bandit.IsGroundDetected() && !bandit.IsSlopeDetected())
         {
             canMove = false;
+            
+        }
+
+        if (bandit.IsSlopeDetected())
+        {
+            bandit.SetZeroVelocity();
         }
 
         if (canMove)
         {
             facingDir = (player.transform.position.x < bandit.transform.position.x) ? -1 : 1;
-            bandit.SetVelocity(bandit.AggroSpeed * facingDir, rb.velocity.y);
+            if (bandit.IsWallDetected())
+                bandit.SetZeroVelocity();
+            else
+                bandit.SetVelocity(bandit.AggroSpeed * facingDir, rb.velocity.y);
         }
     }
 
@@ -60,11 +70,13 @@ public class BanditAggroState : EnemyState
     /// Handles to behavior of enemy.
     /// </summary>
     /// <remarks>
-    /// If player is detected and attack player if close to player.
+    /// If player is detected and attack player if close to player.<br></br>
+    /// If player is not detected but enemy and player has almost same postion then enmy will attack player.<br></br>
     /// If aggro time is over or distance of enemy and player is greater than attack distance will change to Idle state.
     /// </remarks>
     private void AggroController()
     {
+        canMove = true;
         if (bandit.IsPlayerDetected())
         {
             stateTimer = aggroTime;
@@ -75,17 +87,26 @@ public class BanditAggroState : EnemyState
                     stateMachine.Changestate(bandit.AttackState);
                 }
                 canMove = false;
-                return;
             }
         }
         else
         {
+            float distance = Mathf.Abs(bandit.transform.position.x - player.transform.position.x);
+            if (distance < 1)
+            {
+                stateTimer = aggroTime;
+                if (CanAttack())
+                {
+                    stateMachine.Changestate(bandit.AttackState);
+                }
+                canMove = false;
+            }
+
             if (stateTimer < 0 || Vector2.Distance(bandit.transform.position, player.transform.position) > aggroDistance)
             {
                 stateMachine.Changestate(bandit.IdleState);
             }
         }
-        canMove = true;
     }
 
     /// <summary>

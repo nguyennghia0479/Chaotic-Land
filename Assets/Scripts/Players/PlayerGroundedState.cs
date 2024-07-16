@@ -57,14 +57,14 @@ public class PlayerGroundedState : PlayerState
     {
         base.Update();
 
-        if (!player.IsGroundDetected()) {
+        if (!player.IsGroundDetected() && !player.IsSlopeDetected()) {
             stateMachine.ChangeState(player.AirState);
         }
     }
 
     private void PlayerController_OnJumpAction(object sender, System.EventArgs e)
     {
-        if (isJumping || !player.IsGroundDetected()) return;
+        if (isJumping || (!player.IsGroundDetected() && !player.IsSlopeDetected())) return;
 
         isJumping = true;
     }

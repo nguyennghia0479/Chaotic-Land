@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BanditMoveState : BanditGroundedState
 {
+    private float slopedSpeed = 0;
+
     public BanditMoveState(Enemy _enemy, EnemyStateMachine _stateMachine, string _animName, Bandit _bandit) : base(_enemy, _stateMachine, _animName, _bandit)
     {
     }
@@ -22,14 +24,17 @@ public class BanditMoveState : BanditGroundedState
     {
         base.FixedUpdate();
 
-        bandit.SetVelocity(bandit.MoveSpeed * bandit.FacingDir, rb.velocity.y);
+        int moveSpeed = Mathf.CeilToInt(bandit.MoveSpeed + bandit.MoveSpeed * slopedSpeed);
+        bandit.SetVelocity(moveSpeed * bandit.FacingDir, rb.velocity.y);
     }
 
     public override void Update()
     {
         base.Update();
 
-        if (bandit.IsWallDetected() || !bandit.IsGroundDetected())
+        slopedSpeed = bandit.IsSlopeDetected() ? .15f : 0;
+
+        if (bandit.IsWallDetected() || (!bandit.IsGroundDetected() && !bandit.IsSlopeDetected()))
         {
             bandit.Flip();
             stateMachine.Changestate(bandit.IdleState);
