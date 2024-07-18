@@ -23,7 +23,7 @@ public class PlayerMoveState : PlayerGroundedState
         base.FixedUpdate();
 
         float xVelocity = xInput * player.MoveSpeed;
-        player.SetVelocity(xVelocity, rb.velocity.y);
+        player.SetVelocityWithFlip(xVelocity, rb.velocity.y);
     }
 
     public override void Update()

@@ -22,16 +22,6 @@ public class Player : Entity
     private PlayerController controller;
     private float dashTimer;
 
-    private const string IDLE = "Idle";
-    private const string MOVE = "Move";
-    private const string JUMP = "Jump";
-    private const string DASH = "Dash";
-    private const string WALL_SLIDE = "WallSlide";
-    private const string WALL_GRAB = "WallGrab";
-    private const string ATTACK = "Attack";
-    #endregion
-
-    #region States
     private PlayerStateMachine stateMachine;
     private PlayerIdleState idleState;
     private PlayerMoveState moveState;
@@ -42,6 +32,18 @@ public class Player : Entity
     private PlayerWallGrabState wallGrabState;
     private PlayerWallJumpState wallJumpState;
     private PlayerAttackState attackState;
+    private PlayerBlockState blockState;
+    private PlayerDeathState deathState;
+
+    private const string IDLE = "Idle";
+    private const string MOVE = "Move";
+    private const string JUMP = "Jump";
+    private const string DASH = "Dash";
+    private const string WALL_SLIDE = "WallSlide";
+    private const string WALL_GRAB = "WallGrab";
+    private const string ATTACK = "Attack";
+    private const string BLOCK = "Block";
+    private const string DIE = "Die";
     #endregion
 
     protected override void Awake()
@@ -58,16 +60,24 @@ public class Player : Entity
         wallGrabState = new PlayerWallGrabState(this, stateMachine, WALL_GRAB);
         wallJumpState = new PlayerWallJumpState(this, stateMachine, JUMP);
         attackState = new PlayerAttackState(this, stateMachine, ATTACK);
+        blockState = new PlayerBlockState(this, stateMachine, BLOCK);
+        deathState = new PlayerDeathState(this, stateMachine, DIE);
 
         controller = GetComponent<PlayerController>();
     }
 
     protected override void Start()
     {
-        base .Start();
+        base.Start();
 
         stateMachine.IntializedState(idleState);
-        controller.OnDashAction += PlayerController_OnDashAction;
+
+        if (controller != null)
+        {
+            controller.OnDashAction += PlayerController_OnDashAction;
+            controller.OnBlockActionStart += PlayerController_OnBlockActionStart;
+            controller.OnBlockActionEnd += PlayerController_OnBlockActionEnd;
+        }
     }
 
     protected override void Update()
@@ -84,7 +94,16 @@ public class Player : Entity
         base.FixedUpdate();
 
         stateMachine.CurrentState.FixedUpdate();
-        
+    }
+
+    protected void OnDestroy()
+    {
+        if (controller != null)
+        {
+            controller.OnDashAction -= PlayerController_OnDashAction;
+            controller.OnBlockActionStart -= PlayerController_OnBlockActionStart;
+            controller.OnBlockActionEnd -= PlayerController_OnBlockActionEnd;
+        }
     }
 
     #region public methods
@@ -99,9 +118,18 @@ public class Player : Entity
     }
 
     /// <summary>
-    /// Handle to trigger animation of the character
+    /// Handles to trigger animation of the character
     /// </summary>
     public void AnimationTrigger() => stateMachine.CurrentState.AnimationTrigger();
+
+    /// <summary>
+    /// Handles to chanage state to DeathState.
+    /// </summary>
+    public void PlayerDeath()
+    {
+        stateMachine.ChangeState(DeathState);
+        isDead = true;
+    }
     #endregion
 
     #region private methods
@@ -121,7 +149,24 @@ public class Player : Entity
         {
             Debug.Log("Dash is cooldown");
         }
+    }
 
+    /// <summary>
+    /// Handles to perform block of the charaters.
+    /// </summary>
+    private void PlayerController_OnBlockActionStart(object sender, EventArgs e)
+    {
+        isBlocking = true;
+        stateMachine.ChangeState(blockState);
+    }
+
+    /// <summary>
+    /// Handles to cancel block of the characters.
+    /// </summary>
+    private void PlayerController_OnBlockActionEnd(object sender, EventArgs e)
+    {
+        isBlocking = false;
+        stateMachine.ChangeState(idleState);
     }
     #endregion
 
@@ -204,6 +249,16 @@ public class Player : Entity
     public PlayerAttackState AttackState
     {
         get { return attackState; }
+    }
+
+    public PlayerBlockState BlockState
+    {
+        get { return blockState; }
+    }
+
+    public PlayerDeathState DeathState
+    {
+        get { return deathState; }
     }
     #endregion
 }

@@ -12,11 +12,22 @@ public class Entity : MonoBehaviour
     [SerializeField] protected float wallCheckDistance = .5f;
     [SerializeField] protected LayerMask groundLayerMask;
     [SerializeField] protected LayerMask slopeLayerMask;
+    [SerializeField] protected Transform attackCheck;
+    [SerializeField] protected float attackRadius;
+
+    [Header("Stunned info")]
+    [SerializeField] protected Vector2 stunnedPower;
+    [SerializeField] protected float stunnedOffset;
+    [SerializeField] protected float stunnedDuration = 2;
 
     protected Rigidbody2D rb;
     protected Animator animator;
+    protected KnockBack knockBack;
+    protected EntityFX fx;
     protected int facingDir = 1;
     protected bool isFacingRight = true;
+    protected bool isBlocking;
+    protected bool isDead;
     #endregion
 
     protected virtual void Awake()
@@ -27,7 +38,8 @@ public class Entity : MonoBehaviour
 
     protected virtual void Start()
     {
-
+        knockBack = GetComponent<KnockBack>();
+        fx = GetComponent<EntityFX>();
     }
 
     protected virtual void Update()
@@ -42,20 +54,37 @@ public class Entity : MonoBehaviour
 
     #region public methods
     /// <summary>
-    /// Handles movement and flipping of the character.
+    /// Handles movement of the character.
     /// </summary>
     /// <param name="_xVelocity">The horizontal velocity to move the character.</param>
     /// <param name="_yVelocity">The vertical velocity to move the character.</param>
     public void SetVelocity(float _xVelocity, float _yVelocity)
     {
+        if (knockBack != null && knockBack.IsKnockBack) return;
+
         rb.velocity = new Vector2(_xVelocity, _yVelocity);
+    }
+
+    /// <summary>
+    /// Handles movement and flipping of the character.
+    /// </summary>
+    /// <param name="_xVelocity">The horizontal velocity to move the character.</param>
+    /// <param name="_yVelocity">The vertical velocity to move the character.</param>
+    public void SetVelocityWithFlip(float _xVelocity, float _yVelocity)
+    {
+        SetVelocity(_xVelocity, _yVelocity);
         FlipController(_xVelocity);
     }
 
     /// <summary>
     /// Handles to stop the character move with Vector2.zero.
     /// </summary>
-    public void SetZeroVelocity() => rb.velocity = Vector2.zero;
+    public void SetZeroVelocity()
+    {
+        if (knockBack != null && knockBack.IsKnockBack) return;
+
+        rb.velocity = Vector2.zero;
+    }
 
     /// <summary>
     /// Handles to detect ground.
@@ -79,6 +108,10 @@ public class Entity : MonoBehaviour
         return hit.collider != null;
     }
 
+    /// <summary>
+    /// Handles to detect slope ground.
+    /// </summary>
+    /// <returns></returns>
     public virtual bool IsSlopeDetected()
     {
         RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, slopeLayerMask);
@@ -108,6 +141,19 @@ public class Entity : MonoBehaviour
         isFacingRight = !isFacingRight;
         transform.Rotate(0, -180, 0);
     }
+
+    /// <summary>
+    /// Handles to knock back of the target.
+    /// </summary>
+    /// <param name="_damageDealer">Value to determine who's made damage.</param>
+    /// <param name="isCriticalAttack">Value to determine if is critical attack or not.</param>
+    public void SetupKnockBack(Transform _damageDealer, bool isCriticalAttack)
+    {
+        if (knockBack != null)
+        {
+            knockBack.SetupKnockBack(this, _damageDealer, isCriticalAttack);
+        }
+    }
     #endregion
 
     #region protected methods
@@ -131,10 +177,36 @@ public class Entity : MonoBehaviour
     {
         Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
         Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance * facingDir, wallCheck.position.y));
+        Gizmos.DrawWireSphere(attackCheck.position, attackRadius);
     }
     #endregion
 
     #region Getters
+    public Transform AttackCheck
+    {
+        get { return attackCheck; }
+    }
+
+    public float AttackRadius
+    {
+        get { return attackRadius; }
+    }
+
+    public Vector2 StunnedPower
+    {
+        get { return stunnedPower; }
+    }
+
+    public float StunnedOffset
+    {
+        get { return stunnedOffset; }
+    }
+
+    public float StunnedDuration
+    {
+        get { return stunnedDuration; }
+    }
+
     public int FacingDir
     {
         get { return facingDir; }
@@ -153,6 +225,21 @@ public class Entity : MonoBehaviour
     public Animator Animator
     {
         get { return animator; }
+    }
+
+    public EntityFX FX
+    {
+        get { return fx; }
+    }
+
+    public bool IsBlocking
+    {
+        get { return isBlocking; }
+    }
+
+    public bool IsDead
+    {
+        get { return isDead; }
     }
     #endregion
 }

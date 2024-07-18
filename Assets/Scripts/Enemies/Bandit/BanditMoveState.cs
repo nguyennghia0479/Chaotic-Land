@@ -25,7 +25,7 @@ public class BanditMoveState : BanditGroundedState
         base.FixedUpdate();
 
         int moveSpeed = Mathf.CeilToInt(bandit.MoveSpeed + bandit.MoveSpeed * slopedSpeed);
-        bandit.SetVelocity(moveSpeed * bandit.FacingDir, rb.velocity.y);
+        bandit.SetVelocityWithFlip(moveSpeed * bandit.FacingDir, rb.velocity.y);
     }
 
     public override void Update()

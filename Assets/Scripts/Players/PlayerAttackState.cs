@@ -64,6 +64,6 @@ public class PlayerAttackState : PlayerState
         }
 
         Vector2 attackMovement = player.AttackMovements[attackCombo];
-        player.SetVelocity(attackMovement.x * attackDir, attackMovement.y);
+        player.SetVelocityWithFlip(attackMovement.x * attackDir, attackMovement.y);
     }
 }

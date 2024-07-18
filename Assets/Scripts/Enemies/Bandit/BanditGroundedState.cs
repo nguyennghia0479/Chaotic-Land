@@ -6,6 +6,7 @@ public class BanditGroundedState : EnemyState
 {
     protected Bandit bandit;
     protected Player player;
+    private float aggroDistance = 3;
 
     public BanditGroundedState(Enemy _enemy, EnemyStateMachine _stateMachine, string _animName, Bandit _bandit) : base(_enemy, _stateMachine, _animName)
     {
@@ -33,7 +34,7 @@ public class BanditGroundedState : EnemyState
     {
         base.Update();
 
-        if (bandit.IsPlayerDetected() || Vector2.Distance(bandit.transform.position, player.transform.position) < 3)
+        if (bandit.IsPlayerDetected() || Vector2.Distance(bandit.transform.position, player.transform.position) < aggroDistance)
         {
             stateMachine.Changestate(bandit.AggroState);
         }
