@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     public event EventHandler OnJumpAction;
     public event EventHandler OnDashAction;
     public event EventHandler OnAttackAction;
+    public event EventHandler OnBlockActionStart;
+    public event EventHandler OnBlockActionEnd;
 
     private InputControl inputControl;
 
@@ -23,7 +25,9 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.Enable();
             inputControl.Player.Jump.performed += ctx => JumpPerformed();
             inputControl.Player.Dash.performed += ctx => DashPerformed();
-            inputControl.Player.Attack.performed += ctx => AttackPerform();
+            inputControl.Player.Attack.performed += ctx => AttackPerformed();
+            inputControl.Player.Block.performed += ctx => BlockPerformend();
+            inputControl.Player.Block.canceled += ctx => BlockCanceled();
         }
     }
 
@@ -33,7 +37,9 @@ public class PlayerController : MonoBehaviour
         {
             inputControl.Player.Jump.performed -= ctx => JumpPerformed();
             inputControl.Player.Dash.performed -= ctx => DashPerformed();
-            inputControl.Player.Attack.performed -= ctx => AttackPerform();
+            inputControl.Player.Attack.performed -= ctx => AttackPerformed();
+            inputControl.Player.Block.performed -= ctx => BlockCanceled();
+            inputControl.Player.Block.canceled -= ctx => BlockCanceled();
             inputControl.Dispose();
         }
     }
@@ -65,8 +71,27 @@ public class PlayerController : MonoBehaviour
         OnDashAction?.Invoke(this, EventArgs.Empty);
     }
 
-    private void AttackPerform()
+    /// <summary>
+    /// Handles the attack when performed by the player.
+    /// </summary>
+    private void AttackPerformed()
     {
         OnAttackAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Handles the block when performed by the player.
+    /// </summary>
+    private void BlockPerformend()
+    {
+        OnBlockActionStart?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Handles to stop block when cancel by the player.
+    /// </summary>
+    private void BlockCanceled()
+    {
+        OnBlockActionEnd?.Invoke(this, EventArgs.Empty);
     }
 }

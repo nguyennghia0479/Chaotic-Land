@@ -26,7 +26,7 @@ public class PlayerDashState : PlayerState
     {
         base.FixedUpdate();
 
-        player.SetVelocity(player.DashSpeed * player.FacingDir, rb.velocity.y);
+        player.SetVelocityWithFlip(player.DashSpeed * player.FacingDir, rb.velocity.y);
     }
 
     public override void Update()
@@ -38,7 +38,7 @@ public class PlayerDashState : PlayerState
             stateMachine.ChangeState(player.IdleState);
         }
 
-        if (player.IsWallDetected() && !player.IsGroundDetected())
+        if (player.IsWallDetected() && !player.IsGroundDetected() && !player.IsSlopeDetected())
         {
             stateMachine.ChangeState(player.WallGrabState);
         }

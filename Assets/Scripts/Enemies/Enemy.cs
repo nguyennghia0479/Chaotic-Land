@@ -19,8 +19,12 @@ public class Enemy : Entity
     [SerializeField] protected float attackDistance = 2;
     [SerializeField] protected float minAttackCooldown = 1;
     [SerializeField] protected float maxAttackCooldown = 1;
+    [SerializeField] private Transform criticalFX;
+    [SerializeField] private float criticalChance = 25;
 
     protected EnemyStateMachine stateMachine;
+    protected bool isCriticalAttack;
+    protected bool canBeStunned;
     #endregion
 
     protected override void Awake()
@@ -28,6 +32,7 @@ public class Enemy : Entity
         base.Awake();
 
         stateMachine = new EnemyStateMachine();
+        criticalFX.gameObject.SetActive(false);
     }
 
     protected override void Start()
@@ -64,7 +69,63 @@ public class Enemy : Entity
         return hit.collider != null;
     }
 
+    /// <summary>
+    /// Handles to trigger animation of the character
+    /// </summary>
     public void AnimationTrigger() => stateMachine.CurrentState.AnimationTrigger();
+
+    public virtual void EnemyDead()
+    {
+    }
+
+    /// <summary>
+    /// Handles to setup of pre attack.
+    /// </summary>
+    /// <remarks>
+    /// If will be peformed critical or normal attack depend on critical chance.
+    /// </remarks>
+    public void AnimationPrepareAttack()
+    {
+        if (Random.Range(0, 100) < criticalChance)
+        {
+            isCriticalAttack = true;
+            canBeStunned = false;
+        }
+        else
+        {
+            canBeStunned = true;
+        }
+
+        if (isCriticalAttack)
+        {
+            criticalFX.gameObject.SetActive(true);
+        } 
+    }
+
+    /// <summary>
+    /// Handles to setup of finish attack/
+    /// </summary>
+    public void AnimationAttackFinished()
+    {
+        criticalFX.gameObject.SetActive(false);
+        isCriticalAttack = false;
+        canBeStunned = false;
+    }
+
+    /// <summary>
+    /// Handles to determine if the character can be stunned.
+    /// </summary>
+    /// <returns>True if can be stunned. False if not.</returns>
+    public virtual bool CanBeStunned()
+    {
+        if (canBeStunned)
+        {
+            AnimationAttackFinished();
+            return true;
+        }
+
+        return false;
+    }
 
     protected override void OnDrawGizmos()
     {
@@ -87,7 +148,7 @@ public class Enemy : Entity
     public int AggroSpeed
     {
         get { return aggroSpeed; }
-    } 
+    }
 
     public float AttackDistance
     {
@@ -102,6 +163,11 @@ public class Enemy : Entity
     public float MaxAttackCooldown
     {
         get { return maxAttackCooldown; }
+    }
+
+    public bool IsCriticalAttack
+    {
+        get { return isCriticalAttack; }
     }
     #endregion
 }

@@ -39,7 +39,7 @@ public class PlayerWallSlideState : PlayerState
         base.FixedUpdate();
 
         yInput = yInput < 0 ? rb.velocity.y : (rb.velocity.y * wallSlideSpeed);
-        player.SetVelocity(0, yInput);
+        player.SetVelocityWithFlip(0, yInput);
 
         if (isJumping)
         {
