@@ -10,17 +10,15 @@ public class Player : Entity
     [SerializeField] private int moveSpeed = 8;
     [SerializeField] private int jumpForce = 12;
 
-    [Header("Dash info")]
-    [SerializeField] private int dashSpeed = 25;
-    [SerializeField] private float dashDuration = .2f;
-    [SerializeField] private float dashCooldown = 2;
-
     [Header("Attack info")]
     [SerializeField] private float attackCooldown = 2f;
     [SerializeField] private Vector2[] attackMovements;
 
     private PlayerController controller;
-    private float dashTimer;
+    private SkillManager skillManager;
+    private GameObject sword;
+    private bool isAiming;
+    private bool hasThrown;
 
     private PlayerStateMachine stateMachine;
     private PlayerIdleState idleState;
@@ -34,6 +32,8 @@ public class Player : Entity
     private PlayerAttackState attackState;
     private PlayerBlockState blockState;
     private PlayerDeathState deathState;
+    private PlayerAimSwordState aimSwordState;
+    private PlayerCatchSwordState catchSwordState;
 
     private const string IDLE = "Idle";
     private const string MOVE = "Move";
@@ -44,6 +44,8 @@ public class Player : Entity
     private const string ATTACK = "Attack";
     private const string BLOCK = "Block";
     private const string DIE = "Die";
+    private const string AIM_SWORD = "AimSword";
+    private const string CATCH_SWORD = "CatchSword";
     #endregion
 
     protected override void Awake()
@@ -62,8 +64,11 @@ public class Player : Entity
         attackState = new PlayerAttackState(this, stateMachine, ATTACK);
         blockState = new PlayerBlockState(this, stateMachine, BLOCK);
         deathState = new PlayerDeathState(this, stateMachine, DIE);
+        aimSwordState = new PlayerAimSwordState(this, stateMachine, AIM_SWORD);
+        catchSwordState = new PlayerCatchSwordState(this, stateMachine, CATCH_SWORD);
 
         controller = GetComponent<PlayerController>();
+
     }
 
     protected override void Start()
@@ -77,7 +82,11 @@ public class Player : Entity
             controller.OnDashAction += PlayerController_OnDashAction;
             controller.OnBlockActionStart += PlayerController_OnBlockActionStart;
             controller.OnBlockActionEnd += PlayerController_OnBlockActionEnd;
+            controller.OnAimActionStart += PlayerController_OnAimActionStart;
+            controller.OnRecallAction += PlayerController_OnRecallAction;
         }
+
+        skillManager = SkillManager.Instance;
     }
 
     protected override void Update()
@@ -85,8 +94,6 @@ public class Player : Entity
         base.Update();
 
         stateMachine.CurrentState.Update();
-
-        dashTimer -= Time.deltaTime;
     }
 
     protected override void FixedUpdate()
@@ -130,29 +137,58 @@ public class Player : Entity
         stateMachine.ChangeState(DeathState);
         isDead = true;
     }
+
+    /// <summary>
+    /// Handles to flip the character by target pos.
+    /// </summary>
+    /// <param name="_targetPos">The value to determine position of target.</param>
+    public void SetAimAndCatchSwordFlip(Vector2 _targetPos)
+    {
+        if (transform.position.x < _targetPos.x && !isFacingRight)
+        {
+            Flip();
+        }
+        else if (transform.position.x > _targetPos.x && isFacingRight)
+        {
+            Flip();
+        }
+    }
+
+    /// <summary>
+    /// Handles to set sword after thrown.
+    /// </summary>
+    /// <param name="_sword">The value to determine game object.</param>
+    public void AssignSword(GameObject _sword)
+    {
+        sword = _sword;
+    }
+
+    /// <summary>
+    /// Handles to catch sword after recalled sword.
+    /// </summary>
+    public void CatchSword()
+    {
+        stateMachine.ChangeState(catchSwordState);
+        Destroy(sword);
+    }
     #endregion
 
     #region private methods
     /// <summary>
     /// Handles to perform dash of the character.
     /// </summary>
-    private void PlayerController_OnDashAction(object sender, System.EventArgs e)
+    private void PlayerController_OnDashAction(object sender, EventArgs e)
     {
         if (IsWallDetected()) return;
 
-        if (dashTimer < 0)
+        if (skillManager.DashSkill.CanUseSkill())
         {
             stateMachine.ChangeState(dashState);
-            dashTimer = dashCooldown;
-        }
-        else
-        {
-            Debug.Log("Dash is cooldown");
         }
     }
 
     /// <summary>
-    /// Handles to perform block of the charaters.
+    /// Handles to perform block of the charater.
     /// </summary>
     private void PlayerController_OnBlockActionStart(object sender, EventArgs e)
     {
@@ -161,12 +197,33 @@ public class Player : Entity
     }
 
     /// <summary>
-    /// Handles to cancel block of the characters.
+    /// Handles to cancel block of the character.
     /// </summary>
     private void PlayerController_OnBlockActionEnd(object sender, EventArgs e)
     {
         isBlocking = false;
         stateMachine.ChangeState(idleState);
+    }
+
+    /// <summary>
+    /// Handles to perform aim of the character.
+    /// </summary>
+    private void PlayerController_OnAimActionStart(object sender, EventArgs e)
+    {
+        if (skillManager.SwordSkill.CanUseSkill() && sword == null)
+        {
+            stateMachine.ChangeState(aimSwordState);
+        }
+    }
+
+    /// <summary>
+    /// Handles to perform recall of the character.
+    /// </summary>
+    private void PlayerController_OnRecallAction(object sender, EventArgs e)
+    {
+        if (sword == null) return;
+
+        sword.GetComponent<SwordSkillController>().RecallSword();
     }
     #endregion
 
@@ -179,16 +236,6 @@ public class Player : Entity
     public int JumpForce
     {
         get { return jumpForce; }
-    }
-
-    public int DashSpeed
-    {
-        get { return dashSpeed; }
-    }
-
-    public float DashDuration
-    {
-        get { return dashDuration; }
     }
 
     public float AttackCooldown
@@ -204,6 +251,28 @@ public class Player : Entity
     public PlayerController Controller
     {
         get { return controller; }
+    }
+
+    public SkillManager SkillManager
+    {
+        get { return skillManager; }
+    }
+
+    public GameObject Sword
+    {
+        get { return sword; }
+    }
+
+    public bool IsAiming
+    {
+        get { return isAiming; }
+        set { isAiming = value; }
+    }
+
+    public bool HasThrown
+    {
+        get { return hasThrown; }
+        set {  hasThrown = value; }
     }
 
     public PlayerIdleState IdleState
@@ -259,6 +328,16 @@ public class Player : Entity
     public PlayerDeathState DeathState
     {
         get { return deathState; }
+    }
+
+    public PlayerAimSwordState AimSwordState
+    {
+        get { return aimSwordState; }
+    }
+
+    public PlayerCatchSwordState CatchSwordState
+    {
+        get { return catchSwordState; }
     }
     #endregion
 }

@@ -17,7 +17,7 @@ public class BanditGroundedState : EnemyState
     {
         base.Enter();
 
-        player = Object.FindObjectOfType<Player>();
+        player = PlayerManager.Instance.Player;
     }
 
     public override void Exit()

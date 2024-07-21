@@ -41,4 +41,11 @@ public class PlayerAnimationTrigger : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles to create a sword after thrown
+    /// </summary>
+    private void AnimationThrowSword()
+    {
+        player.SkillManager.SwordSkill.ThrowSword();
+    }
 }

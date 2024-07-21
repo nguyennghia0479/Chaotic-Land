@@ -23,7 +23,7 @@ public class BanditAggroState : EnemyState
     {
         base.Enter();
 
-        player = Object.FindObjectOfType<Player>();
+        player = PlayerManager.Instance.Player;
         if (player != null && player.IsDead)
         {
             stateMachine.Changestate(bandit.MoveState);
