@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     public event EventHandler OnAttackAction;
     public event EventHandler OnBlockActionStart;
     public event EventHandler OnBlockActionEnd;
+    public event EventHandler OnAimActionStart;
+    public event EventHandler OnAimActionEnd;
+    public event EventHandler OnRecallAction;
 
     private InputControl inputControl;
 
@@ -28,6 +31,9 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.Attack.performed += ctx => AttackPerformed();
             inputControl.Player.Block.performed += ctx => BlockPerformend();
             inputControl.Player.Block.canceled += ctx => BlockCanceled();
+            inputControl.Player.Aim.performed += ctx => AimPerformed();
+            inputControl.Player.Aim.canceled += ctx => AimCanceled();
+            inputControl.Player.Recall.performed += ctx => RecallPerformed();
         }
     }
 
@@ -40,6 +46,9 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.Attack.performed -= ctx => AttackPerformed();
             inputControl.Player.Block.performed -= ctx => BlockCanceled();
             inputControl.Player.Block.canceled -= ctx => BlockCanceled();
+            inputControl.Player.Aim.performed -= ctx => AimPerformed();
+            inputControl.Player.Aim.canceled -= ctx => AimCanceled();
+            inputControl.Player.Recall.performed -= ctx => RecallPerformed();
             inputControl.Dispose();
         }
     }
@@ -55,6 +64,7 @@ public class PlayerController : MonoBehaviour
         return moveDir.normalized;
     }
 
+    #region Action events
     /// <summary>
     /// Handles the jump action when performed by the player.
     /// </summary>
@@ -88,10 +98,35 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles to stop block when cancel by the player.
+    /// Handles to stop block when canceled by the player.
     /// </summary>
     private void BlockCanceled()
     {
         OnBlockActionEnd?.Invoke(this, EventArgs.Empty);
     }
+
+    /// <summary>
+    /// Handles aim action when performed by the playr.
+    /// </summary>
+    private void AimPerformed()
+    {
+        OnAimActionStart?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Handles to stop aim when canceled by the player.
+    /// </summary>
+    private void AimCanceled()
+    {
+        OnAimActionEnd?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Handle the recall action when performed by the player.
+    /// </summary>
+    private void RecallPerformed()
+    {
+        OnRecallAction?.Invoke(this, EventArgs.Empty);
+    }
+    #endregion
 }

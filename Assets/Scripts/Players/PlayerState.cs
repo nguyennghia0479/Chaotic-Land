@@ -9,6 +9,7 @@ public class PlayerState
     protected PlayerController controller;
     protected Rigidbody2D rb;
     protected Animator anim;
+    protected SkillManager skillManager;
     protected float stateTimer;
     protected float xInput;
     protected float yInput;
@@ -30,6 +31,7 @@ public class PlayerState
         rb = player.Rb;
         anim = player.Animator;
         controller = player.Controller;
+        skillManager = player.SkillManager;
         player.Animator.SetBool(animName, true);
         triggerCalled = false;
     }

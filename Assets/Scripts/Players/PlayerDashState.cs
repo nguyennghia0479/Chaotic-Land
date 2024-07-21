@@ -12,7 +12,7 @@ public class PlayerDashState : PlayerState
     {
         base.Enter();
 
-        stateTimer = player.DashDuration;
+        stateTimer = skillManager.DashSkill.DashDuration;
     }
 
     public override void Exit()
@@ -26,7 +26,7 @@ public class PlayerDashState : PlayerState
     {
         base.FixedUpdate();
 
-        player.SetVelocityWithFlip(player.DashSpeed * player.FacingDir, rb.velocity.y);
+        player.SetVelocityWithFlip(skillManager.DashSkill.DashSpeed * player.FacingDir, rb.velocity.y);
     }
 
     public override void Update()
