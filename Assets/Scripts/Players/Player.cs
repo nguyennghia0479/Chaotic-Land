@@ -83,7 +83,6 @@ public class Player : Entity
             controller.OnBlockActionStart += PlayerController_OnBlockActionStart;
             controller.OnBlockActionEnd += PlayerController_OnBlockActionEnd;
             controller.OnAimActionStart += PlayerController_OnAimActionStart;
-            controller.OnRecallAction += PlayerController_OnRecallAction;
         }
 
         skillManager = SkillManager.Instance;
@@ -110,6 +109,7 @@ public class Player : Entity
             controller.OnDashAction -= PlayerController_OnDashAction;
             controller.OnBlockActionStart -= PlayerController_OnBlockActionStart;
             controller.OnBlockActionEnd -= PlayerController_OnBlockActionEnd;
+            controller.OnAimActionStart -= PlayerController_OnAimActionStart;
         }
     }
 
@@ -206,24 +206,23 @@ public class Player : Entity
     }
 
     /// <summary>
-    /// Handles to perform aim of the character.
+    /// Handles to perform aim and recall of the character.
     /// </summary>
+    /// <remarks>
+    /// Change to aim sword state if character has not been assigned sword.<br></br>
+    /// Recall sword if sword has been assigned by character.
+    /// </remarks>
     private void PlayerController_OnAimActionStart(object sender, EventArgs e)
     {
         if (skillManager.SwordSkill.CanUseSkill() && sword == null)
         {
             stateMachine.ChangeState(aimSwordState);
         }
-    }
 
-    /// <summary>
-    /// Handles to perform recall of the character.
-    /// </summary>
-    private void PlayerController_OnRecallAction(object sender, EventArgs e)
-    {
-        if (sword == null) return;
-
-        sword.GetComponent<SwordSkillController>().RecallSword();
+        if (sword != null)
+        {
+            sword.GetComponent<SwordSkillController>().RecallSword();
+        }
     }
     #endregion
 

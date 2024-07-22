@@ -13,6 +13,7 @@ public class PlayerDashState : PlayerState
         base.Enter();
 
         stateTimer = skillManager.DashSkill.DashDuration;
+        skillManager.DashSkill.CreateCloneOnDash();
     }
 
     public override void Exit()
@@ -20,6 +21,7 @@ public class PlayerDashState : PlayerState
         base.Exit();
 
         player.SetZeroVelocity();
+        skillManager.DashSkill.CreateCloneOnDash();
     }
 
     public override void FixedUpdate()

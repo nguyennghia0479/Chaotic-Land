@@ -12,7 +12,6 @@ public class PlayerController : MonoBehaviour
     public event EventHandler OnBlockActionEnd;
     public event EventHandler OnAimActionStart;
     public event EventHandler OnAimActionEnd;
-    public event EventHandler OnRecallAction;
 
     private InputControl inputControl;
 
@@ -33,7 +32,6 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.Block.canceled += ctx => BlockCanceled();
             inputControl.Player.Aim.performed += ctx => AimPerformed();
             inputControl.Player.Aim.canceled += ctx => AimCanceled();
-            inputControl.Player.Recall.performed += ctx => RecallPerformed();
         }
     }
 
@@ -48,7 +46,6 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.Block.canceled -= ctx => BlockCanceled();
             inputControl.Player.Aim.performed -= ctx => AimPerformed();
             inputControl.Player.Aim.canceled -= ctx => AimCanceled();
-            inputControl.Player.Recall.performed -= ctx => RecallPerformed();
             inputControl.Dispose();
         }
     }
@@ -119,14 +116,6 @@ public class PlayerController : MonoBehaviour
     private void AimCanceled()
     {
         OnAimActionEnd?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>
-    /// Handle the recall action when performed by the player.
-    /// </summary>
-    private void RecallPerformed()
-    {
-        OnRecallAction?.Invoke(this, EventArgs.Empty);
     }
     #endregion
 }
