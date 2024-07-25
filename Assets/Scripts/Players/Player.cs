@@ -17,6 +17,7 @@ public class Player : Entity
     private PlayerController controller;
     private SkillManager skillManager;
     private GameObject sword;
+    private GameObject fireSpin;
     private bool isAiming;
     private bool hasThrown;
 
@@ -34,6 +35,8 @@ public class Player : Entity
     private PlayerDeathState deathState;
     private PlayerAimSwordState aimSwordState;
     private PlayerCatchSwordState catchSwordState;
+    private PlayerPerformFireSpinState performFireSpinState;
+    private PlayerSpellCastState spellCastState;
 
     private const string IDLE = "Idle";
     private const string MOVE = "Move";
@@ -46,6 +49,8 @@ public class Player : Entity
     private const string DIE = "Die";
     private const string AIM_SWORD = "AimSword";
     private const string CATCH_SWORD = "CatchSword";
+    private const string PERFORM_FIRE_SPIN = "PerformFireSpin";
+    private const string SPELL_CAST = "SpellCast";
     #endregion
 
     protected override void Awake()
@@ -66,6 +71,8 @@ public class Player : Entity
         deathState = new PlayerDeathState(this, stateMachine, DIE);
         aimSwordState = new PlayerAimSwordState(this, stateMachine, AIM_SWORD);
         catchSwordState = new PlayerCatchSwordState(this, stateMachine, CATCH_SWORD);
+        performFireSpinState = new PlayerPerformFireSpinState(this, stateMachine, PERFORM_FIRE_SPIN);
+        spellCastState = new PlayerSpellCastState(this, stateMachine, SPELL_CAST);
 
         controller = GetComponent<PlayerController>();
 
@@ -83,6 +90,8 @@ public class Player : Entity
             controller.OnBlockActionStart += PlayerController_OnBlockActionStart;
             controller.OnBlockActionEnd += PlayerController_OnBlockActionEnd;
             controller.OnAimActionStart += PlayerController_OnAimActionStart;
+            controller.OnUltimateAction += PlayerController_OnUltimateAction;
+            controller.OnSpellCastAction += PlayerController_OnSpellCastAction;
         }
 
         skillManager = SkillManager.Instance;
@@ -110,6 +119,8 @@ public class Player : Entity
             controller.OnBlockActionStart -= PlayerController_OnBlockActionStart;
             controller.OnBlockActionEnd -= PlayerController_OnBlockActionEnd;
             controller.OnAimActionStart -= PlayerController_OnAimActionStart;
+            controller.OnUltimateAction -= PlayerController_OnUltimateAction;
+            controller.OnSpellCastAction -= PlayerController_OnSpellCastAction;
         }
     }
 
@@ -157,7 +168,7 @@ public class Player : Entity
     /// <summary>
     /// Handles to set sword after thrown.
     /// </summary>
-    /// <param name="_sword">The value to determine game object.</param>
+    /// <param name="_sword">The value to set sword agme object for player.</param>
     public void AssignSword(GameObject _sword)
     {
         sword = _sword;
@@ -170,6 +181,15 @@ public class Player : Entity
     {
         stateMachine.ChangeState(catchSwordState);
         Destroy(sword);
+    }
+
+    /// <summary>
+    /// Handles to set fire spin.
+    /// </summary>
+    /// <param name="_fireSpin">The value to set fire spin game object for player.</param>
+    public void AssignFireSpin(GameObject _fireSpin)
+    {
+        fireSpin = _fireSpin;
     }
     #endregion
 
@@ -224,6 +244,35 @@ public class Player : Entity
             sword.GetComponent<SwordSkillController>().RecallSword();
         }
     }
+
+    /// <summary>
+    /// Handles to perform fire spin and trigger of the character.
+    /// </summary>
+    private void PlayerController_OnUltimateAction(object sender, EventArgs e)
+    {
+        if (skillManager.FireSpinSkill.CanUseSkill() && fireSpin == null)
+        {
+            stateMachine.ChangeState(performFireSpinState);
+        }
+
+        if (fireSpin != null)
+        {
+            fireSpin.GetComponent<FireSpinSkillController>().TriggerFireSpinGrow();
+        }
+    }
+
+    /// <summary>
+    /// Handles to perform spell cast of the character.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void PlayerController_OnSpellCastAction(object sender, EventArgs e)
+    {
+        if (skillManager.CrystalSkill.CanUseSkill())
+        {
+            stateMachine.ChangeState(spellCastState);
+        }
+    }
     #endregion
 
     #region Getter
@@ -271,7 +320,7 @@ public class Player : Entity
     public bool HasThrown
     {
         get { return hasThrown; }
-        set {  hasThrown = value; }
+        set { hasThrown = value; }
     }
 
     public PlayerIdleState IdleState
@@ -337,6 +386,16 @@ public class Player : Entity
     public PlayerCatchSwordState CatchSwordState
     {
         get { return catchSwordState; }
+    }
+
+    public PlayerPerformFireSpinState PerformFireSpinState
+    {
+        get { return performFireSpinState; }
+    }
+
+    public PlayerSpellCastState SpellCastState
+    {
+        get { return spellCastState; }
     }
     #endregion
 }
