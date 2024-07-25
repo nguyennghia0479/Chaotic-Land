@@ -29,7 +29,7 @@ public class PlayerAnimator : MonoBehaviour
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(player.AttackCheck.position, player.AttackRadius);
 
-        foreach(Collider2D collider in colliders)
+        foreach (Collider2D collider in colliders)
         {
             if (collider.TryGetComponent(out Enemy enemy))
             {
@@ -42,10 +42,18 @@ public class PlayerAnimator : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles to create a sword after thrown
+    /// Handles to create a sword after thrown.
     /// </summary>
     private void AnimationThrowSword()
     {
         player.SkillManager.SwordSkill.ThrowSword();
+    }
+
+    /// <summary>
+    /// Handles to create fire spin.
+    /// </summary>
+    private void AnimationPerformFireSpin()
+    {
+        player.SkillManager.FireSpinSkill.CreateFireSpin();
     }
 }

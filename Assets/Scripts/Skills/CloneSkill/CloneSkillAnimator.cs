@@ -43,7 +43,7 @@ public class CloneSkillAnimator : MonoBehaviour
                 if (Random.Range(0, 100) < cloneSkillController.ChanceToMulti)
                 {
                     float offset = 1 * cloneSkillController.FacingDir;
-                    SkillManager.Instance.CloneSkill.CreateClone(enemy.transform, new Vector2(offset, 1));
+                    SkillManager.Instance.CloneSkill.CreateClone(enemy.transform, new Vector2(offset, 0));
                 }
             }
         }

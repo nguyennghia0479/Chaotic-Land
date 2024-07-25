@@ -82,9 +82,18 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Recall"",
+                    ""name"": ""Ultimate"",
                     ""type"": ""Button"",
                     ""id"": ""d0db8258-be1d-4c69-906e-d7adc57e3026"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SpellCast"",
+                    ""type"": ""Button"",
+                    ""id"": ""6dc8ac0e-0e3f-44d8-a100-90554d183417"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -209,7 +218,18 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Recall"",
+                    ""action"": ""Ultimate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eecacc97-c2a7-48d5-a487-a8f76472042d"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpellCast"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -226,7 +246,8 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
         m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
-        m_Player_Recall = m_Player.FindAction("Recall", throwIfNotFound: true);
+        m_Player_Ultimate = m_Player.FindAction("Ultimate", throwIfNotFound: true);
+        m_Player_SpellCast = m_Player.FindAction("SpellCast", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -294,7 +315,8 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Block;
     private readonly InputAction m_Player_Aim;
-    private readonly InputAction m_Player_Recall;
+    private readonly InputAction m_Player_Ultimate;
+    private readonly InputAction m_Player_SpellCast;
     public struct PlayerActions
     {
         private @InputControl m_Wrapper;
@@ -305,7 +327,8 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @Block => m_Wrapper.m_Player_Block;
         public InputAction @Aim => m_Wrapper.m_Player_Aim;
-        public InputAction @Recall => m_Wrapper.m_Player_Recall;
+        public InputAction @Ultimate => m_Wrapper.m_Player_Ultimate;
+        public InputAction @SpellCast => m_Wrapper.m_Player_SpellCast;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -333,9 +356,12 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @Aim.started += instance.OnAim;
             @Aim.performed += instance.OnAim;
             @Aim.canceled += instance.OnAim;
-            @Recall.started += instance.OnRecall;
-            @Recall.performed += instance.OnRecall;
-            @Recall.canceled += instance.OnRecall;
+            @Ultimate.started += instance.OnUltimate;
+            @Ultimate.performed += instance.OnUltimate;
+            @Ultimate.canceled += instance.OnUltimate;
+            @SpellCast.started += instance.OnSpellCast;
+            @SpellCast.performed += instance.OnSpellCast;
+            @SpellCast.canceled += instance.OnSpellCast;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -358,9 +384,12 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @Aim.started -= instance.OnAim;
             @Aim.performed -= instance.OnAim;
             @Aim.canceled -= instance.OnAim;
-            @Recall.started -= instance.OnRecall;
-            @Recall.performed -= instance.OnRecall;
-            @Recall.canceled -= instance.OnRecall;
+            @Ultimate.started -= instance.OnUltimate;
+            @Ultimate.performed -= instance.OnUltimate;
+            @Ultimate.canceled -= instance.OnUltimate;
+            @SpellCast.started -= instance.OnSpellCast;
+            @SpellCast.performed -= instance.OnSpellCast;
+            @SpellCast.canceled -= instance.OnSpellCast;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -386,6 +415,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnBlock(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
-        void OnRecall(InputAction.CallbackContext context);
+        void OnUltimate(InputAction.CallbackContext context);
+        void OnSpellCast(InputAction.CallbackContext context);
     }
 }

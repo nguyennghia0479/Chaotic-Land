@@ -84,8 +84,12 @@ public class SwordSkillController : MonoBehaviour
     {
         if (collision.TryGetComponent(out Enemy enemy))
         {
-            enemy.SetupKnockBack(player.transform, false);
             SetTargetForBounceSwordSkill();
+
+            if (!isBounceSword && !isSpinSword)
+            {
+                enemy.SetupKnockBack(player.transform, false);
+            }
         }
 
         HitCollision(collision);
