@@ -4,12 +4,20 @@ using UnityEngine;
 
 public class BrightFireSkillController : MonoBehaviour
 {
+    [SerializeField] private AilementType ailementType;
+
+    private Player player;
     private Rigidbody2D rb;
     private readonly float timeToDestroy = 5;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void Start()
+    {
+        player = PlayerManager.Instance.Player;
     }
 
     private void FixedUpdate()
@@ -19,9 +27,9 @@ public class BrightFireSkillController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out Enemy enemy))
+        if (collision.TryGetComponent(out EnemyStats enemy))
         {
-            enemy.SetupKnockBack(transform, false);
+            player.Stats.DoMagicDamage(enemy, ailementType);
         }
 
         Destroy(gameObject);

@@ -82,13 +82,13 @@ public class SwordSkillController : MonoBehaviour
     /// </remarks>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out Enemy enemy))
+        if (collision.TryGetComponent(out EnemyStats enemy))
         {
             SetTargetForBounceSwordSkill();
 
             if (!isBounceSword && !isSpinSword)
             {
-                enemy.SetupKnockBack(player.transform, false);
+                player.Stats.DoPhysicalDamage(enemy);
             }
         }
 
@@ -214,9 +214,9 @@ public class SwordSkillController : MonoBehaviour
             transform.position = Vector2.MoveTowards(transform.position, enemyTargets[enemyIndex].position, bounceSpeed * Time.deltaTime);
             if (Vector2.Distance(transform.position, enemyTargets[enemyIndex].position) < .1f)
             {
-                if (enemyTargets[enemyIndex].TryGetComponent(out Enemy enemy))
+                if (enemyTargets[enemyIndex].TryGetComponent(out EnemyStats enemy))
                 {
-                    enemy.SetupKnockBack(player.transform, false);
+                    player.Stats.DoPhysicalDamage(enemy);
                 }
                 enemyIndex++;
                 bounceAmount--;
@@ -288,9 +288,9 @@ public class SwordSkillController : MonoBehaviour
                     Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, spinHitRadius);
                     foreach (Collider2D collider in colliders)
                     {
-                        if (collider.TryGetComponent(out Enemy enemy))
+                        if (collider.TryGetComponent(out EnemyStats enemy))
                         {
-                            enemy.SetupKnockBack(player.transform, false);
+                            player.Stats.DoPhysicalDamage(enemy);
                         }
                     }
                 }

@@ -6,7 +6,9 @@ public class FireSpinSkillController : MonoBehaviour
 {
     [SerializeField] private GameObject brightFirePrefab;
     [SerializeField] private float brightFireCooldown = .3f;
+    [SerializeField] private AilementType ailementType;
 
+    private Player player;
     private float moveTime;
     private float moveSpeed;
     private float maxGrowSize;
@@ -39,6 +41,7 @@ public class FireSpinSkillController : MonoBehaviour
         canMove = true;
         moveDir = new(1 * _fireSpin.Player.FacingDir, 0);
 
+        player = _fireSpin.Player;
         moveTime = _fireSpin.MoveTime;
         moveSpeed = _fireSpin.MoveSpeed;
         maxGrowSize = _fireSpin.MaxGrowSize;
@@ -129,9 +132,9 @@ public class FireSpinSkillController : MonoBehaviour
             Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, maxGrowSize);
             foreach (Collider2D collider in colliders)
             {
-                if (collider.TryGetComponent(out Enemy enemy))
+                if (collider.TryGetComponent(out EnemyStats enemy))
                 {
-                    enemy.SetupKnockBack(transform, false);
+                    player.Stats.DoMagicDamage(enemy, ailementType);
                 }
             }
         }

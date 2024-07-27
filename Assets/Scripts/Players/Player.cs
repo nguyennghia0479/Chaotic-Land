@@ -102,6 +102,12 @@ public class Player : Entity
         base.Update();
 
         stateMachine.CurrentState.Update();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            stateMachine.ChangeState(deathState);
+            isDead = true;
+        }
     }
 
     protected override void FixedUpdate()
@@ -143,7 +149,7 @@ public class Player : Entity
     /// <summary>
     /// Handles to chanage state to DeathState.
     /// </summary>
-    public void PlayerDeath()
+    public override void SetupDeath()
     {
         stateMachine.ChangeState(DeathState);
         isDead = true;
@@ -199,7 +205,7 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnDashAction(object sender, EventArgs e)
     {
-        if (IsWallDetected()) return;
+        if (IsWallDetected() || isDead) return;
 
         if (skillManager.DashSkill.CanUseSkill())
         {
@@ -212,6 +218,8 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnBlockActionStart(object sender, EventArgs e)
     {
+        if (isDead) return;
+
         isBlocking = true;
         stateMachine.ChangeState(blockState);
     }
@@ -221,6 +229,8 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnBlockActionEnd(object sender, EventArgs e)
     {
+        if (isDead) return;
+
         isBlocking = false;
         stateMachine.ChangeState(idleState);
     }
@@ -234,6 +244,8 @@ public class Player : Entity
     /// </remarks>
     private void PlayerController_OnAimActionStart(object sender, EventArgs e)
     {
+        if (isDead) return;
+
         if (skillManager.SwordSkill.CanUseSkill() && sword == null)
         {
             stateMachine.ChangeState(aimSwordState);
@@ -250,6 +262,8 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnUltimateAction(object sender, EventArgs e)
     {
+        if (isDead) return;
+
         if (skillManager.FireSpinSkill.CanUseSkill() && fireSpin == null)
         {
             stateMachine.ChangeState(performFireSpinState);
@@ -268,6 +282,8 @@ public class Player : Entity
     /// <param name="e"></param>
     private void PlayerController_OnSpellCastAction(object sender, EventArgs e)
     {
+        if (isDead) return;
+
         if (skillManager.CrystalSkill.CanUseSkill())
         {
             stateMachine.ChangeState(spellCastState);

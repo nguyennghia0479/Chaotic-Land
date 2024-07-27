@@ -24,6 +24,7 @@ public class Entity : MonoBehaviour
     protected Animator animator;
     protected KnockBack knockBack;
     protected EntityFX fx;
+    protected EntityStats stats;
     protected int facingDir = 1;
     protected bool isFacingRight = true;
     protected bool isBlocking;
@@ -40,6 +41,7 @@ public class Entity : MonoBehaviour
     {
         knockBack = GetComponent<KnockBack>();
         fx = GetComponent<EntityFX>();
+        stats = GetComponent<EntityStats>();
     }
 
     protected virtual void Update()
@@ -154,6 +156,24 @@ public class Entity : MonoBehaviour
             knockBack.SetupKnockBack(this, _damageDealer, isCriticalAttack);
         }
     }
+
+    /// <summary>
+    /// Handles to make character speed slowly.
+    /// </summary>
+    /// <param name="_slowPercentage">Value to slow speed</param>
+    /// <param name="_duration">Time of slow effect</param>
+    public virtual void SlowEntityEffect(float _slowPercentage, float _duration)
+    {
+        animator.speed = 1 - (animator.speed * _slowPercentage);
+    }
+
+    /// <summary>
+    /// Handles to make character die.
+    /// </summary>
+    public virtual void SetupDeath()
+    {
+
+    }
     #endregion
 
     #region protected methods
@@ -171,6 +191,14 @@ public class Entity : MonoBehaviour
         {
             Flip();
         }
+    }
+
+    /// <summary>
+    /// Handles to reset default speed.
+    /// </summary>
+    protected virtual void ResetDefaultSpeed()
+    {
+        animator.speed = 1;
     }
 
     protected virtual void OnDrawGizmos()
@@ -230,6 +258,11 @@ public class Entity : MonoBehaviour
     public EntityFX FX
     {
         get { return fx; }
+    }
+
+    public EntityStats Stats
+    {
+        get { return stats; }
     }
 
     public bool IsBlocking

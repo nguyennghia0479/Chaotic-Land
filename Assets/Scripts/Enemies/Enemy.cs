@@ -20,11 +20,11 @@ public class Enemy : Entity
     [SerializeField] protected float minAttackCooldown = 1;
     [SerializeField] protected float maxAttackCooldown = 1;
     [SerializeField] private Transform criticalFX;
-    [SerializeField] private float criticalChance = 25;
 
     protected EnemyStateMachine stateMachine;
     protected bool isCriticalAttack;
     protected bool canBeStunned;
+    protected int defaultMoveSpeed;
     #endregion
 
     protected override void Awake()
@@ -38,6 +38,8 @@ public class Enemy : Entity
     protected override void Start()
     {
         base.Start();
+
+        defaultMoveSpeed = moveSpeed;
     }
 
     protected override void Update()
@@ -74,10 +76,6 @@ public class Enemy : Entity
     /// </summary>
     public void AnimationTrigger() => stateMachine.CurrentState.AnimationTrigger();
 
-    public virtual void EnemyDead()
-    {
-    }
-
     /// <summary>
     /// Handles to setup of pre attack.
     /// </summary>
@@ -86,7 +84,8 @@ public class Enemy : Entity
     /// </remarks>
     public void AnimationPrepareAttack()
     {
-        if (Random.Range(0, 100) < criticalChance)
+        int totalCritChance = Stats.critChance.GetValue() + Stats.dexterity.GetValue();
+        if (Utils.RandomChance(totalCritChance))
         {
             isCriticalAttack = true;
             canBeStunned = false;
@@ -103,7 +102,7 @@ public class Enemy : Entity
     }
 
     /// <summary>
-    /// Handles to setup of finish attack/
+    /// Handles to setup of finish attack.
     /// </summary>
     public void AnimationAttackFinished()
     {
@@ -125,6 +124,29 @@ public class Enemy : Entity
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Handles to make character speed slowly.
+    /// </summary>
+    /// <param name="_slowPercentage">Value to slow speed</param>
+    /// <param name="_duration">Time of slow effect</param>
+    public override void SlowEntityEffect(float _slowPercentage, float _duration)
+    {
+        base.SlowEntityEffect(_slowPercentage, _duration);
+
+        moveSpeed = Mathf.RoundToInt(moveSpeed * (1 - _slowPercentage));
+        Invoke(nameof(ResetDefaultSpeed), _duration);
+    }
+
+    /// <summary>
+    /// Handles to reset default speed.
+    /// </summary>
+    protected override void ResetDefaultSpeed()
+    {
+        base.ResetDefaultSpeed();
+
+        moveSpeed = defaultMoveSpeed;
     }
 
     protected override void OnDrawGizmos()

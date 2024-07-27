@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CrystalSkillController : MonoBehaviour
 {
+    [SerializeField] private AilementType ailementType;
+
+    private Player player;
     private Animator animator;
     private CircleCollider2D circleCollider;
     private float lifeTime;
@@ -40,7 +43,7 @@ public class CrystalSkillController : MonoBehaviour
     /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out Enemy enemy))
+        if (collision.TryGetComponent(out EnemyStats enemy))
         {
             if (!isExplore)
             {
@@ -48,10 +51,10 @@ public class CrystalSkillController : MonoBehaviour
                 animator.SetTrigger(EXPLORE);
                 isExplore = true;
                 canMove = false;
-                lifeTimer = lifeTime;
+                lifeTimer = 1;
             }
 
-            enemy.SetupKnockBack(transform, false);
+            player.Stats.DoMagicDamage(enemy, ailementType);
         }
     }
 
@@ -61,6 +64,7 @@ public class CrystalSkillController : MonoBehaviour
     /// <param name="_crystalSkill">The value to store info from crystal skill.</param>
     public void SetupCrystal(CrystalSkill _crystalSkill)
     {
+        player = _crystalSkill.Player;
         lifeTime = _crystalSkill.LifeTime;
         canMove = _crystalSkill.CanMove;
         moveSpeed = _crystalSkill.MoveSpeed;
