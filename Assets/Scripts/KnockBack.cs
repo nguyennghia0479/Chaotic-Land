@@ -13,6 +13,7 @@ public class KnockBack : MonoBehaviour
     private bool isKnockBack;
     private bool isBlock;
     private bool isCriticalAttack;
+    private float defaultKnockBackDuration;
     private readonly float knockBackWithBlock = .8f;
     private readonly float knockBackWithCritical = .5f;
 
@@ -33,6 +34,7 @@ public class KnockBack : MonoBehaviour
         isBlock = _entity.IsBlocking;
         isCriticalAttack = _isCriticalAttack;
         knockBackDir = _damageDealer.transform.position.x < transform.position.x ? 1 : -1;
+        defaultKnockBackDuration = knockBackDuration;
         StartCoroutine(KnockBackRoutine());
     }
 
@@ -47,6 +49,7 @@ public class KnockBack : MonoBehaviour
         yield return new WaitForSeconds(knockBackDuration);
         isKnockBack = false;
         rb.velocity = Vector2.zero;
+        knockBackDuration = defaultKnockBackDuration;
     }
 
 

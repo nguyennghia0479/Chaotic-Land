@@ -6,6 +6,7 @@ public class CloneSkillAnimator : MonoBehaviour
 {
     [SerializeField] private Transform attackCheck;
     [SerializeField] private float attackRadius;
+    [SerializeField] private float attackPercentage = .4f;
 
     private Player player;
     private CloneSkillController cloneSkillController;
@@ -36,11 +37,11 @@ public class CloneSkillAnimator : MonoBehaviour
 
         foreach (Collider2D collider in colliders)
         {
-            if (collider.TryGetComponent(out Enemy enemy))
+            if (collider.TryGetComponent(out EnemyStats enemy))
             {
-                enemy.SetupKnockBack(transform, false);
+                player.GetComponent<PlayerStats>().CloneAttackDamage(enemy, attackPercentage);
 
-                if (Random.Range(0, 100) < cloneSkillController.ChanceToMulti)
+                if (Utils.RandomChance(cloneSkillController.ChanceToMulti))
                 {
                     float offset = 1 * cloneSkillController.FacingDir;
                     SkillManager.Instance.CloneSkill.CreateClone(enemy.transform, new Vector2(offset, 0));

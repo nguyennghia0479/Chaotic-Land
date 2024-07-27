@@ -44,7 +44,7 @@ public class Bandit : Enemy
     /// <summary>
     /// Handles to change state to DeathState.
     /// </summary>
-    public override void EnemyDead()
+    public override void SetupDeath()
     {
         stateMachine.Changestate(deathState);
         isDead = true;

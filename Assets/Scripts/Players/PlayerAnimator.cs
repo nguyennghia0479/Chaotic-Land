@@ -31,12 +31,9 @@ public class PlayerAnimator : MonoBehaviour
 
         foreach (Collider2D collider in colliders)
         {
-            if (collider.TryGetComponent(out Enemy enemy))
+            if (collider.TryGetComponent(out EnemyStats enemy))
             {
-                if (enemy.IsDead) return;
-
-                enemy.SetupKnockBack(player.transform, false);
-                enemy.EnemyDead();
+                player.Stats.DoPhysicalDamage(enemy);
             }
         }
     }

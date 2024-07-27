@@ -5,7 +5,6 @@ using UnityEngine;
 public class EnemyAnimator : MonoBehaviour
 {
     private Enemy enemy;
-    private int count;
 
     private void Awake()
     {
@@ -32,14 +31,9 @@ public class EnemyAnimator : MonoBehaviour
 
         foreach (Collider2D collider in colliders)
         {
-            if (collider.TryGetComponent(out Player player))
+            if (collider.TryGetComponent(out PlayerStats player))
             {
-                player.SetupKnockBack(enemy.transform, enemy.IsCriticalAttack);
-                count++;
-                if (count == 3)
-                {
-                    player.PlayerDeath();
-                }
+                enemy.Stats.DoPhysicalDamage(player);
             }
         }
     }
