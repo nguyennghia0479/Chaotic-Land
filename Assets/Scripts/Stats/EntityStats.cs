@@ -193,24 +193,30 @@ public class EntityStats : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles to check target can evade.
+    /// Handles to check target can evade. Maximum evasion chance is 50.
     /// </summary>
     /// <param name="_targetStats"></param>
     /// <returns>True if can evade. False if not.</returns>
     protected bool CanTargetEvadeAttack(EntityStats _targetStats)
     {
         int totalEvasionChance = _targetStats.evasion.GetValue() + _targetStats.agility.GetValue();
+        int maxEvasionChance = 50;
+
+        totalEvasionChance = Mathf.Clamp(totalEvasionChance, 0, maxEvasionChance);
 
         return Utils.RandomChance(totalEvasionChance);
     }
 
     /// <summary>
-    /// Handles to check can make critical damage.
+    /// Handles to check can make critical damage. Maximum critical chance is 50.
     /// </summary>
     /// <returns>True if can do critical. False if not.</returns>
     protected bool CanDoCritDamage()
     {
         int totalCritChance = critChance.GetValue() + dexterity.GetValue();
+        int maxCritChance = 50;
+
+        totalCritChance = Mathf.Clamp(totalCritChance, 0, maxCritChance);
 
         return Utils.RandomChance(totalCritChance);
     }

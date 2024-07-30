@@ -8,12 +8,12 @@ public class Stat
     [SerializeField] private int baseValue;
     [SerializeField] private List<int> modifiers;
 
-    public void AddModifier(int _modifier)
+    public void AddModify(int _modifier)
     {
         modifiers.Add(_modifier);
     }
 
-    public void RemoveModifier(int _modifier)
+    public void RemoveModify(int _modifier)
     {
         modifiers.Remove(_modifier);
     }
