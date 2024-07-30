@@ -172,7 +172,12 @@ public class Entity : MonoBehaviour
     /// </summary>
     public virtual void SetupDeath()
     {
+        if (isDead) return;
 
+        if (TryGetComponent(out ItemDrop itemDrop))
+        {
+            itemDrop.GenerateItemDrop();
+        }
     }
     #endregion
 

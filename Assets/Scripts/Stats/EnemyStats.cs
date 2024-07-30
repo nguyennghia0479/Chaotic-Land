@@ -54,7 +54,7 @@ public class EnemyStats : EntityStats
         for (int i = 1; i <= level; i++)
         {
             int modifyStat = Mathf.RoundToInt(stat.GetValue() * percentageModify);
-            stat.AddModifier(modifyStat);
+            stat.AddModify(modifyStat);
         }
     }
 }
