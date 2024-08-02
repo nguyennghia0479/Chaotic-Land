@@ -103,10 +103,9 @@ public class Player : Entity
 
         stateMachine.CurrentState.Update();
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            stateMachine.ChangeState(deathState);
-            isDead = true;
+            InventoryManager.Instance.UseFlask();
         }
     }
 

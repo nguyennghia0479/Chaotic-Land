@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Leather
   sprite: {fileID: -1619131747, guid: c6856cc3c11c2e04194736ac915afa00, type: 3}
-  dropChance: 50
+  dropChance: 100
   type: 0

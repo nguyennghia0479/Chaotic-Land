@@ -7,6 +7,7 @@ public class CloneSkillAnimator : MonoBehaviour
     [SerializeField] private Transform attackCheck;
     [SerializeField] private float attackRadius;
     [SerializeField] private float attackPercentage = .4f;
+    [SerializeField] private int maxNumberOfClone = 5;
 
     private Player player;
     private CloneSkillController cloneSkillController;
@@ -39,14 +40,23 @@ public class CloneSkillAnimator : MonoBehaviour
         {
             if (collider.TryGetComponent(out EnemyStats enemy))
             {
+                if (enemy.GetComponent<Enemy>().IsDead) return;
+
                 player.GetComponent<PlayerStats>().CloneAttackDamage(enemy, attackPercentage);
 
-                if (Utils.RandomChance(cloneSkillController.ChanceToMulti))
+                if (Utils.RandomChance(cloneSkillController.ChanceToMulti) && !HasMaxNumberOfClone())
                 {
                     float offset = 1 * cloneSkillController.FacingDir;
                     SkillManager.Instance.CloneSkill.CreateClone(enemy.transform, new Vector2(offset, 0));
                 }
             }
         }
+    }
+
+    private bool HasMaxNumberOfClone()
+    {
+        CloneSkillController[] clones = FindObjectsOfType<CloneSkillController>();
+
+        return clones.Length >= maxNumberOfClone;
     }
 }

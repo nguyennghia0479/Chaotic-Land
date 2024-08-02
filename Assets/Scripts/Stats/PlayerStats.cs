@@ -28,4 +28,16 @@ public class PlayerStats : EntityStats
         totalDamage = CheckTargetArmor(_targetStats, totalDamage);
         _targetStats.TakeDamage(transform, totalDamage, false);
     }
+
+    protected override void DecreaseHealth(int _damage)
+    {
+        base.DecreaseHealth(_damage);
+
+        GearSO armorGear = InventoryManager.Instance.GetGearByGearType(GearType.Armor);
+        if (armorGear != null)
+        {
+            armorGear.ExecuteItemEffects(null);
+        }
+
+    }
 }

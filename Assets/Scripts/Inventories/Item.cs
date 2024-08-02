@@ -18,9 +18,16 @@ public class Item : MonoBehaviour
     {
         if (collision.TryGetComponent(out Player _))
         {
-            Inventory.Instance.AddInventory(itemSO);
+            if (InventoryManager.Instance.CanAddMaterial(itemSO))
+            {
+                InventoryManager.Instance.AddInventory(itemSO);
+                Destroy(gameObject);
+            }
+            else
+            {
+                Debug.Log("Full slot");
+            }
 
-            Destroy(gameObject);
         }
     }
 

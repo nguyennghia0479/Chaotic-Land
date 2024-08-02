@@ -16,9 +16,13 @@ public class GearSlotUI : ItemSlotUI
     {
         if (item == null || item.itemSO == null) return;
 
-        Inventory.Instance.UnequipGear(item.itemSO as GearSO);
-        Inventory.Instance.AddInventory(item.itemSO);
-        ClearSlot();
+        InventoryManager inventory = InventoryManager.Instance;
+        if (inventory.CanAddItem())
+        {
+            inventory.UnequipGear(item.itemSO as GearSO);
+            inventory.AddInventory(item.itemSO);
+            ClearSlot();
+        }
     }
 
     public GearType SlotType

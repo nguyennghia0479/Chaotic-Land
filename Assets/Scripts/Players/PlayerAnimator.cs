@@ -33,7 +33,14 @@ public class PlayerAnimator : MonoBehaviour
         {
             if (collider.TryGetComponent(out EnemyStats enemy))
             {
+                if (enemy.GetComponent<Enemy>().IsDead) return;
+
                 player.Stats.DoPhysicalDamage(enemy);
+                GearSO weaponGear = InventoryManager.Instance.GetGearByGearType(GearType.Weapon);
+                if (weaponGear != null)
+                {
+                    weaponGear.ExecuteItemEffects(enemy.transform);
+                }
             }
         }
     }

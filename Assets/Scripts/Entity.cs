@@ -168,7 +168,7 @@ public class Entity : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles to make character die.
+    /// Handles to make character die. Character can drop material.
     /// </summary>
     public virtual void SetupDeath()
     {
