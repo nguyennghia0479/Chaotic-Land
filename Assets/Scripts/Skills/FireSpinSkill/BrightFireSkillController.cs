@@ -29,7 +29,14 @@ public class BrightFireSkillController : MonoBehaviour
     {
         if (collision.TryGetComponent(out EnemyStats enemy))
         {
+            if (enemy.GetComponent<Enemy>().IsDead) return;
+
             player.Stats.DoMagicDamage(enemy, ailementType);
+            GearSO amuletGear = InventoryManager.Instance.GetGearByGearType(GearType.Amulet);
+            if (amuletGear != null)
+            {
+                amuletGear.ExecuteItemEffects(enemy.transform);
+            }
         }
 
         Destroy(gameObject);

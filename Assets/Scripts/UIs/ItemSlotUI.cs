@@ -10,9 +10,9 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler
     [SerializeField] protected Image image;
     [SerializeField] protected TextMeshProUGUI quantity;
 
-    protected InventoryItem item;
+    protected Inventory item;
 
-    public void UpdateItemSlotUI(InventoryItem _newItem)
+    public void UpdateItemSlotUI(Inventory _newItem)
     {
         item = _newItem;
 
@@ -46,7 +46,7 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler
 
         if (item.itemSO.type == ItemType.Gear)
         {
-            Inventory.Instance.EquipGear(item.itemSO);
+            InventoryManager.Instance.EquipGear(item.itemSO);
         }
 
     }

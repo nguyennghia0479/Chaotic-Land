@@ -134,6 +134,8 @@ public class FireSpinSkillController : MonoBehaviour
             {
                 if (collider.TryGetComponent(out EnemyStats enemy))
                 {
+                    if (enemy.GetComponent<Enemy>().IsDead) return;
+
                     player.Stats.DoMagicDamage(enemy, ailementType);
                 }
             }

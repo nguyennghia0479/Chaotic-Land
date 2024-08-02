@@ -88,6 +88,8 @@ public class SwordSkillController : MonoBehaviour
 
             if (!isBounceSword && !isSpinSword)
             {
+                if (enemy.GetComponent<Enemy>().IsDead) return;
+
                 player.Stats.DoPhysicalDamage(enemy);
             }
         }
@@ -216,6 +218,8 @@ public class SwordSkillController : MonoBehaviour
             {
                 if (enemyTargets[enemyIndex].TryGetComponent(out EnemyStats enemy))
                 {
+                    if (enemy.GetComponent<Enemy>().IsDead) return;
+
                     player.Stats.DoPhysicalDamage(enemy);
                 }
                 enemyIndex++;
@@ -290,6 +294,8 @@ public class SwordSkillController : MonoBehaviour
                     {
                         if (collider.TryGetComponent(out EnemyStats enemy))
                         {
+                            if (enemy.GetComponent<Enemy>().IsDead) return;
+
                             player.Stats.DoPhysicalDamage(enemy);
                         }
                     }

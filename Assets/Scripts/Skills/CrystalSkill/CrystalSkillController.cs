@@ -54,7 +54,14 @@ public class CrystalSkillController : MonoBehaviour
                 lifeTimer = 1;
             }
 
+            if (enemy.GetComponent<Enemy>().IsDead) return;
+
             player.Stats.DoMagicDamage(enemy, ailementType);
+            GearSO amuletGear = InventoryManager.Instance.GetGearByGearType(GearType.Amulet);
+            if (amuletGear != null)
+            {
+                amuletGear.ExecuteItemEffects(enemy.transform);
+            }
         }
     }
 

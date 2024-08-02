@@ -4,7 +4,12 @@ using UnityEngine;
 
 public enum AilementType
 {
-    Ignite, Chill
+    Ignite, Chill, None
+}
+
+public enum BuffType
+{
+    PhysicsDamage, MagicDamage, Armor, Resistance
 }
 
 public class EntityStats : MonoBehaviour
@@ -93,7 +98,7 @@ public class EntityStats : MonoBehaviour
     /// Handles to descrease health.
     /// </summary>
     /// <param name="_damage"></param>
-    protected void DecreaseHealth(int _damage)
+    protected virtual void DecreaseHealth(int _damage)
     {
         currentHealth -= _damage;
 
@@ -101,6 +106,36 @@ public class EntityStats : MonoBehaviour
         {
             entity.SetupDeath();
         }
+    }
+
+    public void IncreaseHealth(int _healPoint)
+    {
+        if (_healPoint <= 0) return;
+
+        currentHealth += _healPoint;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth.GetValue());
+    }
+
+    public void BuffStat(Stat _statToBuff, int _modify, float _duration)
+    {
+        if (_statToBuff == null) return;
+
+        StartCoroutine(BuffStatRoutine(_statToBuff, _modify, _duration));
+    }
+
+    private IEnumerator BuffStatRoutine(Stat _statToBuff, int _modify, float _duration)
+    {
+        if (_statToBuff != null)
+        {
+            _statToBuff.AddModify(_modify);
+            yield return new WaitForSeconds(_duration);
+            _statToBuff.RemoveModify(_modify);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0);
+        }
+
     }
 
     /// <summary>
@@ -261,4 +296,21 @@ public class EntityStats : MonoBehaviour
         return _totalDamage;
     }
     #endregion
+
+    public Stat GetStatByBuffType(BuffType _buffType)
+    {
+        return _buffType switch
+        {
+            BuffType.PhysicsDamage => physicsDamage,
+            BuffType.MagicDamage => magicDamage,
+            BuffType.Armor => armor,
+            BuffType.Resistance => resistance,
+            _ => null,
+        };
+    }
+
+    public int CurrentHealth
+    {
+        get { return currentHealth; }
+    }
 }

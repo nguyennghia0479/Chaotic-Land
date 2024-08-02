@@ -14,6 +14,6 @@ public class CraftSlotUI : ItemSlotUI
 
     public override void OnPointerDown(PointerEventData eventData)
     {
-        Inventory.Instance.CraftItem(gearSO);
+        InventoryManager.Instance.CraftItem(gearSO);
     }
 }

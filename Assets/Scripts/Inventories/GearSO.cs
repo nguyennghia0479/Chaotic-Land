@@ -11,10 +11,9 @@ public enum GearType
 public class GearSO : ItemSO
 {
     [Header("Equipment info")]
-    public GearType EquipType;
-    [Range(0f, 100f)]
-    public float condition;
-    public List<InventoryItem> craftingMaterials;
+    public GearType gearType;
+    public List<Inventory> craftingMaterials;
+    [Range(0f, 1f)] public float lossConditionRate;
 
     [Header("Attribute stats info")]
     public int vitality;
@@ -39,6 +38,11 @@ public class GearSO : ItemSO
     public int armor;
     public int resistance;
 
+    [Header("Effect info")]
+    public List<ItemEffectSO> effects;
+    public float cooldown;
+
+    #region Modify stats
     public void AddModifiy()
     {
         PlayerStats playerStats = PlayerManager.Instance.Player.GetComponent<PlayerStats>();
@@ -75,5 +79,14 @@ public class GearSO : ItemSO
         playerStats.evasion.RemoveModify(evasion);
         playerStats.armor.RemoveModify(armor);
         playerStats.resistance.RemoveModify(resistance);
+    }
+    #endregion
+
+    public void ExecuteItemEffects(Transform _target)
+    {
+        foreach (ItemEffectSO effect in effects)
+        {
+            effect.ExecuteItemEffect(_target);
+        }
     }
 }

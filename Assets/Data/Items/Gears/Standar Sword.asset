@@ -16,11 +16,11 @@ MonoBehaviour:
   sprite: {fileID: 1731608023, guid: c6856cc3c11c2e04194736ac915afa00, type: 3}
   dropChance: 0
   type: 1
-  EquipType: 0
+  gearType: 0
   condition: 0
   craftingMaterials:
   - itemSO: {fileID: 11400000, guid: cddfc48fa60268041b1bb1cfb16725fb, type: 2}
-    quantity: 2
+    quantity: 1
   - itemSO: {fileID: 11400000, guid: 968d188910803274080f46bc08f94567, type: 2}
     quantity: 1
   vitality: 0
@@ -38,3 +38,5 @@ MonoBehaviour:
   evasion: 0
   armor: 0
   resistance: 0
+  effects:
+  - {fileID: 11400000, guid: 7ab792160923d6148a2d45ad9c2c9a30, type: 2}
