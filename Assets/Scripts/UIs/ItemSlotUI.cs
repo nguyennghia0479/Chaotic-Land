@@ -12,6 +12,9 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler
 
     protected Inventory item;
 
+    /// <summary>
+    /// Handles to update item slot ui.
+    /// </summary>
     public void UpdateItemSlotUI(Inventory _newItem)
     {
         item = _newItem;
@@ -32,6 +35,9 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler
         }   
     }
 
+    /// <summary>
+    /// Handles to clear slot info.
+    /// </summary>
     public void ClearSlot()
     {
         item = null;
@@ -40,13 +46,16 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler
         quantity.text = "";
     }
 
+    /// <summary>
+    /// Handles to equip gear.
+    /// </summary>
     public virtual void OnPointerDown(PointerEventData eventData)
     {
         if (item == null || item.itemSO == null) return;
 
         if (item.itemSO.type == ItemType.Gear)
         {
-            InventoryManager.Instance.EquipGear(item.itemSO);
+            InventoryManager.Instance.EquipGear(item as InventoryItem);
         }
 
     }

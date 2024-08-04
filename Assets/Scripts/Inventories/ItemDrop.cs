@@ -16,6 +16,9 @@ public class ItemDrop : MonoBehaviour
         dropItems = new List<ItemSO>();
     }
 
+    /// <summary>
+    /// Handles to generate item drop.
+    /// </summary>
     public void GenerateItemDrop()
     {
         while (itemSOs.Count > 0)
@@ -36,6 +39,9 @@ public class ItemDrop : MonoBehaviour
         DropItem();
     }
 
+    /// <summary>
+    /// Handles to drop item.
+    /// </summary>
     private void DropItem()
     {
         foreach (ItemSO itemSO in dropItems)

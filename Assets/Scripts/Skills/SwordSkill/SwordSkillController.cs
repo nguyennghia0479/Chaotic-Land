@@ -18,9 +18,9 @@ public class SwordSkillController : MonoBehaviour
 
     [Header("Bounce sword info")]
     private bool isBounceSword;
-    private List<Transform> enemyTargets;
+    [SerializeField] private List<Transform> enemyTargets;
     private int enemyIndex;
-    private int bounceAmount;
+    [SerializeField] private int bounceAmount;
     private float bounceRadius;
     private float bounceSpeed;
 
@@ -86,7 +86,7 @@ public class SwordSkillController : MonoBehaviour
         {
             SetTargetForBounceSwordSkill();
 
-            if (!isBounceSword && !isSpinSword)
+            if (!isSpinSword)
             {
                 if (enemy.GetComponent<Enemy>().IsDead) return;
 
@@ -218,15 +218,17 @@ public class SwordSkillController : MonoBehaviour
             {
                 if (enemyTargets[enemyIndex].TryGetComponent(out EnemyStats enemy))
                 {
-                    if (enemy.GetComponent<Enemy>().IsDead) return;
-
                     player.Stats.DoPhysicalDamage(enemy);
+                    if (enemy.GetComponent<Enemy>().IsDead)
+                    {
+                        enemyTargets.Remove(enemyTargets[enemyIndex]);
+                    }
                 }
                 enemyIndex++;
                 bounceAmount--;
             }
 
-            if (bounceAmount <= 0)
+            if (bounceAmount <= 0 || enemyTargets.Count <= 0)
             {
                 isBounceSword = false;
                 RecallSword();

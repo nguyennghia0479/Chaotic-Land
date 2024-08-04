@@ -98,6 +98,15 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UseFlask"",
+                    ""type"": ""Button"",
+                    ""id"": ""636e39d8-a6c9-4073-93bf-34cd9fdfdabf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -232,6 +241,17 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""action"": ""SpellCast"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3fc1e77e-a7ba-4691-99bc-c6f4360003be"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseFlask"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -248,6 +268,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
         m_Player_Ultimate = m_Player.FindAction("Ultimate", throwIfNotFound: true);
         m_Player_SpellCast = m_Player.FindAction("SpellCast", throwIfNotFound: true);
+        m_Player_UseFlask = m_Player.FindAction("UseFlask", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -317,6 +338,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Aim;
     private readonly InputAction m_Player_Ultimate;
     private readonly InputAction m_Player_SpellCast;
+    private readonly InputAction m_Player_UseFlask;
     public struct PlayerActions
     {
         private @InputControl m_Wrapper;
@@ -329,6 +351,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         public InputAction @Aim => m_Wrapper.m_Player_Aim;
         public InputAction @Ultimate => m_Wrapper.m_Player_Ultimate;
         public InputAction @SpellCast => m_Wrapper.m_Player_SpellCast;
+        public InputAction @UseFlask => m_Wrapper.m_Player_UseFlask;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -362,6 +385,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @SpellCast.started += instance.OnSpellCast;
             @SpellCast.performed += instance.OnSpellCast;
             @SpellCast.canceled += instance.OnSpellCast;
+            @UseFlask.started += instance.OnUseFlask;
+            @UseFlask.performed += instance.OnUseFlask;
+            @UseFlask.canceled += instance.OnUseFlask;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -390,6 +416,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @SpellCast.started -= instance.OnSpellCast;
             @SpellCast.performed -= instance.OnSpellCast;
             @SpellCast.canceled -= instance.OnSpellCast;
+            @UseFlask.started -= instance.OnUseFlask;
+            @UseFlask.performed -= instance.OnUseFlask;
+            @UseFlask.canceled -= instance.OnUseFlask;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -417,5 +446,6 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         void OnAim(InputAction.CallbackContext context);
         void OnUltimate(InputAction.CallbackContext context);
         void OnSpellCast(InputAction.CallbackContext context);
+        void OnUseFlask(InputAction.CallbackContext context);
     }
 }

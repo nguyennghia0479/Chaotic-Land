@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public event EventHandler OnAimActionEnd;
     public event EventHandler OnUltimateAction;
     public event EventHandler OnSpellCastAction;
+    public event EventHandler OnUseFlaskAction;
 
     private InputControl inputControl;
 
@@ -36,6 +37,7 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.Aim.canceled += ctx => AimCanceled();
             inputControl.Player.Ultimate.performed += ctx => UltimatePerformed();
             inputControl.Player.SpellCast.performed += ctx => SpellCastPerformed();
+            inputControl.Player.UseFlask.performed += ctx => UseFlaskPerformed();
         }
     }
 
@@ -52,6 +54,7 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.Aim.canceled -= ctx => AimCanceled();
             inputControl.Player.Ultimate.performed -= ctx => UltimatePerformed();
             inputControl.Player.SpellCast.performed -= ctx => SpellCastPerformed();
+            inputControl.Player.UseFlask.performed -= ctx => UseFlaskPerformed();
             inputControl.Dispose();
         }
     }
@@ -138,6 +141,14 @@ public class PlayerController : MonoBehaviour
     private void SpellCastPerformed()
     {
         OnSpellCastAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Handles use flask action when performed by the player.
+    /// </summary>
+    private void UseFlaskPerformed()
+    {
+        OnUseFlaskAction?.Invoke(this, EventArgs.Empty);
     }
     #endregion
 }

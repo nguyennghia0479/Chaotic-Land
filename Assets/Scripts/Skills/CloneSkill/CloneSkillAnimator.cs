@@ -30,7 +30,7 @@ public class CloneSkillAnimator : MonoBehaviour
     /// Handles to make damage of the target charaters. 
     /// </summary>
     /// <remarks>
-    /// If the random value is lesser then clone can create another clone until random value is equal or greater.
+    /// If the random value is lesser then clone can create another clone until random value is equal or greater or equal max number of clone.
     /// </remarks>
     private void AnimationAttack()
     {
@@ -53,6 +53,10 @@ public class CloneSkillAnimator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles to check number of clone.
+    /// </summary>
+    /// <returns></returns>
     private bool HasMaxNumberOfClone()
     {
         CloneSkillController[] clones = FindObjectsOfType<CloneSkillController>();

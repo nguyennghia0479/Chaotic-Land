@@ -12,6 +12,9 @@ public class GearSlotUI : ItemSlotUI
         gameObject.name = "GearSlotBG - " + slotType.ToString();
     }
 
+    /// <summary>
+    /// Handles to unequip gear if inventory item has empty slot.
+    /// </summary>
     public override void OnPointerDown(PointerEventData eventData)
     {
         if (item == null || item.itemSO == null) return;
@@ -20,7 +23,7 @@ public class GearSlotUI : ItemSlotUI
         if (inventory.CanAddItem())
         {
             inventory.UnequipGear(item.itemSO as GearSO);
-            inventory.AddInventory(item.itemSO);
+            inventory.AddItemToInventory(item as InventoryItem);
             ClearSlot();
         }
     }

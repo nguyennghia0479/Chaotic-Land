@@ -29,15 +29,22 @@ public class PlayerStats : EntityStats
         _targetStats.TakeDamage(transform, totalDamage, false);
     }
 
+    /// <summary>
+    /// Handles to decrease player health.
+    /// </summary>
+    /// <param name="_damage"></param>
+    /// <remarks>
+    /// If player has equip armor can execute item effect.
+    /// </remarks>
     protected override void DecreaseHealth(int _damage)
     {
         base.DecreaseHealth(_damage);
 
-        GearSO armorGear = InventoryManager.Instance.GetGearByGearType(GearType.Armor);
+        player.InventoryManager.DecreaseGearCondition(GearType.Armor);
+        GearSO armorGear = player.InventoryManager.GetGearByGearType(GearType.Armor);
         if (armorGear != null)
         {
             armorGear.ExecuteItemEffects(null);
         }
-
     }
 }

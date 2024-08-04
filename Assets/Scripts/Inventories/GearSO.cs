@@ -13,7 +13,7 @@ public class GearSO : ItemSO
     [Header("Equipment info")]
     public GearType gearType;
     public List<Inventory> craftingMaterials;
-    [Range(0f, 1f)] public float lossConditionRate;
+    [Range(0f, 1f)] public float loseConditionSpeed;
 
     [Header("Attribute stats info")]
     public int vitality;
@@ -82,6 +82,10 @@ public class GearSO : ItemSO
     }
     #endregion
 
+    /// <summary>
+    /// Handles to execute effect of item.
+    /// </summary>
+    /// <param name="_target"></param>
     public void ExecuteItemEffects(Transform _target)
     {
         foreach (ItemEffectSO effect in effects)
