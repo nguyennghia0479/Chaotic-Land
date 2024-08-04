@@ -1,27 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class InventoryManager : Singleton<InventoryManager>
 {
+    #region Variables
+    [Header("Material info")]
     [SerializeField] private Transform materialSlotParent;
     private ItemSlotUI[] materialSlots;
     [SerializeField] private List<Inventory> materials;
     private Dictionary<ItemSO, Inventory> materialDictionaries;
 
+    [Header("Item info")]
     [SerializeField] private Transform itemSlotParent;
     private ItemSlotUI[] itemSlots;
-    [SerializeField] private List<Inventory> items;
+    [SerializeField] private List<InventoryItem> items;
+    private Dictionary<string, InventoryItem> itemDictionaries;
 
+    [Header("Gear info")]
     [SerializeField] private Transform gearSlotParent;
     private GearSlotUI[] gearSlots;
-    [SerializeField] private List<Inventory> gears;
-    private Dictionary<GearSO, Inventory> gearDictionaries;
+    [SerializeField] private List<InventoryItem> gears;
+    private Dictionary<GearSO, InventoryItem> gearDictionaries;
 
     private float lastTimeUseFlask;
     private float flaskCooldown;
     private float lastTimeUseArmor;
     private float armorCooldown;
+    #endregion
 
     private void Start()
     {
@@ -32,12 +39,61 @@ public class InventoryManager : Singleton<InventoryManager>
         materials = new List<Inventory>();
         materialDictionaries = new Dictionary<ItemSO, Inventory>();
 
-        items = new List<Inventory>();
-    
-        gears = new List<Inventory>();
-        gearDictionaries = new Dictionary<GearSO, Inventory>();
+        items = new List<InventoryItem>();
+        itemDictionaries = new Dictionary<string, InventoryItem>();
+
+        gears = new List<InventoryItem>();
+        gearDictionaries = new Dictionary<GearSO, InventoryItem>();
     }
 
+    #region Gear condition
+    /// <summary>
+    /// Handles to get gear by gear type.
+    /// </summary>
+    /// <param name="_gearType"></param>
+    /// <returns>GearSO if found. Null if not.</returns>
+    public GearSO GetGearByGearType(GearType _gearType)
+    {
+        GearSO gear = null;
+
+        foreach (KeyValuePair<GearSO, InventoryItem> item in gearDictionaries)
+        {
+            if (item.Key.gearType == _gearType)
+            {
+                gear = item.Key;
+            }
+        }
+
+        return gear;
+    }
+
+    /// <summary>
+    /// Handles to decrease condition of gear.
+    /// </summary>
+    /// <param name="_gearType"></param>
+    public void DecreaseGearCondition(GearType _gearType)
+    {
+        GearSO gear = GetGearByGearType(_gearType);
+
+        if (gear == null) return;
+
+        if (gearDictionaries.TryGetValue(gear, out InventoryItem item))
+        {
+            item.DecreaseCondition(gear.loseConditionSpeed);
+
+            if (item.Condition <= 0)
+            {
+                UnequipGear(gear);
+                UpdateItemSlotUI(gear);
+            }
+        }
+    }
+    #endregion
+
+    #region Use Flask and armor effect
+    /// <summary>
+    /// Handles to use flask.
+    /// </summary>
     public void UseFlask()
     {
         GearSO flaskGear = GetGearByGearType(GearType.Flask);
@@ -48,10 +104,16 @@ public class InventoryManager : Singleton<InventoryManager>
                 lastTimeUseFlask = Time.time;
                 flaskCooldown = flaskGear.cooldown;
                 flaskGear.ExecuteItemEffects(null);
+
+                DecreaseGearCondition(GearType.Flask);
             }
         }
     }
 
+    /// <summary>
+    /// Handles to use armor effect.
+    /// </summary>
+    /// <returns>True if time is greater than cooldown. False if not.</returns>
     public bool CanUseArmorEffect()
     {
         GearSO armorGear = GetGearByGearType(GearType.Armor);
@@ -67,39 +129,36 @@ public class InventoryManager : Singleton<InventoryManager>
 
         return false;
     }
-
-    public GearSO GetGearByGearType(GearType _gearType)
-    {
-        GearSO gear = null;
-
-        foreach (KeyValuePair<GearSO, Inventory> item in gearDictionaries)
-        {
-            if (item.Key.gearType == _gearType)
-            {
-                gear = item.Key;
-            }
-        }
-
-        return gear;
-    }
+    #endregion
 
     #region Craft item
+    /// <summary>
+    /// Handles to craft item.
+    /// </summary>
+    /// <param name="_itemToCraft"></param>
     public void CraftItem(GearSO _itemToCraft)
     {
-        if (!CanCraft(_itemToCraft) || !CanAddItem()) return;
+        if (!CanAddItem() || !CanCraft(_itemToCraft)) return;
 
         foreach (Inventory requiredMaterial in _itemToCraft.craftingMaterials)
         {
             for (int i = 0; i < requiredMaterial.GetQuantity(); i++)
             {
-                RemoveInventory(requiredMaterial.itemSO);
+                RemoveMaterialFromInventory(requiredMaterial.itemSO);
             }
         }
 
-        AddInventory(_itemToCraft);
+        InventoryItem newItem = new(_itemToCraft);
+        items.Add(newItem);
+        itemDictionaries.Add(newItem.ItemId, newItem);
         UpdateItemSlotUI(_itemToCraft);
     }
 
+    /// <summary>
+    /// Handles to check can craft item.
+    /// </summary>
+    /// <param name="_itemToCraft"></param>
+    /// <returns>True if found enough required material. False if not.</returns>
     private bool CanCraft(GearSO _itemToCraft)
     {
         if (_itemToCraft == null)
@@ -127,62 +186,67 @@ public class InventoryManager : Singleton<InventoryManager>
     #endregion
 
     #region Equip and Unequip gear
-    public void EquipGear(ItemSO _itemSO)
+    /// <summary>
+    /// Handles to equip item.
+    /// </summary>
+    /// <param name="_itemToEquip"></param>
+    /// <remarks>
+    /// Unequip old item if has exists then equip new item.
+    /// </remarks>
+    public void EquipGear(InventoryItem _itemToEquip)
     {
-        GearSO newEquip = _itemSO as GearSO;
-        GearSO oldEquip = null;
+        GearSO itemToEquip = _itemToEquip.itemSO as GearSO;
+        InventoryItem itemToUnequip = null;
 
-        foreach (KeyValuePair<GearSO, Inventory> pair in gearDictionaries)
+        foreach (KeyValuePair<GearSO, InventoryItem> pair in gearDictionaries)
         {
-            if (pair.Key.gearType == newEquip.gearType)
+            if (pair.Key.gearType == itemToEquip.gearType)
             {
-                oldEquip = pair.Key;
+                itemToUnequip = pair.Value;
             }
         }
 
-        if (oldEquip != null)
+        RemoveItemFromInventory(_itemToEquip);
+        if (itemToUnequip != null)
         {
-            UnequipGear(oldEquip);
-            AddItemToInventory(oldEquip);
+            UnequipGear(itemToUnequip.itemSO as GearSO);
+            AddItemToInventory(itemToUnequip);
         }
-        
-        Inventory newGear = new(newEquip);
+
+        InventoryItem newGear = new(itemToEquip, _itemToEquip.Condition, _itemToEquip.ItemId);
         gears.Add(newGear);
-        gearDictionaries.Add(newEquip, newGear);
-        RemoveInventory(newEquip);
-        UpdateItemSlotUI(_itemSO);
-        newEquip.AddModifiy();
+        gearDictionaries.Add(itemToEquip, newGear);
+        itemToEquip.AddModifiy();
+
+        UpdateItemSlotUI(_itemToEquip.itemSO);
     }
 
-    public void UnequipGear(GearSO _oldEquip)
+    /// <summary>
+    /// Handles to unequip item.
+    /// </summary>
+    /// <param name="_itemToUnequip"></param>
+    public void UnequipGear(GearSO _itemToUnequip)
     {
-        if (_oldEquip == null) return;
+        if (_itemToUnequip == null) return;
 
-        if (gearDictionaries.TryGetValue(_oldEquip, out Inventory item))
+        if (gearDictionaries.TryGetValue(_itemToUnequip, out InventoryItem item))
         {
+            _itemToUnequip.RemoveModifiy();
             gears.Remove(item);
-            gearDictionaries.Remove(_oldEquip);
-            _oldEquip.RemoveModifiy();
+            gearDictionaries.Remove(_itemToUnequip);
         }
     }
     #endregion
 
     #region Add item
-    public void AddInventory(ItemSO _itemSO)
-    {
-        if (_itemSO.type == ItemType.Material)
-        {
-            AddMaterialToInventory(_itemSO);
-        }
-        else
-        {
-            AddItemToInventory(_itemSO);
-        }
-
-        UpdateItemSlotUI(_itemSO);
-    }
-
-    private void AddMaterialToInventory(ItemSO _itemSO)
+    /// <summary>
+    /// Handles to add material to inventory.
+    /// </summary>
+    /// <param name="_itemSO"></param>
+    /// <remarks>
+    /// If has the same material in inventory then add quantity. If not then add new in inventory.
+    /// </remarks>
+    public void AddMaterialToInventory(ItemSO _itemSO)
     {
         if (materialDictionaries.TryGetValue(_itemSO, out Inventory item))
         {
@@ -194,14 +258,28 @@ public class InventoryManager : Singleton<InventoryManager>
             materials.Add(newItem);
             materialDictionaries.Add(_itemSO, newItem);
         }
+
+        UpdateItemSlotUI(_itemSO);
     }
 
-    private void AddItemToInventory(ItemSO _itemSO)
+    /// <summary>
+    /// Handles to add item to inventory.
+    /// </summary>
+    /// <param name="_item"></param>
+    public void AddItemToInventory(InventoryItem _item)
     {
-        Inventory newItem = new(_itemSO);
-        items.Add(newItem);
+        InventoryItem item = new(_item.itemSO, _item.Condition, _item.ItemId);
+        items.Add(item);
+        itemDictionaries.Add(item.ItemId, item);
+
+        UpdateItemSlotUI(_item.itemSO);
     }
 
+    /// <summary>
+    /// Handles to check can add material.
+    /// </summary>
+    /// <param name="_itemSO"></param>
+    /// <returns>True if material number is less than material slot or has a same material in inventory. False if not.</returns>
     public bool CanAddMaterial(ItemSO _itemSO)
     {
         if (materialDictionaries.Count < materialSlots.Length)
@@ -221,27 +299,21 @@ public class InventoryManager : Singleton<InventoryManager>
         }
     }
 
+    /// <summary>
+    /// Handles to check can item.
+    /// </summary>
+    /// <returns>True if item number is less than item slot number. False if not</returns>
     public bool CanAddItem()
     {
-        return items.Count < itemSlots.Length;
+        return itemDictionaries.Count < itemSlots.Length;
     }
     #endregion
 
     #region Remove item
-    public void RemoveInventory(ItemSO _itemSO)
-    {
-        if (_itemSO.type == ItemType.Material)
-        {
-            RemoveMaterialFromInventory(_itemSO);
-        }
-        else
-        {
-            RemoveItemFromInventory(_itemSO);
-        }
-
-        UpdateItemSlotUI(_itemSO);
-    }
-
+    /// <summary>
+    /// Handles to remove material from inventory.
+    /// </summary>
+    /// <param name="_itemSO"></param>
     private void RemoveMaterialFromInventory(ItemSO _itemSO)
     {
         if (materialDictionaries.TryGetValue(_itemSO, out Inventory item))
@@ -253,26 +325,32 @@ public class InventoryManager : Singleton<InventoryManager>
                 materialDictionaries.Remove(_itemSO);
                 materials.Remove(item);
             }
+
+            UpdateItemSlotUI(_itemSO);
         }
     }
 
-    private void RemoveItemFromInventory(ItemSO _itemSO)
+    /// <summary>
+    /// Handles to remove item from inventory.
+    /// </summary>
+    /// <param name="_item"></param>
+    private void RemoveItemFromInventory(InventoryItem _item)
     {
-        Inventory removeItem = null;
-
-        foreach (Inventory item in items)
+        if (itemDictionaries.TryGetValue(_item.ItemId, out InventoryItem item))
         {
-            if (item.itemSO.Equals(_itemSO))
-            {
-                removeItem = item;
-                break;
-            }
+            items.Remove(item);
+            itemDictionaries.Remove(item.ItemId);
+
+            UpdateItemSlotUI(_item.itemSO);
         }
-        items.Remove(removeItem);
     }
     #endregion
 
     #region Clear and update slot
+    /// <summary>
+    /// Handles to clear and update item slot ui.
+    /// </summary>
+    /// <param name="_itemSO"></param>
     private void UpdateItemSlotUI(ItemSO _itemSO)
     {
         if (_itemSO == null) return;
@@ -295,7 +373,7 @@ public class InventoryManager : Singleton<InventoryManager>
 
         for (int i = 0; i < gearSlots.Length; i++)
         {
-            foreach (KeyValuePair<GearSO, Inventory> pair in gearDictionaries)
+            foreach (KeyValuePair<GearSO, InventoryItem> pair in gearDictionaries)
             {
                 if (pair.Key.gearType == gearSlots[i].SlotType)
                 {
@@ -306,6 +384,10 @@ public class InventoryManager : Singleton<InventoryManager>
         }
     }
 
+    /// <summary>
+    /// Handles to clear item slot ui.
+    /// </summary>
+    /// <param name="_itemSO"></param>
     private void ClearItemSlotUI(ItemSO _itemSO)
     {
         if (_itemSO == null) return;

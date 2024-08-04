@@ -14,23 +14,27 @@ public class Item : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
+    /// <summary>
+    /// Handles to pickup item.
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out Player _))
         {
             if (InventoryManager.Instance.CanAddMaterial(itemSO))
             {
-                InventoryManager.Instance.AddInventory(itemSO);
+                InventoryManager.Instance.AddMaterialToInventory(itemSO);
                 Destroy(gameObject);
             }
-            else
-            {
-                Debug.Log("Full slot");
-            }
-
         }
     }
 
+    /// <summary>
+    /// Handles to setup item info.
+    /// </summary>
+    /// <param name="_itemSO"></param>
+    /// <param name="_velocity"></param>
     public void SetupItem(ItemSO _itemSO, Vector2 _velocity)
     {
         if (_itemSO == null) return;

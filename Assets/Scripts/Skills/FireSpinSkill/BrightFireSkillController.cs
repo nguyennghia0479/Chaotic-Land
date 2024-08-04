@@ -25,6 +25,12 @@ public class BrightFireSkillController : MonoBehaviour
         transform.up = -rb.velocity;
     }
 
+    /// <summary>
+    /// Handles to make magic damage on target.
+    /// </summary>
+    /// <remarks>
+    /// If player has equip amulet can execute item effect.
+    /// </remarks>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out EnemyStats enemy))
@@ -32,7 +38,7 @@ public class BrightFireSkillController : MonoBehaviour
             if (enemy.GetComponent<Enemy>().IsDead) return;
 
             player.Stats.DoMagicDamage(enemy, ailementType);
-            GearSO amuletGear = InventoryManager.Instance.GetGearByGearType(GearType.Amulet);
+            GearSO amuletGear = player.InventoryManager.GetGearByGearType(GearType.Amulet);
             if (amuletGear != null)
             {
                 amuletGear.ExecuteItemEffects(enemy.transform);

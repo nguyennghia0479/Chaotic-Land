@@ -16,6 +16,7 @@ public class Player : Entity
 
     private PlayerController controller;
     private SkillManager skillManager;
+    private InventoryManager inventoryManager;
     private GameObject sword;
     private GameObject fireSpin;
     private bool isAiming;
@@ -92,9 +93,11 @@ public class Player : Entity
             controller.OnAimActionStart += PlayerController_OnAimActionStart;
             controller.OnUltimateAction += PlayerController_OnUltimateAction;
             controller.OnSpellCastAction += PlayerController_OnSpellCastAction;
+            controller.OnUseFlaskAction += PlayerController_OnUseFlaskAction;
         }
 
         skillManager = SkillManager.Instance;
+        inventoryManager = InventoryManager.Instance;
     }
 
     protected override void Update()
@@ -102,11 +105,6 @@ public class Player : Entity
         base.Update();
 
         stateMachine.CurrentState.Update();
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            InventoryManager.Instance.UseFlask();
-        }
     }
 
     protected override void FixedUpdate()
@@ -126,6 +124,7 @@ public class Player : Entity
             controller.OnAimActionStart -= PlayerController_OnAimActionStart;
             controller.OnUltimateAction -= PlayerController_OnUltimateAction;
             controller.OnSpellCastAction -= PlayerController_OnSpellCastAction;
+            controller.OnUseFlaskAction -= PlayerController_OnUseFlaskAction;
         }
     }
 
@@ -277,8 +276,6 @@ public class Player : Entity
     /// <summary>
     /// Handles to perform spell cast of the character.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private void PlayerController_OnSpellCastAction(object sender, EventArgs e)
     {
         if (isDead) return;
@@ -287,6 +284,14 @@ public class Player : Entity
         {
             stateMachine.ChangeState(spellCastState);
         }
+    }
+
+    /// <summary>
+    /// Handles to perform use flask of the character.
+    /// </summary>
+    private void PlayerController_OnUseFlaskAction(object sender, EventArgs e)
+    {
+        InventoryManager.UseFlask();
     }
     #endregion
 
@@ -319,6 +324,11 @@ public class Player : Entity
     public SkillManager SkillManager
     {
         get { return skillManager; }
+    }
+
+    public InventoryManager InventoryManager
+    {
+        get { return inventoryManager; }
     }
 
     public GameObject Sword

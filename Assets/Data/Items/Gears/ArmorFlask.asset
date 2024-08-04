@@ -17,10 +17,10 @@ MonoBehaviour:
   dropChance: 0
   type: 1
   gearType: 3
-  condition: 0
   craftingMaterials:
   - itemSO: {fileID: 11400000, guid: 69213c0dfac89be4aa5cdab406efa11b, type: 2}
     quantity: 1
+  loseConditionSpeed: 1
   vitality: 0
   endurance: 0
   strength: 0

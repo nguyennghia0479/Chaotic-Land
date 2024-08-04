@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerAnimator : MonoBehaviour
 {
+    [SerializeField] private LayerMask enemyLayerMask;
+
     private Player player;
 
     private void Awake()
@@ -23,11 +25,17 @@ public class PlayerAnimator : MonoBehaviour
     /// Handles to make damage of the target charaters. 
     /// </summary>
     /// <remarks>
-    /// The characters receive damage will be knock back.
+    /// The characters receive damage will be knock back.<br></br>
+    /// If player has equip weapon can execute item effect.
     /// </remarks>
     private void AnimationAttack()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(player.AttackCheck.position, player.AttackRadius);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(player.AttackCheck.position, player.AttackRadius, enemyLayerMask);
+
+        if (colliders.Length > 0)
+        {
+            player.InventoryManager.DecreaseGearCondition(GearType.Weapon);
+        }
 
         foreach (Collider2D collider in colliders)
         {
@@ -36,7 +44,8 @@ public class PlayerAnimator : MonoBehaviour
                 if (enemy.GetComponent<Enemy>().IsDead) return;
 
                 player.Stats.DoPhysicalDamage(enemy);
-                GearSO weaponGear = InventoryManager.Instance.GetGearByGearType(GearType.Weapon);
+
+                GearSO weaponGear = player.InventoryManager.GetGearByGearType(GearType.Weapon);
                 if (weaponGear != null)
                 {
                     weaponGear.ExecuteItemEffects(enemy.transform);

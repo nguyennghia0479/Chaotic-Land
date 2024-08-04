@@ -95,50 +95,6 @@ public class EntityStats : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles to descrease health.
-    /// </summary>
-    /// <param name="_damage"></param>
-    protected virtual void DecreaseHealth(int _damage)
-    {
-        currentHealth -= _damage;
-
-        if (currentHealth <= 0)
-        {
-            entity.SetupDeath();
-        }
-    }
-
-    public void IncreaseHealth(int _healPoint)
-    {
-        if (_healPoint <= 0) return;
-
-        currentHealth += _healPoint;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth.GetValue());
-    }
-
-    public void BuffStat(Stat _statToBuff, int _modify, float _duration)
-    {
-        if (_statToBuff == null) return;
-
-        StartCoroutine(BuffStatRoutine(_statToBuff, _modify, _duration));
-    }
-
-    private IEnumerator BuffStatRoutine(Stat _statToBuff, int _modify, float _duration)
-    {
-        if (_statToBuff != null)
-        {
-            _statToBuff.AddModify(_modify);
-            yield return new WaitForSeconds(_duration);
-            _statToBuff.RemoveModify(_modify);
-        }
-        else
-        {
-            yield return new WaitForSeconds(0);
-        }
-
-    }
-
-    /// <summary>
     /// Handles to make physical damage.
     /// </summary>
     /// <param name="_targetStats"></param>
@@ -157,6 +113,34 @@ public class EntityStats : MonoBehaviour
         totalDamage = CheckTargetArmor(_targetStats, totalDamage);
         _targetStats.TakeDamage(transform, totalDamage, canCrit);
     }
+
+    #region Health
+    /// <summary>
+    /// Handles to decrease health.
+    /// </summary>
+    /// <param name="_damage"></param>
+    protected virtual void DecreaseHealth(int _damage)
+    {
+        currentHealth -= _damage;
+
+        if (currentHealth <= 0)
+        {
+            entity.SetupDeath();
+        }
+    }
+
+    /// <summary>
+    /// Handles to increase health.
+    /// </summary>
+    /// <param name="_healPoint"></param>
+    public void IncreaseHealth(int _healPoint)
+    {
+        if (_healPoint <= 0) return;
+
+        currentHealth += _healPoint;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth.GetValue());
+    }
+    #endregion
 
     #region Magic damage
     /// <summary>
@@ -295,8 +279,12 @@ public class EntityStats : MonoBehaviour
 
         return _totalDamage;
     }
-    #endregion
 
+    /// <summary>
+    /// Handles to get stat to buff.
+    /// </summary>
+    /// <param name="_buffType"></param>
+    /// <returns></returns>
     public Stat GetStatByBuffType(BuffType _buffType)
     {
         return _buffType switch
@@ -308,6 +296,42 @@ public class EntityStats : MonoBehaviour
             _ => null,
         };
     }
+
+    /// <summary>
+    /// Handles to buff stat of the character.
+    /// </summary>
+    /// <param name="_statToBuff"></param>
+    /// <param name="_modify"></param>
+    /// <param name="_duration"></param>
+    public void BuffStat(Stat _statToBuff, int _modify, float _duration)
+    {
+        if (_statToBuff == null) return;
+
+        StartCoroutine(BuffStatRoutine(_statToBuff, _modify, _duration));
+    }
+
+    /// <summary>
+    /// Handles to buff stat of the character.
+    /// </summary>
+    /// <param name="_statToBuff"></param>
+    /// <param name="_modify"></param>
+    /// <param name="_duration"></param>
+    /// <returns></returns>
+    private IEnumerator BuffStatRoutine(Stat _statToBuff, int _modify, float _duration)
+    {
+        if (_statToBuff != null)
+        {
+            _statToBuff.AddModify(_modify);
+            yield return new WaitForSeconds(_duration);
+            _statToBuff.RemoveModify(_modify);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0);
+        }
+
+    }
+    #endregion
 
     public int CurrentHealth
     {

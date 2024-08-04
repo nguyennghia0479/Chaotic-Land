@@ -34,6 +34,8 @@ public class ThunderStrikeSkill : MonoBehaviour
         {
             if (collider.TryGetComponent(out Enemy enemy) && Vector2.Distance(transform.position, collider.transform.position) > 1)
             {
+                if (enemy.IsDead) return;
+
                 float distance = Vector2.Distance(transform.position, collider.transform.position);
 
                 if (distance < closetTarget)

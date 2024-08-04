@@ -17,12 +17,12 @@ MonoBehaviour:
   dropChance: 0
   type: 1
   gearType: 0
-  condition: 0
   craftingMaterials:
   - itemSO: {fileID: 11400000, guid: cddfc48fa60268041b1bb1cfb16725fb, type: 2}
     quantity: 1
   - itemSO: {fileID: 11400000, guid: 968d188910803274080f46bc08f94567, type: 2}
     quantity: 1
+  loseConditionSpeed: 0.1
   vitality: 0
   endurance: 0
   strength: 0
@@ -40,3 +40,4 @@ MonoBehaviour:
   resistance: 0
   effects:
   - {fileID: 11400000, guid: 7ab792160923d6148a2d45ad9c2c9a30, type: 2}
+  cooldown: 0

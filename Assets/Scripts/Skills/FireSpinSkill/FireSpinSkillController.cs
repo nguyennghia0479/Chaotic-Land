@@ -153,6 +153,7 @@ public class FireSpinSkillController : MonoBehaviour
         if (isSpawnBrightFire) return;
 
         isSpawnBrightFire = true;
+        player.InventoryManager.DecreaseGearCondition(GearType.Amulet);
         StartCoroutine(SpawnBrightFireRoutine(_localScaleX));
     }
 

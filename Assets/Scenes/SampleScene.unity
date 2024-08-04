@@ -12209,6 +12209,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7788da64ff0b29e4e847b88e41d129ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &1101884580
 GameObject:
   m_ObjectHideFlags: 0
@@ -17181,8 +17184,8 @@ MonoBehaviour:
   normalGravity: 2
   recallSpeed: 12
   swordAliveTime: 7
-  bounceAmount: 3
-  bounceRadius: 5
+  bounceAmount: 5
+  bounceRadius: 10
   bounceSpeed: 10
   bounceGravity: 4
   bounceCooldown: 4

@@ -12,6 +12,9 @@ public class CraftSlotUI : ItemSlotUI
         image.sprite = gearSO.sprite;
     }
 
+    /// <summary>
+    /// Handles to craft item.
+    /// </summary>
     public override void OnPointerDown(PointerEventData eventData)
     {
         InventoryManager.Instance.CraftItem(gearSO);
