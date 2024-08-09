@@ -2,14 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum AilementType
+public enum AilmentType
 {
     Ignite, Chill, None
 }
 
-public enum BuffType
+public enum StatType
 {
-    PhysicsDamage, MagicDamage, Armor, Resistance
+    Vitality, Endurance, Strength, Dexterity, Intelligence, Agility,
+    MaxHealth, Stamina,
+    PhysicsDamage, CritChance, CritPower, MagicDamage,
+    Evasion, Armor, Resistance
 }
 
 public class EntityStats : MonoBehaviour
@@ -148,7 +151,7 @@ public class EntityStats : MonoBehaviour
     /// </summary>
     /// <param name="_targetStats"></param>
     /// <param name="_type"></param>
-    public virtual void DoMagicDamage(EntityStats _targetStats, AilementType _type)
+    public virtual void DoMagicDamage(EntityStats _targetStats, AilmentType _type)
     {
         if (CanTargetEvadeAttack(_targetStats) || entity.IsDead) return;
 
@@ -157,7 +160,7 @@ public class EntityStats : MonoBehaviour
         _targetStats.TakeDamage(transform, totalDamage, false);
         _targetStats.ApplyAilement(_type);
 
-        if (_type == AilementType.Ignite)
+        if (_type == AilmentType.Ignite)
         {
             _targetStats.SetIgniteDamage(igniteDamage);
         }
@@ -167,15 +170,15 @@ public class EntityStats : MonoBehaviour
     /// Handles to apply ailment.
     /// </summary>
     /// <param name="_type"></param>
-    protected void ApplyAilement(AilementType _type)
+    protected void ApplyAilement(AilmentType _type)
     {
-        if (_type == AilementType.Ignite && !isIgnite)
+        if (_type == AilmentType.Ignite && !isIgnite)
         {
             isIgnite = true;
             igniteTimer = ignitedDuration;
             fx.PlayIgnitedFX(ignitedDuration);
         }
-        else if (_type == AilementType.Chill)
+        else if (_type == AilmentType.Chill)
         {
             isChilled = true;
             fx.PlayChilledFX(chilledDuration);
@@ -281,23 +284,6 @@ public class EntityStats : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles to get stat to buff.
-    /// </summary>
-    /// <param name="_buffType"></param>
-    /// <returns></returns>
-    public Stat GetStatByBuffType(BuffType _buffType)
-    {
-        return _buffType switch
-        {
-            BuffType.PhysicsDamage => physicsDamage,
-            BuffType.MagicDamage => magicDamage,
-            BuffType.Armor => armor,
-            BuffType.Resistance => resistance,
-            _ => null,
-        };
-    }
-
-    /// <summary>
     /// Handles to buff stat of the character.
     /// </summary>
     /// <param name="_statToBuff"></param>
@@ -324,12 +310,41 @@ public class EntityStats : MonoBehaviour
             _statToBuff.AddModify(_modify);
             yield return new WaitForSeconds(_duration);
             _statToBuff.RemoveModify(_modify);
+
+            InventoryManager.Instance.UpdateStatUIs();
         }
         else
         {
             yield return new WaitForSeconds(0);
         }
+    }
 
+    /// <summary>
+    /// Handles to get stat by type.
+    /// </summary>
+    /// <param name="_statType"></param>
+    /// <returns></returns>
+    public Stat GetStatByType(StatType _statType)
+    {
+        return _statType switch
+        {
+            StatType.Vitality => vitality,
+            StatType.Endurance => endurance,
+            StatType.Strength => strength,
+            StatType.Dexterity => dexterity,
+            StatType.Intelligence => intelligence,
+            StatType.Agility => agility,
+            StatType.MaxHealth => maxHealth,
+            StatType.Stamina => stamina,
+            StatType.PhysicsDamage => physicsDamage,
+            StatType.CritChance => critChance,
+            StatType.CritPower => critPower,
+            StatType.MagicDamage => magicDamage,
+            StatType.Evasion => evasion,
+            StatType.Armor => armor,
+            StatType.Resistance => resistance,
+            _ => null,
+        };
     }
     #endregion
 

@@ -5,11 +5,9 @@ using UnityEngine.EventSystems;
 
 public class CraftSlotUI : ItemSlotUI
 {
-    [SerializeField] private GearSO gearSO;
-
-    private void OnValidate()
+    protected override void Start()
     {
-        image.sprite = gearSO.sprite;
+        base.Start();
     }
 
     /// <summary>
@@ -17,6 +15,19 @@ public class CraftSlotUI : ItemSlotUI
     /// </summary>
     public override void OnPointerDown(PointerEventData eventData)
     {
-        InventoryManager.Instance.CraftItem(gearSO);
+        tabMenu.CraftUI.SetupCraftUI(item.itemSO as GearSO);
+    }
+
+    /// <summary>
+    /// Handles to setup craft item info.
+    /// </summary>
+    /// <param name="_itemSO"></param>
+    public void SetupCraftItem(GearSO _itemSO)
+    {
+        if (_itemSO == null) return;
+
+        item.itemSO = _itemSO;
+        itemIcon.sprite = _itemSO.sprite;
+        itemText.text = _itemSO.name;
     }
 }

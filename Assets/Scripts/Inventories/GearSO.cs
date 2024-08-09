@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public enum GearType
@@ -14,6 +15,7 @@ public class GearSO : ItemSO
     public GearType gearType;
     public List<Inventory> craftingMaterials;
     [Range(0f, 1f)] public float loseConditionSpeed;
+    protected StringBuilder sb = new();
 
     [Header("Attribute stats info")]
     public int vitality;
@@ -43,6 +45,10 @@ public class GearSO : ItemSO
     public float cooldown;
 
     #region Modify stats
+
+    /// <summary>
+    /// Handles to add modify stats when equip gear.
+    /// </summary>
     public void AddModifiy()
     {
         PlayerStats playerStats = PlayerManager.Instance.Player.GetComponent<PlayerStats>();
@@ -62,6 +68,9 @@ public class GearSO : ItemSO
         playerStats.resistance.AddModify(resistance);
     }
 
+    /// <summary>
+    /// Handles to remove modify stats when unequip gear.
+    /// </summary>
     public void RemoveModifiy()
     {
         PlayerStats playerStats = PlayerManager.Instance.Player.GetComponent<PlayerStats>();
@@ -91,6 +100,51 @@ public class GearSO : ItemSO
         foreach (ItemEffectSO effect in effects)
         {
             effect.ExecuteItemEffect(_target);
+        }
+    }
+
+    /// <summary>
+    /// Handles to get item description.
+    /// </summary>
+    /// <returns>Item description</returns>
+    public string GetDescription()
+    {
+        sb.Clear();
+
+        AddDescription(vitality, "Vitality");
+        AddDescription(endurance, "Endurance");
+        AddDescription(strength, "Strength");
+        AddDescription(dexterity, "Dexterity");
+        AddDescription(intelligence, "Intelligence");
+        AddDescription(agility, "Agility");
+        AddDescription(maxHealth, "Max health");
+        AddDescription(stamina, "Stamina");
+        AddDescription(physicsDamage, "Physics damage");
+        AddDescription(critChance, "Critical chance");
+        AddDescription(critPower, "Critical power");
+        AddDescription(armor, "Armor");
+        AddDescription(evasion, "Evasion");
+        AddDescription(resistance, "Resistance");
+
+        sb.AppendLine();
+        foreach (ItemEffectSO effect in effects)
+        {
+            sb.AppendLine(effect.itemDes);
+        }
+
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// Handles to add description.
+    /// </summary>
+    /// <param name="stat"></param>
+    /// <param name="des"></param>
+    private void AddDescription(int stat, string des)
+    {
+        if (stat > 0)
+        {
+            sb.Append("+ ").Append(stat).Append(" ").Append(des).AppendLine();
         }
     }
 }

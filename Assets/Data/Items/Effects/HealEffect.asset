@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a34f8d35e1b9844e8f3f48dca11b602, type: 3}
   m_Name: HealEffect
   m_EditorClassIdentifier: 
+  itemDes: 'Unique: Healing 20% health point'
   healPercentage: 0.2

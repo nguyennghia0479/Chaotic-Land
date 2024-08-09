@@ -34,7 +34,7 @@ public class PlayerAnimator : MonoBehaviour
 
         if (colliders.Length > 0)
         {
-            player.InventoryManager.DecreaseGearCondition(GearType.Weapon);
+            player.InventoryManager.DecreaseGearDurability(GearType.Weapon);
         }
 
         foreach (Collider2D collider in colliders)

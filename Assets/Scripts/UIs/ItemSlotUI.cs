@@ -7,10 +7,15 @@ using UnityEngine.UI;
 
 public class ItemSlotUI : MonoBehaviour, IPointerDownHandler
 {
-    [SerializeField] protected Image image;
-    [SerializeField] protected TextMeshProUGUI quantity;
+    public Image itemIcon;
+    public TextMeshProUGUI itemText;
+    public Inventory item;
+    protected TabMenuUI tabMenu;
 
-    protected Inventory item;
+    protected virtual void Start()
+    {
+        tabMenu = GetComponentInParent<TabMenuUI>();
+    }
 
     /// <summary>
     /// Handles to update item slot ui.
@@ -21,16 +26,16 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler
 
         if (item != null)
         {
-            image.color = Color.white;
-            image.sprite = item.itemSO.sprite;
+            itemIcon.color = Color.white;
+            itemIcon.sprite = item.itemSO.sprite;
 
             if (item.GetQuantity() > 1)
             {
-                quantity.text = item.GetQuantity().ToString();
+                itemText.text = item.GetQuantity().ToString();
             }
             else
             {
-                quantity.text = "";
+                itemText.text = "";
             }
         }   
     }
@@ -41,9 +46,9 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler
     public void ClearSlot()
     {
         item = null;
-        image.color = Color.clear;
-        image.sprite = null;
-        quantity.text = "";
+        itemIcon.color = Color.clear;
+        itemIcon.sprite = null;
+        itemText.text = "";
     }
 
     /// <summary>
@@ -57,6 +62,5 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler
         {
             InventoryManager.Instance.EquipGear(item as InventoryItem);
         }
-
     }
 }

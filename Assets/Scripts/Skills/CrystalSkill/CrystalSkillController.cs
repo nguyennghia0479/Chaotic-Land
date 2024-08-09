@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CrystalSkillController : MonoBehaviour
 {
-    [SerializeField] private AilementType ailementType;
+    [SerializeField] private AilmentType ailementType;
 
     private Player player;
     private Animator animator;
@@ -94,7 +94,7 @@ public class CrystalSkillController : MonoBehaviour
             if (colliders.Length > 0)
             {
                 enemyTarget = colliders[Random.Range(0, colliders.Length)].transform;
-                player.InventoryManager.DecreaseGearCondition(GearType.Amulet);
+                player.InventoryManager.DecreaseGearDurability(GearType.Amulet);
             }
         }
     }

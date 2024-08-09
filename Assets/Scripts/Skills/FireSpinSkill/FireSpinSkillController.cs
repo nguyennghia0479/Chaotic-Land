@@ -6,7 +6,7 @@ public class FireSpinSkillController : MonoBehaviour
 {
     [SerializeField] private GameObject brightFirePrefab;
     [SerializeField] private float brightFireCooldown = .3f;
-    [SerializeField] private AilementType ailementType;
+    [SerializeField] private AilmentType ailementType;
 
     private Player player;
     private float moveTime;
@@ -153,7 +153,7 @@ public class FireSpinSkillController : MonoBehaviour
         if (isSpawnBrightFire) return;
 
         isSpawnBrightFire = true;
-        player.InventoryManager.DecreaseGearCondition(GearType.Amulet);
+        player.InventoryManager.DecreaseGearDurability(GearType.Amulet);
         StartCoroutine(SpawnBrightFireRoutine(_localScaleX));
     }
 

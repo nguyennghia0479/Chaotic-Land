@@ -64,14 +64,14 @@ public class PlayerGroundedState : PlayerState
 
     private void PlayerController_OnJumpAction(object sender, System.EventArgs e)
     {
-        if (isJumping || (!player.IsGroundDetected() && !player.IsSlopeDetected())) return;
+        if (isJumping || (!player.IsGroundDetected() && !player.IsSlopeDetected()) || player.GameManager.IsGamePaused) return;
 
         isJumping = true;
     }
 
     private void PlayerController_OnAttackAction(object sender, System.EventArgs e)
     {
-        if (isAttacking) return;
+        if (isAttacking || player.GameManager.IsGamePaused) return;
 
         isAttacking = true;
     }

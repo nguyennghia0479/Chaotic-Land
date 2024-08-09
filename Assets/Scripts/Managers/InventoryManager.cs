@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class InventoryManager : Singleton<InventoryManager>
 {
@@ -24,6 +23,10 @@ public class InventoryManager : Singleton<InventoryManager>
     [SerializeField] private List<InventoryItem> gears;
     private Dictionary<GearSO, InventoryItem> gearDictionaries;
 
+    [Header("Stats info")]
+    [SerializeField] private GameObject inventoryStats;
+    private StatUI[] statUIs;
+
     private float lastTimeUseFlask;
     private float flaskCooldown;
     private float lastTimeUseArmor;
@@ -35,6 +38,7 @@ public class InventoryManager : Singleton<InventoryManager>
         materialSlots = materialSlotParent.GetComponentsInChildren<ItemSlotUI>();
         itemSlots = itemSlotParent.GetComponentsInChildren<ItemSlotUI>();
         gearSlots = gearSlotParent.GetComponentsInChildren<GearSlotUI>();
+        statUIs = inventoryStats.GetComponentsInChildren<StatUI>();
 
         materials = new List<Inventory>();
         materialDictionaries = new Dictionary<ItemSO, Inventory>();
@@ -46,7 +50,7 @@ public class InventoryManager : Singleton<InventoryManager>
         gearDictionaries = new Dictionary<GearSO, InventoryItem>();
     }
 
-    #region Gear condition
+    #region Gear durability
     /// <summary>
     /// Handles to get gear by gear type.
     /// </summary>
@@ -68,10 +72,10 @@ public class InventoryManager : Singleton<InventoryManager>
     }
 
     /// <summary>
-    /// Handles to decrease condition of gear.
+    /// Handles to decrease durability of gear.
     /// </summary>
     /// <param name="_gearType"></param>
-    public void DecreaseGearCondition(GearType _gearType)
+    public void DecreaseGearDurability(GearType _gearType)
     {
         GearSO gear = GetGearByGearType(_gearType);
 
@@ -79,7 +83,7 @@ public class InventoryManager : Singleton<InventoryManager>
 
         if (gearDictionaries.TryGetValue(gear, out InventoryItem item))
         {
-            item.DecreaseCondition(gear.loseConditionSpeed);
+            item.DecreaseDurability(gear.loseConditionSpeed);
 
             if (item.Condition <= 0)
             {
@@ -105,7 +109,7 @@ public class InventoryManager : Singleton<InventoryManager>
                 flaskCooldown = flaskGear.cooldown;
                 flaskGear.ExecuteItemEffects(null);
 
-                DecreaseGearCondition(GearType.Flask);
+                DecreaseGearDurability(GearType.Flask);
             }
         }
     }
@@ -382,6 +386,8 @@ public class InventoryManager : Singleton<InventoryManager>
                 }
             }
         }
+
+        UpdateStatUIs();
     }
 
     /// <summary>
@@ -410,6 +416,17 @@ public class InventoryManager : Singleton<InventoryManager>
         for (int i = 0; i < gearSlots.Length; i++)
         {
             gearSlots[i].ClearSlot();
+        }
+    }
+
+    /// <summary>
+    /// Handles to update stats ui.
+    /// </summary>
+    public void UpdateStatUIs()
+    {
+        foreach (StatUI stat in statUIs)
+        {
+            stat.UpdateStatUI();
         }
     }
     #endregion

@@ -253,6 +253,8 @@ public class SwordSkillController : MonoBehaviour
             {
                 if (collider.TryGetComponent(out Enemy enemy))
                 {
+                    if (enemy.IsDead) return;
+
                     enemyTargets.Add(enemy.transform);
                 }
             }

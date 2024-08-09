@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8598082d00dc5941a31b444accbcd15, type: 3}
   m_Name: BuffArmorEffect
   m_EditorClassIdentifier: 
+  itemDes: 'Unique: Add 15 armor points in 15 seconds.'
   buffType: 2
   modify: 15
   duration: 15
