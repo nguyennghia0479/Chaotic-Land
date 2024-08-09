@@ -107,6 +107,15 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Tab"",
+                    ""type"": ""Button"",
+                    ""id"": ""614fa52b-0282-418d-a0f6-6824930f363c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -252,6 +261,17 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""action"": ""UseFlask"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""02299c49-7af3-48a1-864a-c13c7dd56a65"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -269,6 +289,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         m_Player_Ultimate = m_Player.FindAction("Ultimate", throwIfNotFound: true);
         m_Player_SpellCast = m_Player.FindAction("SpellCast", throwIfNotFound: true);
         m_Player_UseFlask = m_Player.FindAction("UseFlask", throwIfNotFound: true);
+        m_Player_Tab = m_Player.FindAction("Tab", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -339,6 +360,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Ultimate;
     private readonly InputAction m_Player_SpellCast;
     private readonly InputAction m_Player_UseFlask;
+    private readonly InputAction m_Player_Tab;
     public struct PlayerActions
     {
         private @InputControl m_Wrapper;
@@ -352,6 +374,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         public InputAction @Ultimate => m_Wrapper.m_Player_Ultimate;
         public InputAction @SpellCast => m_Wrapper.m_Player_SpellCast;
         public InputAction @UseFlask => m_Wrapper.m_Player_UseFlask;
+        public InputAction @Tab => m_Wrapper.m_Player_Tab;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -388,6 +411,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @UseFlask.started += instance.OnUseFlask;
             @UseFlask.performed += instance.OnUseFlask;
             @UseFlask.canceled += instance.OnUseFlask;
+            @Tab.started += instance.OnTab;
+            @Tab.performed += instance.OnTab;
+            @Tab.canceled += instance.OnTab;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -419,6 +445,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @UseFlask.started -= instance.OnUseFlask;
             @UseFlask.performed -= instance.OnUseFlask;
             @UseFlask.canceled -= instance.OnUseFlask;
+            @Tab.started -= instance.OnTab;
+            @Tab.performed -= instance.OnTab;
+            @Tab.canceled -= instance.OnTab;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -447,5 +476,6 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         void OnUltimate(InputAction.CallbackContext context);
         void OnSpellCast(InputAction.CallbackContext context);
         void OnUseFlask(InputAction.CallbackContext context);
+        void OnTab(InputAction.CallbackContext context);
     }
 }

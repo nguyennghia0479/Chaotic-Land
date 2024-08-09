@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BrightFireSkillController : MonoBehaviour
 {
-    [SerializeField] private AilementType ailementType;
+    [SerializeField] private AilmentType ailementType;
 
     private Player player;
     private Rigidbody2D rb;

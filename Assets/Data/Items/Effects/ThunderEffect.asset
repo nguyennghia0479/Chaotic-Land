@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18e2609eb4c0cd0449d3ae7ebff23e83, type: 3}
   m_Name: ThunderEffect
   m_EditorClassIdentifier: 
+  itemDes: 'Unique: Create thunder strike'
   thunderPrefab: {fileID: 2895746520745637959, guid: c1e21318199a5624f930cceeb45b9b15, type: 3}

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c3080bf18d25dd409ca0a320e3b1bb2, type: 3}
   m_Name: FreezeEffect
   m_EditorClassIdentifier: 
+  itemDes: 'Unique: Make enemy surrounded freezing in 3 seconds when player in low
+    health.'
   radius: 10
   percentage: 0.1
   freezeDuration: 3

@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cc0134834c175d4c9423ee9f0df697b, type: 3}
   m_Name: ChillEffect
   m_EditorClassIdentifier: 
-  ailementType: 1
+  itemDes: 'Unique: Add chill alilment in final attack'
+  ailmentType: 1

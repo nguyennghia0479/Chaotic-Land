@@ -11,7 +11,7 @@ public class ThunderStrikeSkillController : MonoBehaviour
             if (enemy.GetComponent<Enemy>().IsDead) return;
 
             PlayerStats player = PlayerManager.Instance.Player.GetComponent<PlayerStats>();
-            player.DoMagicDamage(enemy, AilementType.None);
+            player.DoMagicDamage(enemy, AilmentType.None);
         }
     }
 }

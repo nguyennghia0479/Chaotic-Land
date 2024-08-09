@@ -10,6 +10,8 @@ public class Stat
 
     public void AddModify(int _modifier)
     {
+        if (_modifier <= 0) return;
+
         modifiers.Add(_modifier);
     }
 

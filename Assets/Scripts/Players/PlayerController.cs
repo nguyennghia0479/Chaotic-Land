@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public event EventHandler OnUltimateAction;
     public event EventHandler OnSpellCastAction;
     public event EventHandler OnUseFlaskAction;
+    public event EventHandler OnTabAction;
 
     private InputControl inputControl;
 
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.Ultimate.performed += ctx => UltimatePerformed();
             inputControl.Player.SpellCast.performed += ctx => SpellCastPerformed();
             inputControl.Player.UseFlask.performed += ctx => UseFlaskPerformed();
+            inputControl.Player.Tab.performed += ctx => TabPerformed();
         }
     }
 
@@ -55,6 +57,7 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.Ultimate.performed -= ctx => UltimatePerformed();
             inputControl.Player.SpellCast.performed -= ctx => SpellCastPerformed();
             inputControl.Player.UseFlask.performed -= ctx => UseFlaskPerformed();
+            inputControl.Player.Tab.performed -= ctx => TabPerformed();
             inputControl.Dispose();
         }
     }
@@ -149,6 +152,14 @@ public class PlayerController : MonoBehaviour
     private void UseFlaskPerformed()
     {
         OnUseFlaskAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Handles use tab menu when performed by the player.
+    /// </summary>
+    private void TabPerformed()
+    {
+        OnTabAction?.Invoke(this, EventArgs.Empty);
     }
     #endregion
 }

@@ -17,6 +17,7 @@ public class Player : Entity
     private PlayerController controller;
     private SkillManager skillManager;
     private InventoryManager inventoryManager;
+    private GameManager gameManager;
     private GameObject sword;
     private GameObject fireSpin;
     private bool isAiming;
@@ -98,6 +99,7 @@ public class Player : Entity
 
         skillManager = SkillManager.Instance;
         inventoryManager = InventoryManager.Instance;
+        gameManager = GameManager.Instance;
     }
 
     protected override void Update()
@@ -203,7 +205,7 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnDashAction(object sender, EventArgs e)
     {
-        if (IsWallDetected() || isDead) return;
+        if (IsWallDetected() || isDead || gameManager.IsGamePaused) return;
 
         if (skillManager.DashSkill.CanUseSkill())
         {
@@ -216,7 +218,7 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnBlockActionStart(object sender, EventArgs e)
     {
-        if (isDead) return;
+        if (isDead || gameManager.IsGamePaused) return;
 
         isBlocking = true;
         stateMachine.ChangeState(blockState);
@@ -227,7 +229,7 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnBlockActionEnd(object sender, EventArgs e)
     {
-        if (isDead) return;
+        if (isDead || gameManager.IsGamePaused) return;
 
         isBlocking = false;
         stateMachine.ChangeState(idleState);
@@ -242,7 +244,7 @@ public class Player : Entity
     /// </remarks>
     private void PlayerController_OnAimActionStart(object sender, EventArgs e)
     {
-        if (isDead) return;
+        if (isDead || gameManager.IsGamePaused) return;
 
         if (skillManager.SwordSkill.CanUseSkill() && sword == null)
         {
@@ -260,7 +262,7 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnUltimateAction(object sender, EventArgs e)
     {
-        if (isDead) return;
+        if (isDead || gameManager.IsGamePaused) return;
 
         if (skillManager.FireSpinSkill.CanUseSkill() && fireSpin == null)
         {
@@ -278,7 +280,7 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnSpellCastAction(object sender, EventArgs e)
     {
-        if (isDead) return;
+        if (isDead || gameManager.IsGamePaused) return;
 
         if (skillManager.CrystalSkill.CanUseSkill())
         {
@@ -324,6 +326,11 @@ public class Player : Entity
     public SkillManager SkillManager
     {
         get { return skillManager; }
+    }
+
+    public GameManager GameManager
+    {
+        get { return gameManager; }
     }
 
     public InventoryManager InventoryManager

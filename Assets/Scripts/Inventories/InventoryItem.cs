@@ -6,10 +6,10 @@ using UnityEngine;
 [Serializable]
 public class InventoryItem : Inventory
 {
-    [SerializeField] private float condition;
+    [SerializeField] private float durability;
     [SerializeField] private string itemId;
 
-    private readonly float maxCondition = 100;
+    private readonly float maxDurability = 100;
 
     /// <summary>
     /// Handles to create from craft.
@@ -17,7 +17,7 @@ public class InventoryItem : Inventory
     /// <param name="_itemSO"></param>
     public InventoryItem(ItemSO _itemSO) : base(_itemSO)
     {
-        condition = maxCondition;
+        durability = maxDurability;
         itemId = Guid.NewGuid().ToString();
     }
 
@@ -29,7 +29,7 @@ public class InventoryItem : Inventory
     /// <param name="_itemId"></param>
     public InventoryItem(ItemSO _itemSO, float _condition, string _itemId) : base(_itemSO)
     {
-        condition = _condition;
+        durability = _condition;
         itemId = _itemId;
     }
 
@@ -37,14 +37,14 @@ public class InventoryItem : Inventory
     /// Handles to decrease condition by lose condition speed.
     /// </summary>
     /// <param name="_loseConditionSpeed"></param>
-    public void DecreaseCondition(float _loseConditionSpeed)
+    public void DecreaseDurability(float _loseConditionSpeed)
     {
-        condition -= (maxCondition * _loseConditionSpeed);
+        durability -= (maxDurability * _loseConditionSpeed);
     }
 
     public float Condition
     {
-        get { return condition; }
+        get { return durability; }
     }
 
     public string ItemId

@@ -40,7 +40,7 @@ public class PlayerStats : EntityStats
     {
         base.DecreaseHealth(_damage);
 
-        player.InventoryManager.DecreaseGearCondition(GearType.Armor);
+        player.InventoryManager.DecreaseGearDurability(GearType.Armor);
         GearSO armorGear = player.InventoryManager.GetGearByGearType(GearType.Armor);
         if (armorGear != null)
         {
