@@ -14,6 +14,10 @@ public class Player : Entity
     [SerializeField] private float attackCooldown = 2f;
     [SerializeField] private Vector2[] attackMovements;
 
+    [Header("Physics material 2D")]
+    [SerializeField] private PhysicsMaterial2D wallStick;
+    [SerializeField] private PhysicsMaterial2D slopeSlide;
+
     private PlayerController controller;
     private SkillManager skillManager;
     private InventoryManager inventoryManager;
@@ -197,6 +201,16 @@ public class Player : Entity
     {
         fireSpin = _fireSpin;
     }
+
+    /// <summary>
+    /// Handles to update physics material of the character.
+    /// </summary>
+    /// <param name="_physicsMaterial"></param>
+    public void UpdatePhysicsMaterial(PhysicsMaterial2D _physicsMaterial)
+    {
+        CapsuleCollider2D capsuleCollider2D = GetComponent<CapsuleCollider2D>();
+        capsuleCollider2D.sharedMaterial = _physicsMaterial;
+    }
     #endregion
 
     #region private methods
@@ -316,6 +330,16 @@ public class Player : Entity
     public Vector2[] AttackMovements
     {
         get { return attackMovements; }
+    }
+
+    public PhysicsMaterial2D WallStick
+    {
+        get { return wallStick;}
+    }
+
+    public PhysicsMaterial2D SlopeSlide
+    {
+        get { return slopeSlide;}
     }
 
     public PlayerController Controller

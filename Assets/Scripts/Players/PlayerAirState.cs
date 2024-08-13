@@ -39,7 +39,7 @@ public class PlayerAirState : PlayerState
             stateMachine.ChangeState(player.WallGrabState);
         }
 
-        if (player.IsGroundDetected())
+        if (player.IsGroundDetected() || player.IsSlopeDetected())
         {
             stateMachine.ChangeState(player.IdleState);
         }

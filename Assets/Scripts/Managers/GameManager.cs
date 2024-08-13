@@ -5,15 +5,17 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    [SerializeField] InGameUI inGameUI;
+
+    private PlayerController playerController;
+    private bool isOpenTab;
+    private bool isGamePaused;
+
     public event EventHandler<OnTabEventArgs> OnTab;
     public class OnTabEventArgs : EventArgs
     {
         public bool isOpenTab;
     }
-
-    private PlayerController playerController;
-    private bool isOpenTab;
-    private bool isGamePaused;
 
     private void OnEnable()
     {
@@ -53,10 +55,12 @@ public class GameManager : Singleton<GameManager>
         if (_isGamePaused)
         {
             Time.timeScale = 0;
+            inGameUI.gameObject.SetActive(false);
         }
         else
         {
             Time.timeScale = 1;
+            inGameUI.gameObject.SetActive(true);
         }
     }
 

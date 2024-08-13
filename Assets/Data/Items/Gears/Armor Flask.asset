@@ -18,8 +18,8 @@ MonoBehaviour:
   type: 1
   gearType: 3
   craftingMaterials:
-  - itemSO: {fileID: 11400000, guid: c74dad7096604c044a49c7d68ce090ec, type: 2}
-    quantity: 2
+  - itemSO: {fileID: 11400000, guid: 69213c0dfac89be4aa5cdab406efa11b, type: 2}
+    quantity: 1
   loseConditionSpeed: 1
   vitality: 0
   endurance: 0

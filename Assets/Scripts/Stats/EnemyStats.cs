@@ -51,7 +51,7 @@ public class EnemyStats : EntityStats
     /// <param name="stat">Stat need to be modified</param>
     private void ModifyStat(Stat stat)
     {
-        for (int i = 1; i <= level; i++)
+        for (int i = 1; i < level; i++)
         {
             int modifyStat = Mathf.RoundToInt(stat.GetValue() * percentageModify);
             stat.AddModify(modifyStat);

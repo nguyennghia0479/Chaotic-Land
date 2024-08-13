@@ -123,7 +123,6 @@ public class BanditAggroState : EnemyState
         if (!bandit.IsGroundDetected() && !bandit.IsSlopeDetected())
         {
             canMove = false;
-
         }
 
         if (bandit.IsSlopeDetected())

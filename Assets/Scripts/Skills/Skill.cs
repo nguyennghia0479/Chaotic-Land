@@ -48,4 +48,9 @@ public class Skill : MonoBehaviour
     {
         get { return player;}
     }
+
+    public float Cooldown
+    {
+        get { return cooldown; }
+    }
 }

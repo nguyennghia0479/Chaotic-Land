@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,6 +31,8 @@ public class Entity : MonoBehaviour
     protected bool isBlocking;
     protected bool isDead;
     #endregion
+
+    public event EventHandler OnFlipped;
 
     protected virtual void Awake()
     {
@@ -142,6 +145,7 @@ public class Entity : MonoBehaviour
         facingDir *= -1;
         isFacingRight = !isFacingRight;
         transform.Rotate(0, -180, 0);
+        OnFlipped?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,12 +59,15 @@ public class EntityStats : MonoBehaviour
     protected bool isChilled;
     #endregion
 
+    public event EventHandler OnInitHealth;
+    public event EventHandler OnHealthChange;
+
     protected virtual void Start()
     {
         entity = GetComponent<Entity>();
         fx = GetComponent<EntityFX>();
 
-        SetCurrentHealth();
+        InitCurrentHealth();
     }
 
     protected virtual void Update()
@@ -125,6 +129,7 @@ public class EntityStats : MonoBehaviour
     protected virtual void DecreaseHealth(int _damage)
     {
         currentHealth -= _damage;
+        OnHealthChange?.Invoke(this, EventArgs.Empty);
 
         if (currentHealth <= 0)
         {
@@ -142,6 +147,7 @@ public class EntityStats : MonoBehaviour
 
         currentHealth += _healPoint;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth.GetValue());
+        OnHealthChange?.Invoke(this, EventArgs.Empty);
     }
     #endregion
 
@@ -207,11 +213,12 @@ public class EntityStats : MonoBehaviour
 
     #region Stats
     /// <summary>
-    /// Handles to set current health.
+    /// Handles to initial current health.
     /// </summary>
-    protected void SetCurrentHealth()
+    protected void InitCurrentHealth()
     {
         currentHealth = maxHealth.GetValue() + vitality.GetValue();
+        OnInitHealth?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -351,5 +358,10 @@ public class EntityStats : MonoBehaviour
     public int CurrentHealth
     {
         get { return currentHealth; }
+    }
+
+    public int Level
+    {
+        get { return level; }
     }
 }

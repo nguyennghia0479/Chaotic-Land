@@ -18,8 +18,8 @@ public class InventoryManager : Singleton<InventoryManager>
     private Dictionary<string, InventoryItem> itemDictionaries;
 
     [Header("Gear info")]
-    [SerializeField] private Transform gearSlotParent;
-    private GearSlotUI[] gearSlots;
+    [SerializeField] private Transform[] gearSlotParents;
+    private List<GearSlotUI> gearSlots;
     [SerializeField] private List<InventoryItem> gears;
     private Dictionary<GearSO, InventoryItem> gearDictionaries;
 
@@ -35,9 +35,10 @@ public class InventoryManager : Singleton<InventoryManager>
 
     private void Start()
     {
+        SetupGearSlotsUI();
+
         materialSlots = materialSlotParent.GetComponentsInChildren<ItemSlotUI>();
         itemSlots = itemSlotParent.GetComponentsInChildren<ItemSlotUI>();
-        gearSlots = gearSlotParent.GetComponentsInChildren<GearSlotUI>();
         statUIs = inventoryStats.GetComponentsInChildren<StatUI>();
 
         materials = new List<Inventory>();
@@ -48,6 +49,21 @@ public class InventoryManager : Singleton<InventoryManager>
 
         gears = new List<InventoryItem>();
         gearDictionaries = new Dictionary<GearSO, InventoryItem>();
+    }
+
+    /// <summary>
+    /// Handles to setup gear slots ui.
+    /// </summary>
+    private void SetupGearSlotsUI()
+    {
+        gearSlots = new List<GearSlotUI>();
+        foreach (Transform gearSlotParent in gearSlotParents)
+        {
+            foreach (GearSlotUI gearSlot in gearSlotParent.GetComponentsInChildren<GearSlotUI>())
+            {
+                gearSlots.Add(gearSlot);
+            }
+        }
     }
 
     #region Gear durability
@@ -375,7 +391,7 @@ public class InventoryManager : Singleton<InventoryManager>
             }
         }
 
-        for (int i = 0; i < gearSlots.Length; i++)
+        for (int i = 0; i < gearSlots.Count; i++)
         {
             foreach (KeyValuePair<GearSO, InventoryItem> pair in gearDictionaries)
             {
@@ -413,7 +429,7 @@ public class InventoryManager : Singleton<InventoryManager>
             }
         }
 
-        for (int i = 0; i < gearSlots.Length; i++)
+        for (int i = 0; i < gearSlots.Count; i++)
         {
             gearSlots[i].ClearSlot();
         }

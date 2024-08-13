@@ -16,7 +16,7 @@ public class PlayerIdleState : PlayerGroundedState
 
         if (player.IsSlopeDetected())
         {
-            rb.gravityScale = 0;
+            player.UpdatePhysicsMaterial(player.SlopeSlide);
         }
     }
 
@@ -24,7 +24,7 @@ public class PlayerIdleState : PlayerGroundedState
     {
         base.Exit();
 
-        rb.gravityScale = 4;
+        player.UpdatePhysicsMaterial(player.WallStick);
     }
 
     public override void FixedUpdate()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +23,8 @@ public class CrystalSkill : Skill
 
     private List<GameObject> crystalLeft;
     #endregion
+
+    public event EventHandler OnResetSkill;
 
     protected override void Start()
     {
@@ -102,6 +105,7 @@ public class CrystalSkill : Skill
         RefillCrystal();
         cooldown = multiCrystalCooldown;
         cooldownTimer = multiCrystalCooldown;
+        OnResetSkill?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
