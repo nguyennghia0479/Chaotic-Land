@@ -58,18 +58,22 @@ public class InGameUI : MonoBehaviour
         }
 
         skillManager = SkillManager.Instance;
-        Invoke(nameof(InvokeCrystal), .1f);
+        Invoke(nameof(InitCrystalResetSkillEvent), .1f);
     }
 
     private void Update()
     {
-        CheckImageCooldown(swordCooldownImg, skillManager.SwordSkill.Cooldown);
-        CheckImageCooldown(crystalCooldownImg, skillManager.CrystalSkill.Cooldown);
-        CheckImageCooldown(dashCooldownImg, skillManager.DashSkill.Cooldown);
-        CheckImageCooldown(ultimateCooldownImg, skillManager.FireSpinSkill.Cooldown);
+        UpdateImageCooldown(swordCooldownImg, skillManager.SwordSkill.Cooldown);
+        UpdateImageCooldown(crystalCooldownImg, skillManager.CrystalSkill.Cooldown);
+        UpdateImageCooldown(dashCooldownImg, skillManager.DashSkill.Cooldown);
+        UpdateImageCooldown(ultimateCooldownImg, skillManager.FireSpinSkill.Cooldown);
     }
 
-    private void SetImageCooldown(Image image)
+    /// <summary>
+    /// Handles to set image fill amount.
+    /// </summary>
+    /// <param name="image"></param>
+    private void SetImageFillAmount(Image image)
     {
         if (image.fillAmount <= 0)
         {
@@ -77,22 +81,17 @@ public class InGameUI : MonoBehaviour
         }
     }
 
-    private void CheckImageCooldown(Image image, float cooldown)
+    /// <summary>
+    /// Handles to update image fill amount by time.
+    /// </summary>
+    /// <param name="image"></param>
+    /// <param name="cooldown"></param>
+    private void UpdateImageCooldown(Image image, float cooldown)
     {
         if (image != null && image.fillAmount > 0)
         {
             image.fillAmount -= 1 / cooldown * Time.deltaTime;
         }
-    }
-
-    private void InvokeCrystal()
-    {
-        skillManager.CrystalSkill.OnResetSkill += CrystalSkill_OnResetSkill;
-    }
-
-    private void CrystalSkill_OnResetSkill(object sender, System.EventArgs e)
-    {
-        SetImageCooldown(crystalCooldownImg);
     }
 
     private void PlayerStats_OnInitHealth(object sender, System.EventArgs e)
@@ -108,21 +107,31 @@ public class InGameUI : MonoBehaviour
 
     private void PlayerController_OnAimActionEnd(object sender, System.EventArgs e)
     {
-        SetImageCooldown(swordCooldownImg);
+        SetImageFillAmount(swordCooldownImg);
     }
 
     private void PlayerController_OnSpellCastAction(object sender, System.EventArgs e)
     {
-       SetImageCooldown(crystalCooldownImg);
+       SetImageFillAmount(crystalCooldownImg);
     }
 
     private void PlayerController_OnDashAction(object sender, System.EventArgs e)
     {
-        SetImageCooldown(dashCooldownImg);
+        SetImageFillAmount(dashCooldownImg);
     }
 
     private void PlayerController_OnUltimateAction(object sender, System.EventArgs e)
     {
-        SetImageCooldown(ultimateCooldownImg);
+        SetImageFillAmount(ultimateCooldownImg);
+    }
+
+    private void InitCrystalResetSkillEvent()
+    {
+        skillManager.CrystalSkill.OnResetSkill += CrystalSkill_OnResetSkill;
+    }
+
+    private void CrystalSkill_OnResetSkill(object sender, System.EventArgs e)
+    {
+        SetImageFillAmount(crystalCooldownImg);
     }
 }

@@ -11,6 +11,7 @@ public class CraftUI : MonoBehaviour
     [SerializeField] private Image itemIcon;
     [SerializeField] private Image[] materials;
     [SerializeField] private Button craftBtn;
+    [SerializeField] private MaterialTooltipUI materialTooltip;
 
     private GearSO craftItem;
 
@@ -22,6 +23,10 @@ public class CraftUI : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Handles to clear and update crafting panel.
+    /// </summary>
+    /// <param name="_item"></param>
     public void SetupCraftUI(GearSO _item)
     {
         ClearRequiredMaterialSlot();
@@ -33,6 +38,8 @@ public class CraftUI : MonoBehaviour
             material.itemIcon.sprite = _item.craftingMaterials[i].itemSO.sprite;
             material.itemIcon.color = Color.white; 
             material.itemText.text = _item.craftingMaterials[i].GetQuantity().ToString();
+            material.item.itemSO = _item;
+            material.itemTooltip = materialTooltip;
         }
 
         itemName.text = _item.itemName;
@@ -42,6 +49,9 @@ public class CraftUI : MonoBehaviour
         craftItem = _item;
     }
 
+    /// <summary>
+    /// Handles to clear crafting panel.
+    /// </summary>
     public void ClearCraftPanel()
     {
         ClearRequiredMaterialSlot();
@@ -53,6 +63,9 @@ public class CraftUI : MonoBehaviour
         craftItem = null;
     }
 
+    /// <summary>
+    /// Handles to clear required material slot.
+    /// </summary>
     private void ClearRequiredMaterialSlot()
     {
         for (int i = 0; i < materials.Length; i++)

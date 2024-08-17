@@ -42,7 +42,7 @@ public class InventoryItem : Inventory
         durability -= (maxDurability * _loseConditionSpeed);
     }
 
-    public float Condition
+    public float Durability
     {
         get { return durability; }
     }

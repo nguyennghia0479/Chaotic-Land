@@ -101,12 +101,12 @@ public class InventoryManager : Singleton<InventoryManager>
         {
             item.DecreaseDurability(gear.loseConditionSpeed);
 
-            if (item.Condition <= 0)
+            if (item.Durability <= 0)
             {
                 UnequipGear(gear);
-                UpdateItemSlotUI(gear);
             }
         }
+        UpdateItemSlotUI(gear);
     }
     #endregion
 
@@ -233,7 +233,7 @@ public class InventoryManager : Singleton<InventoryManager>
             AddItemToInventory(itemToUnequip);
         }
 
-        InventoryItem newGear = new(itemToEquip, _itemToEquip.Condition, _itemToEquip.ItemId);
+        InventoryItem newGear = new(itemToEquip, _itemToEquip.Durability, _itemToEquip.ItemId);
         gears.Add(newGear);
         gearDictionaries.Add(itemToEquip, newGear);
         itemToEquip.AddModifiy();
@@ -288,7 +288,7 @@ public class InventoryManager : Singleton<InventoryManager>
     /// <param name="_item"></param>
     public void AddItemToInventory(InventoryItem _item)
     {
-        InventoryItem item = new(_item.itemSO, _item.Condition, _item.ItemId);
+        InventoryItem item = new(_item.itemSO, _item.Durability, _item.ItemId);
         items.Add(item);
         itemDictionaries.Add(item.ItemId, item);
 

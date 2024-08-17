@@ -9,7 +9,7 @@ public class GearSlotUI : ItemSlotUI
 
     private void OnValidate()
     {
-        gameObject.name = "GearSlotBG - " + slotType.ToString();
+        gameObject.name = "GearSlot - " + slotType.ToString();
     }
 
     /// <summary>
@@ -25,6 +25,7 @@ public class GearSlotUI : ItemSlotUI
             inventory.UnequipGear(item.itemSO as GearSO);
             inventory.AddItemToInventory(item as InventoryItem);
             ClearSlot();
+            itemTooltip.HideItemTooltip();
         }
     }
 

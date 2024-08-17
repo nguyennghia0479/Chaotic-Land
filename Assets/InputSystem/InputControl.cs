@@ -116,6 +116,15 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""33eaaf69-83f6-4573-8637-5ea083ab0dc8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -272,6 +281,17 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""action"": ""Tab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""67a9f6f4-ba23-4a34-b3c7-512f12ac2035"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -290,6 +310,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         m_Player_SpellCast = m_Player.FindAction("SpellCast", throwIfNotFound: true);
         m_Player_UseFlask = m_Player.FindAction("UseFlask", throwIfNotFound: true);
         m_Player_Tab = m_Player.FindAction("Tab", throwIfNotFound: true);
+        m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -361,6 +382,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_SpellCast;
     private readonly InputAction m_Player_UseFlask;
     private readonly InputAction m_Player_Tab;
+    private readonly InputAction m_Player_Pause;
     public struct PlayerActions
     {
         private @InputControl m_Wrapper;
@@ -375,6 +397,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         public InputAction @SpellCast => m_Wrapper.m_Player_SpellCast;
         public InputAction @UseFlask => m_Wrapper.m_Player_UseFlask;
         public InputAction @Tab => m_Wrapper.m_Player_Tab;
+        public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -414,6 +437,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @Tab.started += instance.OnTab;
             @Tab.performed += instance.OnTab;
             @Tab.canceled += instance.OnTab;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -448,6 +474,9 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @Tab.started -= instance.OnTab;
             @Tab.performed -= instance.OnTab;
             @Tab.canceled -= instance.OnTab;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -477,5 +506,6 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         void OnSpellCast(InputAction.CallbackContext context);
         void OnUseFlask(InputAction.CallbackContext context);
         void OnTab(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
 }
