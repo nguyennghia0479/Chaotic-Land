@@ -20,6 +20,9 @@ public class CraftListUI : MonoBehaviour, IPointerDownHandler
         tabMenu = GetComponentInParent<TabMenuUI>();
     }
 
+    /// <summary>
+    /// Handles to set default of menu crafting.
+    /// </summary>
     public void SetDefaultMenuCraft()
     {
         menuBG.color = Color.white;
@@ -27,6 +30,10 @@ public class CraftListUI : MonoBehaviour, IPointerDownHandler
         transform.parent.GetChild(0).GetComponent<CraftListUI>().SetupCraftList();
     }
 
+    /// <summary>
+    /// Handles to clear and update crafting list.
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerDown(PointerEventData eventData)
     {
         menuBG.color = Color.white;
@@ -35,9 +42,13 @@ public class CraftListUI : MonoBehaviour, IPointerDownHandler
         SetupCraftList();
     }
 
+    /// <summary>
+    /// Handles to setup crafting item list.
+    /// </summary>
+    /// <param name="eventData"></param>
     private void SetupCraftList()
     {
-        UpdateMenu();
+        UpdateMenuCraft();
 
         for (int i = 0; i < craftListParent.childCount; i++)
         {
@@ -51,7 +62,10 @@ public class CraftListUI : MonoBehaviour, IPointerDownHandler
         }
     }
 
-    private void UpdateMenu()
+    /// <summary>
+    /// Handles to update menu crafting.
+    /// </summary>
+    private void UpdateMenuCraft()
     {
         for (int i = 0; i < transform.parent.childCount; i++)
         {

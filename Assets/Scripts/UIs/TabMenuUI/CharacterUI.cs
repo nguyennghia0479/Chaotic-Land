@@ -11,6 +11,9 @@ public class CharacterUI : MonoBehaviour
         statUIs = GetComponentsInChildren<StatUI>();
     }
 
+    /// <summary>
+    /// Handles to update character's stats.
+    /// </summary>
     public void UpdateCharacterStats()
     {
         foreach(StatUI stat in statUIs)

@@ -11,6 +11,7 @@ public enum TabMenu
 
 public class TabMenuUI : MonoBehaviour
 {
+    [Header("Header menu info")]
     [SerializeField] private GameObject[] tabMenus;
     [SerializeField] private Color inactiveColor;
     [SerializeField] private Transform tabHeader;
@@ -19,6 +20,7 @@ public class TabMenuUI : MonoBehaviour
     [SerializeField] private Button inventoryBtn;
     [SerializeField] private Button craftBtn;
     [SerializeField] private Button skillTreeBtn;
+
     [SerializeField] private CraftUI craftUI;
 
     private Button[] tabBtns;
@@ -33,7 +35,7 @@ public class TabMenuUI : MonoBehaviour
 
         inventoryBtn.onClick.AddListener(() =>
         {
-            SwitchToTab(TabMenu.Inventory);
+            SwitchToMenuTab(TabMenu.Inventory);
         });
 
         craftBtn.onClick.AddListener(() =>
@@ -43,7 +45,7 @@ public class TabMenuUI : MonoBehaviour
 
         skillTreeBtn.onClick.AddListener(() =>
         {
-            SwitchToTab(TabMenu.SkillTree);
+            SwitchToMenuTab(TabMenu.SkillTree);
         });
     }
 
@@ -55,12 +57,15 @@ public class TabMenuUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Handles to open/close tab.
+    /// </summary>
     private void GameManager_OnTab(object sender, GameManager.OnTabEventArgs e)
     {
         if (e.isOpenTab)
         {
             gameObject.SetActive(true);
-            SwitchToTab(TabMenu.Character);
+            SwitchToMenuTab(TabMenu.Character);
         }
         else
         {
@@ -69,20 +74,28 @@ public class TabMenuUI : MonoBehaviour
         }
     }
 
-    private void SwitchToTab(TabMenu _tabMenu)
+    /// <summary>
+    /// Handles to switch to menu tab.
+    /// </summary>
+    /// <param name="_tabMenu"></param>
+    private void SwitchToMenuTab(TabMenu _tabMenu)
     {
         foreach (GameObject go in tabMenus)
         {
             go.SetActive(false);
         }
 
-        tabId = GetTabMenuId(_tabMenu);
+        tabId = GetMenuTabId(_tabMenu);
         tabMenus[tabId].SetActive(true);
 
-        UpdateTabButton(tabId);
+        UpdateMenuHeader(tabId);
     }
 
-    private void UpdateTabButton(int _tabId)
+    /// <summary>
+    /// Handles to update menu header.
+    /// </summary>
+    /// <param name="_tabId"></param>
+    private void UpdateMenuHeader(int _tabId)
     {
         if (_tabId < 0 || _tabId >= tabBtns.Length) return;
 
@@ -105,7 +118,12 @@ public class TabMenuUI : MonoBehaviour
         }
     }
 
-    private int GetTabMenuId(TabMenu _tabMenu)
+    /// <summary>
+    /// Handles to get menu tab id.
+    /// </summary>
+    /// <param name="_tabMenu"></param>
+    /// <returns></returns>
+    private int GetMenuTabId(TabMenu _tabMenu)
     {
         return _tabMenu switch
         {
@@ -116,20 +134,29 @@ public class TabMenuUI : MonoBehaviour
         };
     }
 
+    /// <summary>
+    /// Handles to show character ui.
+    /// </summary>
     private void ShowCharacterUI()
     {
-        SwitchToTab(TabMenu.Character);
+        SwitchToMenuTab(TabMenu.Character);
         UpdateCharacterUI();
     }
 
+    /// <summary>
+    /// Handles to show craft ui.
+    /// </summary>
     private void ShowCraftUI()
     {
-        SwitchToTab(TabMenu.Craft);
+        SwitchToMenuTab(TabMenu.Craft);
         craftUI.ClearCraftPanel();
         CraftListUI craftList = GetComponentInChildren<CraftListUI>();
         craftList.SetDefaultMenuCraft();
     }
 
+    /// <summary>
+    /// Handles to update character ui.
+    /// </summary>
     private void UpdateCharacterUI()
     {
         GameObject characterUI = tabMenus[0];

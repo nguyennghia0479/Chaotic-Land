@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public event EventHandler OnSpellCastAction;
     public event EventHandler OnUseFlaskAction;
     public event EventHandler OnTabAction;
+    public event EventHandler OnPauseAction;
 
     private InputControl inputControl;
 
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.SpellCast.performed += ctx => SpellCastPerformed();
             inputControl.Player.UseFlask.performed += ctx => UseFlaskPerformed();
             inputControl.Player.Tab.performed += ctx => TabPerformed();
+            inputControl.Player.Pause.performed += ctx => PausePerformed();
         }
     }
 
@@ -58,6 +60,7 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.SpellCast.performed -= ctx => SpellCastPerformed();
             inputControl.Player.UseFlask.performed -= ctx => UseFlaskPerformed();
             inputControl.Player.Tab.performed -= ctx => TabPerformed();
+            inputControl.Player.Pause.performed -= ctx => PausePerformed();
             inputControl.Dispose();
         }
     }
@@ -160,6 +163,14 @@ public class PlayerController : MonoBehaviour
     private void TabPerformed()
     {
         OnTabAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Handles to pause game when performed by the player.
+    /// </summary>
+    private void PausePerformed()
+    {
+        OnPauseAction?.Invoke(this, EventArgs.Empty);
     }
     #endregion
 }
