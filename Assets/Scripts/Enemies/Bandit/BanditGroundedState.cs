@@ -6,7 +6,7 @@ public class BanditGroundedState : EnemyState
 {
     protected Bandit bandit;
     protected Player player;
-    private float aggroDistance = 3;
+    private readonly float aggroDistance = 3;
 
     public BanditGroundedState(Enemy _enemy, EnemyStateMachine _stateMachine, string _animName, Bandit _bandit) : base(_enemy, _stateMachine, _animName)
     {
@@ -33,6 +33,8 @@ public class BanditGroundedState : EnemyState
     public override void Update()
     {
         base.Update();
+
+        if (bandit.IsImmobilized) return;
 
         if (bandit.IsPlayerDetected() || Vector2.Distance(bandit.transform.position, player.transform.position) < aggroDistance)
         {

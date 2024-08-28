@@ -30,6 +30,7 @@ public class Entity : MonoBehaviour
     protected bool isFacingRight = true;
     protected bool isBlocking;
     protected bool isDead;
+    protected bool isImmobilized;
     #endregion
 
     public event EventHandler OnFlipped;
@@ -164,11 +165,11 @@ public class Entity : MonoBehaviour
     /// <summary>
     /// Handles to make character speed slowly.
     /// </summary>
-    /// <param name="_slowPercentage">Value to slow speed</param>
+    /// <param name="_slowAffect">Value to slow speed</param>
     /// <param name="_duration">Time of slow effect</param>
-    public virtual void SlowEntityEffect(float _slowPercentage, float _duration)
+    public virtual void SlowEntityEffect(float _slowAffect, float _duration)
     {
-        animator.speed = 1 - (animator.speed * _slowPercentage);
+        animator.speed *= _slowAffect;
     }
 
     /// <summary>
@@ -178,6 +179,7 @@ public class Entity : MonoBehaviour
     {
         if (isDead) return;
 
+        isDead = true;
         if (TryGetComponent(out ItemDrop itemDrop))
         {
             itemDrop.GenerateItemDrop();
@@ -219,6 +221,11 @@ public class Entity : MonoBehaviour
     #endregion
 
     #region Getters
+    public Transform GroundCheck
+    {
+        get { return groundCheck; }
+    }
+
     public Transform AttackCheck
     {
         get { return attackCheck; }
@@ -282,6 +289,11 @@ public class Entity : MonoBehaviour
     public bool IsDead
     {
         get { return isDead; }
+    }
+
+    public bool IsImmobilized
+    {
+        get { return isImmobilized; }
     }
     #endregion
 }

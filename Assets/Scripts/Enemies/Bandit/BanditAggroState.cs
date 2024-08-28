@@ -38,6 +38,7 @@ public class BanditAggroState : EnemyState
     public override void FixedUpdate()
     {
         base.FixedUpdate();
+        if (bandit.IsImmobilized) return;
 
         anim.SetFloat(X_VELOCITY, rb.velocity.x);
         AggroController();
@@ -54,6 +55,7 @@ public class BanditAggroState : EnemyState
     /// </summary>
     /// <remarks>
     /// If player is detected and attack player if close to player.<br></br>
+    /// If player is not detected but in aggro distance then enemy will flip.<br></br>
     /// If player is not detected but enemy and player has almost same postion then enmy will attack player.<br></br>
     /// If aggro time is over or distance of enemy and player is greater than attack distance will change to Idle state.
     /// </remarks>
@@ -70,6 +72,11 @@ public class BanditAggroState : EnemyState
         }
         else
         {
+            if (Vector2.Distance(bandit.transform.position, player.transform.position) < aggroDistance)
+            {
+                bandit.Flip();
+            }
+
             float distance = Mathf.Abs(bandit.transform.position.x - player.transform.position.x);
             if (distance < 1)
             {

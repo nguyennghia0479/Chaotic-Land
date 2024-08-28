@@ -443,6 +443,7 @@ public class InventoryManager : Singleton<InventoryManager>
         foreach (StatUI stat in statUIs)
         {
             stat.UpdateStatUI();
+            stat.UpdateModifyUI();
         }
     }
     #endregion

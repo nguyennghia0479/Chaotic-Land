@@ -15,12 +15,14 @@ public class SwordSkillController : MonoBehaviour
     private float recallSpeed;
     private float swordAliveTime;
     private float swordAliveTimer;
+    private bool isImmobilizedUnlocked;
+    private bool isVulnerableUnlocked;
 
     [Header("Bounce sword info")]
     private bool isBounceSword;
-    [SerializeField] private List<Transform> enemyTargets;
+    private List<Transform> enemyTargets;
     private int enemyIndex;
-    [SerializeField] private int bounceAmount;
+    private int bounceAmount;
     private float bounceRadius;
     private float bounceSpeed;
 
@@ -38,6 +40,9 @@ public class SwordSkillController : MonoBehaviour
     private float spinHitCooldown;
     private float spinHitRadius;
     private float spinHitSpeed;
+    private float immobilizedDuration;
+    private float vulnerableDuration;
+    private float vulnerableRate;
 
     private const string ROTATE = "Rotate";
     #endregion
@@ -82,15 +87,15 @@ public class SwordSkillController : MonoBehaviour
     /// </remarks>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out EnemyStats enemy))
+        if (collision.TryGetComponent(out Enemy enemy))
         {
             SetTargetForBounceSwordSkill();
 
             if (!isSpinSword)
             {
-                if (enemy.GetComponent<Enemy>().IsDead) return;
+                if (enemy.IsDead) return;
 
-                player.Stats.DoPhysicalDamage(enemy);
+                SwordSkillDamage(enemy);
             }
         }
 
@@ -111,6 +116,11 @@ public class SwordSkillController : MonoBehaviour
         recallSpeed = _swordSkill.RecallSpeed;
         swordAliveTime = _swordSkill.SwordAliveTime;
         swordAliveTimer = swordAliveTime;
+        isImmobilizedUnlocked = _swordSkill.IsImmobilziedUnlocked;
+        immobilizedDuration = _swordSkill.ImmobilizedDuration;
+        isVulnerableUnlocked = _swordSkill.IsVulnerableUnlocked;
+        vulnerableDuration = _swordSkill.VulnerableDuration;
+        vulnerableRate = _swordSkill.VulnerableRate;
 
         if (isBounceSword || isSpinSword)
         {
@@ -216,10 +226,10 @@ public class SwordSkillController : MonoBehaviour
             transform.position = Vector2.MoveTowards(transform.position, enemyTargets[enemyIndex].position, bounceSpeed * Time.deltaTime);
             if (Vector2.Distance(transform.position, enemyTargets[enemyIndex].position) < .1f)
             {
-                if (enemyTargets[enemyIndex].TryGetComponent(out EnemyStats enemy))
+                if (enemyTargets[enemyIndex].TryGetComponent(out Enemy enemy))
                 {
-                    player.Stats.DoPhysicalDamage(enemy);
-                    if (enemy.GetComponent<Enemy>().IsDead)
+                    SwordSkillDamage(enemy);
+                    if (enemy.IsDead)
                     {
                         enemyTargets.Remove(enemyTargets[enemyIndex]);
                     }
@@ -296,11 +306,11 @@ public class SwordSkillController : MonoBehaviour
                     Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, spinHitRadius);
                     foreach (Collider2D collider in colliders)
                     {
-                        if (collider.TryGetComponent(out EnemyStats enemy))
+                        if (collider.TryGetComponent(out Enemy enemy))
                         {
-                            if (enemy.GetComponent<Enemy>().IsDead) return;
+                            if (enemy.IsDead) return;
 
-                            player.Stats.DoPhysicalDamage(enemy);
+                            SwordSkillDamage(enemy);
                         }
                     }
                 }
@@ -364,5 +374,24 @@ public class SwordSkillController : MonoBehaviour
         {
             animator.SetBool(ROTATE, _isPlay);
         }
+    }
+
+    /// <summary>
+    /// Handles to do physics damage by sword.
+    /// </summary>
+    /// <param name="_enemy"></param>
+    private void SwordSkillDamage(Enemy _enemy)
+    {
+        if (isImmobilizedUnlocked)
+        {
+            _enemy.ImmobilizedEffect(immobilizedDuration);
+        }
+
+        if (isVulnerableUnlocked)
+        {
+            _enemy.Stats.MakeVulnerable(vulnerableDuration, vulnerableRate);
+        }
+
+        player.Stats.DoPhysicalDamage(_enemy.Stats);
     }
 }

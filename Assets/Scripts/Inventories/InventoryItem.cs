@@ -47,6 +47,11 @@ public class InventoryItem : Inventory
         get { return durability; }
     }
 
+    public float MaxDurability
+    {
+        get { return maxDurability; }
+    }
+
     public string ItemId
     {
         get { return itemId; }

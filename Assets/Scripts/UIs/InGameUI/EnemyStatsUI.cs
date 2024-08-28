@@ -25,7 +25,7 @@ public class EnemyStatsUI : MonoBehaviour
             if (entity.TryGetComponent(out EnemyStats stats))
             {
                 this.stats = stats;
-                levelText.text = stats.Level.ToString();
+                UpdateLevelUI();
                 stats.OnInitHealth += EntityStats_OnInitHealth;
                 stats.OnHealthChange += EntityStats_OnHealthChange;
             }
@@ -48,6 +48,14 @@ public class EnemyStatsUI : MonoBehaviour
             stats.OnInitHealth -= EntityStats_OnInitHealth;
             stats.OnHealthChange -= EntityStats_OnHealthChange;
         }
+    }
+
+    /// <summary>
+    /// Handles to update enemy's level.
+    /// </summary>
+    public void UpdateLevelUI()
+    {
+        levelText.text = stats.Level.ToString();
     }
 
     /// <summary>

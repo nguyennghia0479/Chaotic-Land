@@ -11,7 +11,7 @@ public class HealEffectSO : ItemEffectSO
     {
         PlayerStats playerStats = PlayerManager.Instance.Player.GetComponent<PlayerStats>();
 
-        int healPoint = Mathf.RoundToInt(playerStats.maxHealth.GetValue() * healPercentage);
+        int healPoint = Mathf.RoundToInt(playerStats.maxHealth.GetValueWithModify() * healPercentage);
         playerStats.IncreaseHealth(healPoint);
     }
 }

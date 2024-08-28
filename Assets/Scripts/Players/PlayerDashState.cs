@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerDashState : PlayerState
 {
+    private DashSkill dashSkill;
+
     public PlayerDashState(Player _player, PlayerStateMachine _stateMachine, string _animName) : base(_player, _stateMachine, _animName)
     {
     }
@@ -12,8 +14,13 @@ public class PlayerDashState : PlayerState
     {
         base.Enter();
 
-        stateTimer = skillManager.DashSkill.DashDuration;
-        skillManager.DashSkill.CreateCloneOnDash();
+        dashSkill = skillManager.DashSkill;
+        stateTimer = dashSkill.DashDuration;
+
+        if (dashSkill.IsCloneOnStart)
+        {
+            dashSkill.CreateCloneOnDash();
+        }
     }
 
     public override void Exit()
@@ -21,14 +28,18 @@ public class PlayerDashState : PlayerState
         base.Exit();
 
         player.SetZeroVelocity();
-        skillManager.DashSkill.CreateCloneOnDash();
+
+        if (dashSkill.IsCloneOnArrival)
+        {
+            dashSkill.CreateCloneOnDash();
+        }
     }
 
     public override void FixedUpdate()
     {
         base.FixedUpdate();
 
-        player.SetVelocityWithFlip(skillManager.DashSkill.DashSpeed * player.FacingDir, rb.velocity.y);
+        player.SetVelocityWithFlip(dashSkill.DashSpeed * player.FacingDir, rb.velocity.y);
     }
 
     public override void Update()

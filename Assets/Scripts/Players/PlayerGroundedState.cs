@@ -71,8 +71,9 @@ public class PlayerGroundedState : PlayerState
 
     private void PlayerController_OnAttackAction(object sender, System.EventArgs e)
     {
-        if (isAttacking || player.GameManager.IsGamePaused) return;
+        if (isAttacking || player.GameManager.IsGamePaused || playerStats.CurrentStamina < player.AttackStaminaAmount) return;
 
         isAttacking = true;
+        playerStats.DecreaseStamina(player.AttackStaminaAmount);
     }
 }

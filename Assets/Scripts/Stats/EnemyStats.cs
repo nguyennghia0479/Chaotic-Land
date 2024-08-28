@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class EnemyStats : EntityStats
 {
+    [Header("Level info")]
+    [SerializeField] protected int level;
+    [SerializeField] protected Stat exp;
     [SerializeField] private float percentageModify;
 
     private Enemy enemy;
 
     protected override void Start()
     {
-        ModifiyStatsByLevel();
         base.Start();
         enemy = GetComponent<Enemy>();
     }
@@ -23,7 +25,7 @@ public class EnemyStats : EntityStats
     {
         if (CanTargetEvadeAttack(_targetStats)) return;
 
-        int totalDamage = physicsDamage.GetValue() + strength.GetValue();
+        float totalDamage = physicsDamage.GetValueWithModify();
         if (enemy.IsCriticalAttack)
         {
             totalDamage = CalculateCritDamage(totalDamage);
@@ -34,15 +36,28 @@ public class EnemyStats : EntityStats
     }
 
     /// <summary>
+    /// Handles to make enemy's level up base on player's level.
+    /// </summary>
+    /// <param name="_level"></param>
+    public void LevelUp(int _level)
+    {
+        level = _level;
+        ModifiyStatsByLevel();
+        InitStats();
+        GetComponentInChildren<EnemyStatsUI>().UpdateLevelUI();
+    }
+
+    /// <summary>
     /// Handles to modify enemy stats by level
     /// </summary>
     private void ModifiyStatsByLevel()
     {
+        ModifyStat(maxHealth);
         ModifyStat(physicsDamage);
         ModifyStat(magicDamage);
-        ModifyStat(maxHealth);
         ModifyStat(armor);
         ModifyStat(resistance);
+        ModifyStat(exp);
     }
 
     /// <summary>
@@ -53,8 +68,18 @@ public class EnemyStats : EntityStats
     {
         for (int i = 1; i < level; i++)
         {
-            int modifyStat = Mathf.RoundToInt(stat.GetValue() * percentageModify);
-            stat.AddModify(modifyStat);
+            int modifyStat = Mathf.RoundToInt(stat.GetValueWithModify() * percentageModify);
+            stat.UpdateBaseValue(stat.GetValueWithModify() + modifyStat);
         }
+    }
+
+    public int Level
+    {
+        get { return level; }
+    }
+
+    public Stat Exp
+    {
+        get { return exp; }
     }
 }

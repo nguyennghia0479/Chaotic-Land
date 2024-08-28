@@ -11,6 +11,7 @@ public class Player : Entity
     [SerializeField] private int jumpForce = 12;
 
     [Header("Attack info")]
+    [SerializeField] private int attackStaminaAmount = 10;
     [SerializeField] private float attackCooldown = 2f;
     [SerializeField] private Vector2[] attackMovements;
 
@@ -19,6 +20,7 @@ public class Player : Entity
     [SerializeField] private PhysicsMaterial2D slopeSlide;
 
     private PlayerController controller;
+    private PlayerStats playerStats;
     private SkillManager skillManager;
     private InventoryManager inventoryManager;
     private GameManager gameManager;
@@ -41,7 +43,7 @@ public class Player : Entity
     private PlayerDeathState deathState;
     private PlayerAimSwordState aimSwordState;
     private PlayerCatchSwordState catchSwordState;
-    private PlayerPerformFireSpinState performFireSpinState;
+    private PlayerPerformUltimateState performUltimateState;
     private PlayerSpellCastState spellCastState;
 
     private const string IDLE = "Idle";
@@ -55,7 +57,7 @@ public class Player : Entity
     private const string DIE = "Die";
     private const string AIM_SWORD = "AimSword";
     private const string CATCH_SWORD = "CatchSword";
-    private const string PERFORM_FIRE_SPIN = "PerformFireSpin";
+    private const string PERFORM_ULTIMATE = "PerformUltimate";
     private const string SPELL_CAST = "SpellCast";
     #endregion
 
@@ -77,7 +79,7 @@ public class Player : Entity
         deathState = new PlayerDeathState(this, stateMachine, DIE);
         aimSwordState = new PlayerAimSwordState(this, stateMachine, AIM_SWORD);
         catchSwordState = new PlayerCatchSwordState(this, stateMachine, CATCH_SWORD);
-        performFireSpinState = new PlayerPerformFireSpinState(this, stateMachine, PERFORM_FIRE_SPIN);
+        performUltimateState = new PlayerPerformUltimateState(this, stateMachine, PERFORM_ULTIMATE);
         spellCastState = new PlayerSpellCastState(this, stateMachine, SPELL_CAST);
 
         controller = GetComponent<PlayerController>();
@@ -87,8 +89,6 @@ public class Player : Entity
     protected override void Start()
     {
         base.Start();
-
-        stateMachine.IntializedState(idleState);
 
         if (controller != null)
         {
@@ -101,9 +101,12 @@ public class Player : Entity
             controller.OnUseFlaskAction += PlayerController_OnUseFlaskAction;
         }
 
+        playerStats = Stats as PlayerStats;
         skillManager = SkillManager.Instance;
         inventoryManager = InventoryManager.Instance;
         gameManager = GameManager.Instance;
+
+        stateMachine.IntializedState(idleState);
     }
 
     protected override void Update()
@@ -208,8 +211,18 @@ public class Player : Entity
     /// <param name="_physicsMaterial"></param>
     public void UpdatePhysicsMaterial(PhysicsMaterial2D _physicsMaterial)
     {
-        CapsuleCollider2D capsuleCollider2D = GetComponent<CapsuleCollider2D>();
-        capsuleCollider2D.sharedMaterial = _physicsMaterial;
+        if (TryGetComponent(out CapsuleCollider2D collider2D))
+        {
+            collider2D.sharedMaterial = _physicsMaterial;
+        }
+    }
+
+    public void CancelBlock()
+    {
+        if (isDead) return;
+
+        isBlocking = false;
+        stateMachine.ChangeState(idleState);
     }
     #endregion
 
@@ -219,10 +232,12 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnDashAction(object sender, EventArgs e)
     {
-        if (IsWallDetected() || isDead || gameManager.IsGamePaused) return;
+        int dashStaminaAmount = skillManager.DashSkill.SkillStaminaAmount;
+        if (IsWallDetected() || isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < dashStaminaAmount) return;
 
         if (skillManager.DashSkill.CanUseSkill())
         {
+            playerStats.DecreaseStamina(dashStaminaAmount);
             stateMachine.ChangeState(dashState);
         }
     }
@@ -234,8 +249,11 @@ public class Player : Entity
     {
         if (isDead || gameManager.IsGamePaused) return;
 
-        isBlocking = true;
-        stateMachine.ChangeState(blockState);
+        if (skillManager.ParrySkill.CanUseSkill())
+        {
+            isBlocking = true;
+            stateMachine.ChangeState(blockState);
+        }
     }
 
     /// <summary>
@@ -245,8 +263,7 @@ public class Player : Entity
     {
         if (isDead || gameManager.IsGamePaused) return;
 
-        isBlocking = false;
-        stateMachine.ChangeState(idleState);
+        CancelBlock();
     }
 
     /// <summary>
@@ -258,16 +275,18 @@ public class Player : Entity
     /// </remarks>
     private void PlayerController_OnAimActionStart(object sender, EventArgs e)
     {
-        if (isDead || gameManager.IsGamePaused) return;
+        if (sword != null)
+        {
+            sword.GetComponent<SwordSkillController>().RecallSword();
+            return;
+        }
+
+        int throwSwordStaminaAmount = skillManager.SwordSkill.SkillStaminaAmount;
+        if (isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < throwSwordStaminaAmount) return;
 
         if (skillManager.SwordSkill.CanUseSkill() && sword == null)
         {
             stateMachine.ChangeState(aimSwordState);
-        }
-
-        if (sword != null)
-        {
-            sword.GetComponent<SwordSkillController>().RecallSword();
         }
     }
 
@@ -276,16 +295,22 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnUltimateAction(object sender, EventArgs e)
     {
-        if (isDead || gameManager.IsGamePaused) return;
-
-        if (skillManager.FireSpinSkill.CanUseSkill() && fireSpin == null)
+        if (skillManager.UltimateSkill.Type == UltimateType.FireSpin)
         {
-            stateMachine.ChangeState(performFireSpinState);
+            if (fireSpin != null)
+            {
+                fireSpin.GetComponent<FireSpinSkillController>().TriggerFireSpinGrow();
+                return;
+            }
         }
 
-        if (fireSpin != null)
+        int ultimateStaminaAmount = skillManager.UltimateSkill.SkillStaminaAmount;
+        if (isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < ultimateStaminaAmount) return;
+
+        if (skillManager.UltimateSkill.CanUseSkill())
         {
-            fireSpin.GetComponent<FireSpinSkillController>().TriggerFireSpinGrow();
+            playerStats.DecreaseStamina(ultimateStaminaAmount);
+            stateMachine.ChangeState(performUltimateState);
         }
     }
 
@@ -294,10 +319,12 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnSpellCastAction(object sender, EventArgs e)
     {
-        if (isDead || gameManager.IsGamePaused) return;
+        int spellCastStaminaAmount = skillManager.CrystalSkill.SkillStaminaAmount;
+        if (isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < spellCastStaminaAmount) return;
 
         if (skillManager.CrystalSkill.CanUseSkill())
         {
+            playerStats.DecreaseStamina(spellCastStaminaAmount);
             stateMachine.ChangeState(spellCastState);
         }
     }
@@ -307,6 +334,8 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnUseFlaskAction(object sender, EventArgs e)
     {
+        if (isDead || gameManager.IsGamePaused) return;
+
         InventoryManager.UseFlask();
     }
     #endregion
@@ -322,6 +351,11 @@ public class Player : Entity
         get { return jumpForce; }
     }
 
+    public int AttackStaminaAmount
+    {
+        get { return attackStaminaAmount; }
+    }
+
     public float AttackCooldown
     {
         get { return attackCooldown; }
@@ -334,17 +368,23 @@ public class Player : Entity
 
     public PhysicsMaterial2D WallStick
     {
-        get { return wallStick;}
+        get { return wallStick; }
     }
 
     public PhysicsMaterial2D SlopeSlide
     {
-        get { return slopeSlide;}
+        get { return slopeSlide; }
     }
 
     public PlayerController Controller
     {
         get { return controller; }
+    }
+
+
+    public PlayerStats PlayerStats
+    {
+        get { return playerStats; }
     }
 
     public SkillManager SkillManager
@@ -365,6 +405,11 @@ public class Player : Entity
     public GameObject Sword
     {
         get { return sword; }
+    }
+
+    public GameObject FireSpin
+    {
+        get { return fireSpin; }
     }
 
     public bool IsAiming
@@ -444,9 +489,9 @@ public class Player : Entity
         get { return catchSwordState; }
     }
 
-    public PlayerPerformFireSpinState PerformFireSpinState
+    public PlayerPerformUltimateState PerformUltimateState
     {
-        get { return performFireSpinState; }
+        get { return performUltimateState; }
     }
 
     public PlayerSpellCastState SpellCastState

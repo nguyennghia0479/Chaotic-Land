@@ -26,13 +26,9 @@ public class GameManager : Singleton<GameManager>
     }
     #endregion
 
-    private void OnEnable()
-    {
-        playerController = GetComponent<PlayerController>();
-    }
-
     private void Start()
     {
+        playerController = GetComponent<PlayerController>();
         if (playerController != null)
         {
             playerController.OnTabAction += PlayerController_OnTabAction;
@@ -147,5 +143,10 @@ public class GameManager : Singleton<GameManager>
     public bool IsGamePaused
     {
         get { return isGamePaused; }
+    }
+
+    public InGameUI InGameUI
+    {
+        get { return inGameUI; }
     }
 }

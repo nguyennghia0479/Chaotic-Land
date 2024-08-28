@@ -76,7 +76,7 @@ public class CrystalSkillController : MonoBehaviour
     {
         player = _crystalSkill.Player;
         lifeTime = _crystalSkill.LifeTime;
-        canMove = _crystalSkill.CanMove;
+        canMove = _crystalSkill.IsAggressiveCrystalUnlocked;
         moveSpeed = _crystalSkill.MoveSpeed;
         checkRadius = _crystalSkill.CheckRadius;
         enemyLayerMask = _crystalSkill.EnemyLayerMask;

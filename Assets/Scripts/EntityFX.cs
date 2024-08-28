@@ -12,7 +12,6 @@ public class EntityFX : MonoBehaviour
     [Header("DeathFX info")]
     [SerializeField] private float repeatRate = .2f;
     [SerializeField] private float blinkAlpha = 100;
-    [SerializeField] private int maxBlinkCount = 5;
 
     [Header("IgniteFX info")]
     [SerializeField] private Color[] igniteColors;
@@ -24,7 +23,6 @@ public class EntityFX : MonoBehaviour
 
     private SpriteRenderer sr;
     private Material defaultMat;
-    private int blinkCount = 0;
     private int colorCount = 0;
     #endregion
 
@@ -63,14 +61,6 @@ public class EntityFX : MonoBehaviour
         else if (sr.color != color)
         {
             sr.color = color;
-        }
-
-        blinkCount++;
-
-        if (blinkCount > maxBlinkCount)
-        {
-            blinkCount = 0;
-            Destroy(gameObject);
         }
     }
     #endregion
