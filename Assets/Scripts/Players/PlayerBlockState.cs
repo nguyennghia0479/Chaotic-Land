@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PlayerBlockState : PlayerState
 {
-    private float timeToParry = .2f;
+    private readonly float timeToParry = .2f;
+    private const string COUNTER_SUCCESS = "CounterSuccess";
+    private bool hasCreateClone;
 
     public PlayerBlockState(Player _player, PlayerStateMachine _stateMachine, string _animName) : base(_player, _stateMachine, _animName)
     {
@@ -16,7 +18,8 @@ public class PlayerBlockState : PlayerState
 
         player.SetZeroVelocity();
         stateTimer = timeToParry;
-        anim.SetBool("CounterSuccess", false); // Reset to block animation.
+        anim.SetBool(COUNTER_SUCCESS, false); // Reset to block animation.
+        hasCreateClone = false;
     }
 
     public override void Exit()
@@ -39,6 +42,12 @@ public class PlayerBlockState : PlayerState
         {
             stateMachine.ChangeState(player.IdleState);
         }
+
+        if (playerStats.CurrentStamina <= 0)
+        {
+            player.CancelBlock();
+
+        }
     }
 
     /// <summary>
@@ -56,7 +65,14 @@ public class PlayerBlockState : PlayerState
             {
                 if (stateTimer > 0 && enemy.CanBeStunned())
                 {
-                    anim.SetBool("CounterSuccess", true);
+                    anim.SetBool(COUNTER_SUCCESS, true);
+                    skillManager.ParrySkill.RestoreHealth();
+
+                    if (!hasCreateClone)
+                    {
+                        hasCreateClone = true;
+                        skillManager.ParrySkill.CanCreateClone(enemy.transform);
+                    }
                 }
             }
         }

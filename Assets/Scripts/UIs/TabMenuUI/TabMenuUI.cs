@@ -36,6 +36,7 @@ public class TabMenuUI : MonoBehaviour
         inventoryBtn.onClick.AddListener(() =>
         {
             SwitchToMenuTab(TabMenu.Inventory);
+            InventoryManager.Instance.UpdateStatUIs();
         });
 
         craftBtn.onClick.AddListener(() =>
@@ -65,7 +66,7 @@ public class TabMenuUI : MonoBehaviour
         if (e.isOpenTab)
         {
             gameObject.SetActive(true);
-            SwitchToMenuTab(TabMenu.Character);
+            ShowCharacterUI();
         }
         else
         {
@@ -159,10 +160,13 @@ public class TabMenuUI : MonoBehaviour
     /// </summary>
     private void UpdateCharacterUI()
     {
-        GameObject characterUI = tabMenus[0];
-        if (characterUI.TryGetComponent(out CharacterUI ui))
+        foreach (GameObject go in tabMenus)
         {
-            ui.UpdateCharacterStats();
+            if (go.TryGetComponent(out CharacterUI ui))
+            {
+                ui.UpdateCharacter();
+                break;
+            }
         }
     }
 

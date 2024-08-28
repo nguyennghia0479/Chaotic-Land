@@ -11,7 +11,10 @@ public class CloneSkillController : MonoBehaviour
     private Transform closestTarget;
     private float cloneDuration;
     private float losingSpeed;
+    private float cloneDamageRate;
     private float chanceToMulti;
+    private int maxClones;
+    private bool isMultipleClonesUnlocked;
     private int facingDir = 1;
 
     private void Awake()
@@ -33,11 +36,14 @@ public class CloneSkillController : MonoBehaviour
     /// <param name="_cloneSkill">The value to store clone skill info.</param>
     /// <param name="_clonePos">The value to determine position of clone.</param>
     /// <param name="_offset">The value to determine offset position of clone.</param>
-    public void SetupClone(CloneSkill _cloneSkill, Transform _clonePos, Vector3 _offset)
+    public void SetupClone(CloneSkill _cloneSkill, Transform _clonePos, Vector3 _offset, bool _isMultipleClonesUnlocked)
     {
         cloneDuration = _cloneSkill.CloneDuration;
         losingSpeed = _cloneSkill.LosingSpeed;
+        cloneDamageRate = _cloneSkill.CloneDamageRate;
         chanceToMulti = _cloneSkill.ChanceToMulti;
+        maxClones = _cloneSkill.MaxClones;
+        isMultipleClonesUnlocked = _isMultipleClonesUnlocked;
      
         transform.position = _clonePos.position + _offset;
         animator.SetInteger("Attack", Random.Range(1, 4));
@@ -103,13 +109,30 @@ public class CloneSkillController : MonoBehaviour
         }
     }
 
+    #region Getter
+    public float CloneDamageRate
+    {
+        get { return cloneDamageRate; }
+    }
+
     public float ChanceToMulti
     {
         get { return chanceToMulti; }
+    }
+
+    public int MaxClones
+    {
+        get { return maxClones; }
+    }
+
+    public bool IsMultipleClonesUnlocked
+    {
+        get { return isMultipleClonesUnlocked; }
     }
 
     public int FacingDir
     {
         get { return facingDir; }
     }
+    #endregion
 }

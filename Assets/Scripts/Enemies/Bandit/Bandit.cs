@@ -46,10 +46,15 @@ public class Bandit : Enemy
     /// </summary>
     public override void SetupDeath()
     {
-        base .SetupDeath();
+        base.SetupDeath();
+
+        if (isImmobilized)
+        {
+            ResetDefaultSpeed();
+        }
 
         stateMachine.Changestate(deathState);
-        isDead = true;
+        Destroy(gameObject, 3);
     }
 
     /// <summary>

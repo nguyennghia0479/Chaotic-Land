@@ -5,8 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class Stat
 {
-    [SerializeField] private int baseValue;
-    [SerializeField] private List<int> modifiers;
+    [SerializeField] private float baseValue;
+    [SerializeField] private List<float> modifiers;
 
     public void AddModify(int _modifier)
     {
@@ -20,15 +20,40 @@ public class Stat
         modifiers.Remove(_modifier);
     }
 
-    public int GetValue()
+    /// <summary>
+    /// Handles to get value with modify of stat.
+    /// </summary>
+    /// <returns></returns>
+    public float GetValueWithModify()
     {
-        int finalValue = baseValue;
+        float finalValue = baseValue;
 
-        foreach (int modifier in modifiers)
+        foreach (float modifier in modifiers)
         {
             finalValue += modifier;
         }
 
         return finalValue;
+    }
+
+    public void UpdateBaseValue(float _value)
+    {
+        baseValue = _value;
+    }
+
+    /// <summary>
+    /// Handles to get value without modify when increase stat.
+    /// </summary>
+    /// <param name="_value"></param>
+    /// <returns></returns>
+    public float GetValueWithoutModify(float _value)
+    {
+        float value = _value;
+        foreach (float modifier in modifiers)
+        {
+            value -= modifier;
+        }
+
+        return value;
     }
 }

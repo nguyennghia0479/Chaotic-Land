@@ -6,35 +6,102 @@ using UnityEngine;
 public class CrystalSkill : Skill
 {
     #region Variables
+    [Header("Crystal skill info")]
     [SerializeField] private GameObject crystalPrefab;
     [SerializeField] private float lifeTime = 3;
-
     [Header("Aggressive crystal info")]
-    [SerializeField] private bool canMove;
     [SerializeField] private float moveSpeed = 5;
     [SerializeField] private float checkRadius = 10;
     [SerializeField] private LayerMask enemyLayerMask;
-
-    [Header("Multiple crystal info")]
-    [SerializeField] private bool canUseMultiCrystal;
+    [Header("Multiple crystals info")]
     [SerializeField] private int numberOfCrystal = 3;
     [SerializeField] private float multiCrystalCooldown = 4;
     [SerializeField] private float useTimeCooldown = 3;
+    [Header("Skills unlocked info")]
+    [SerializeField] private SkillTreeUI crystalSkill;
+    [SerializeField] private SkillTreeUI aggressiveCrystalSkill;
+    [SerializeField] private SkillTreeUI multipleCrystalsSkill;
 
+    private bool isSpellCrystalUnlocked;
+    private bool isAggressiveCrystalUnlocked;
+    private bool isMultilCrystalsUnlocked;
     private List<GameObject> crystalLeft;
     #endregion
 
     public event EventHandler OnResetSkill;
 
-    protected override void Start()
+    #region Skills unlocked
+    private void OnEnable()
     {
-        base.Start();
-
-        if (canUseMultiCrystal)
+        if (crystalSkill != null)
         {
-            crystalLeft = new List<GameObject>();
-            RefillCrystal();
+            crystalSkill.OnUnlocked += CrystalSkill_OnUnlocked;
         }
+
+        if (aggressiveCrystalSkill != null)
+        {
+            aggressiveCrystalSkill.OnUnlocked += AggressiveCrystalSkill_OnUnlocked;
+        }
+
+        if (multipleCrystalsSkill != null)
+        {
+            multipleCrystalsSkill.OnUnlocked += MultipleCrystalsSkill_OnUnlocked;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (crystalSkill != null)
+        {
+            crystalSkill.OnUnlocked -= CrystalSkill_OnUnlocked;
+        }
+
+        if (aggressiveCrystalSkill != null)
+        {
+            aggressiveCrystalSkill.OnUnlocked -= AggressiveCrystalSkill_OnUnlocked;
+        }
+
+        if (multipleCrystalsSkill != null)
+        {
+            multipleCrystalsSkill.OnUnlocked -= MultipleCrystalsSkill_OnUnlocked;
+        }
+    }
+
+    private void CrystalSkill_OnUnlocked(object sender, EventArgs e)
+    {
+        if (crystalSkill != null && crystalSkill.IsUnlocked)
+        {
+            isSpellCrystalUnlocked = true;
+            GameManager.Instance.InGameUI.CrystalSkillImg.fillAmount = 0;
+        }
+    }
+
+    private void AggressiveCrystalSkill_OnUnlocked(object sender, EventArgs e)
+    {
+        if (aggressiveCrystalSkill != null && aggressiveCrystalSkill.IsUnlocked)
+        {
+            isAggressiveCrystalUnlocked = true;
+        }
+    }
+
+    private void MultipleCrystalsSkill_OnUnlocked(object sender, EventArgs e)
+    {
+        if (multipleCrystalsSkill != null && multipleCrystalsSkill.IsUnlocked)
+        {
+            isMultilCrystalsUnlocked = true;
+            if (isMultilCrystalsUnlocked)
+            {
+                crystalLeft = new List<GameObject>();
+                RefillCrystal();
+            }
+        }
+    }
+    #endregion
+
+    public override bool CanUseSkill()
+    {
+        if (!isSpellCrystalUnlocked) return false;
+        return base.CanUseSkill();
     }
 
     /// <summary>
@@ -42,8 +109,6 @@ public class CrystalSkill : Skill
     /// </summary>
     public override void UseSkill()
     {
-        base.UseSkill();
-
         if (CanUseMultiCrystal()) return;
 
         CreateCrysal();
@@ -69,7 +134,7 @@ public class CrystalSkill : Skill
     /// </remarks>
     private bool CanUseMultiCrystal()
     {
-        if (canUseMultiCrystal && crystalLeft.Count > 0)
+        if (isMultilCrystalsUnlocked && crystalLeft.Count > 0)
         {
             if (crystalLeft.Count == numberOfCrystal)
             {
@@ -127,11 +192,6 @@ public class CrystalSkill : Skill
         get { return lifeTime; }
     }
 
-    public bool CanMove
-    {
-        get { return canMove; }
-    }
-
     public float MoveSpeed
     {
         get { return moveSpeed; }
@@ -145,6 +205,26 @@ public class CrystalSkill : Skill
     public LayerMask EnemyLayerMask
     {
         get { return enemyLayerMask; }
+    }
+
+    public bool IsSpellCrystalUnlocked
+    {
+        get { return isSpellCrystalUnlocked; }
+    }
+
+    public bool IsAggressiveCrystalUnlocked
+    {
+        get { return isAggressiveCrystalUnlocked; }
+    }
+
+    public bool IsMultipleCrystalsUnlocked
+    {
+        get { return isMultilCrystalsUnlocked; }
+    }
+
+    public List<GameObject> CrystalLeft
+    {
+        get { return crystalLeft; }
     }
     #endregion
 }

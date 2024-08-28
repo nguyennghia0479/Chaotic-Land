@@ -1,18 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InGameUI : MonoBehaviour
 {
+    [Header("Player info")]
     [SerializeField] private PlayerStats playerStats;
+    [SerializeField] private Image levelBar;
+    [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private Slider healthSlider;
+    [SerializeField] private Slider staminaSlider;
+    [Header("Skill cooldown info")]
     [SerializeField] private Image swordCooldownImg;
     [SerializeField] private Image crystalCooldownImg;
     [SerializeField] private Image dashCooldownImg;
+    [SerializeField] private Image parryCooldownImg;
     [SerializeField] private Image ultimateCooldownImg;
 
     private SkillManager skillManager;
+    private PlayerManager playerManager;
+    private Player player;
     private PlayerController playerController;
 
     private void OnEnable()
@@ -21,6 +30,17 @@ public class InGameUI : MonoBehaviour
         {
             playerStats.OnInitHealth += PlayerStats_OnInitHealth;
             playerStats.OnHealthChange += PlayerStats_OnHealthChange;
+            playerStats.OnInitStamina += PlayerStats_OnInitStamina;
+            playerStats.OnStaminaChange += PlayerStats_OnStaminaChange;
+        }
+   
+        playerManager = PlayerManager.Instance;
+        if (playerManager != null)
+        {
+            if (playerManager != null)
+            {
+                playerManager.OnUpdateExp += PlayerManager_OnUpdateExp;
+            }
         }
     }
 
@@ -30,6 +50,13 @@ public class InGameUI : MonoBehaviour
         {
             playerStats.OnInitHealth -= PlayerStats_OnInitHealth;
             playerStats.OnHealthChange -= PlayerStats_OnHealthChange;
+            playerStats.OnInitStamina -= PlayerStats_OnInitStamina;
+            playerStats.OnStaminaChange -= PlayerStats_OnStaminaChange;
+        }
+
+        if (playerManager != null)
+        {
+            playerManager.OnUpdateExp -= PlayerManager_OnUpdateExp;
         }
 
         if (playerController != null)
@@ -37,6 +64,7 @@ public class InGameUI : MonoBehaviour
             playerController.OnAimActionEnd -= PlayerController_OnAimActionEnd;
             playerController.OnSpellCastAction -= PlayerController_OnSpellCastAction;
             playerController.OnDashAction -= PlayerController_OnDashAction;
+            playerController.OnBlockActionEnd -= PlayerController_OnBlockActionEnd;
             playerController.OnUltimateAction -= PlayerController_OnUltimateAction;
         }
 
@@ -48,50 +76,47 @@ public class InGameUI : MonoBehaviour
 
     private void Start()
     {
-        playerController = PlayerManager.Instance.Player.Controller;
+        skillManager = SkillManager.Instance;
+        player = playerManager.Player;
+        playerController = player.Controller;
+
         if (playerController != null)
         {
             playerController.OnAimActionEnd += PlayerController_OnAimActionEnd;
             playerController.OnSpellCastAction += PlayerController_OnSpellCastAction;
             playerController.OnDashAction += PlayerController_OnDashAction;
+            playerController.OnBlockActionEnd += PlayerController_OnBlockActionEnd;
             playerController.OnUltimateAction += PlayerController_OnUltimateAction;
         }
 
-        skillManager = SkillManager.Instance;
         Invoke(nameof(InitCrystalResetSkillEvent), .1f);
     }
 
     private void Update()
     {
-        UpdateImageCooldown(swordCooldownImg, skillManager.SwordSkill.Cooldown);
-        UpdateImageCooldown(crystalCooldownImg, skillManager.CrystalSkill.Cooldown);
-        UpdateImageCooldown(dashCooldownImg, skillManager.DashSkill.Cooldown);
-        UpdateImageCooldown(ultimateCooldownImg, skillManager.FireSpinSkill.Cooldown);
+        UpdateImageCooldown(swordCooldownImg, skillManager.SwordSkill.Cooldown, skillManager.SwordSkill.IsRegularSwordUnlocked);
+        UpdateImageCooldown(crystalCooldownImg, skillManager.CrystalSkill.Cooldown, skillManager.CrystalSkill.IsSpellCrystalUnlocked);
+        UpdateImageCooldown(dashCooldownImg, skillManager.DashSkill.Cooldown, skillManager.DashSkill.IsDashUnlocked);
+        UpdateImageCooldown(parryCooldownImg, skillManager.ParrySkill.Cooldown, skillManager.ParrySkill.IsParryUnlocked);
+        UpdateImageCooldown(ultimateCooldownImg, skillManager.UltimateSkill.Cooldown, skillManager.UltimateSkill.IsUltimateUnlocked);
     }
 
-    /// <summary>
-    /// Handles to set image fill amount.
-    /// </summary>
-    /// <param name="image"></param>
-    private void SetImageFillAmount(Image image)
+    #region Player info
+    public void UpdateHealthStat()
     {
-        if (image.fillAmount <= 0)
-        {
-            image.fillAmount = 1;
-        }
+        healthSlider.maxValue = playerStats.maxHealth.GetValueWithModify();
     }
 
-    /// <summary>
-    /// Handles to update image fill amount by time.
-    /// </summary>
-    /// <param name="image"></param>
-    /// <param name="cooldown"></param>
-    private void UpdateImageCooldown(Image image, float cooldown)
+    public void UpdateStaminaStat()
     {
-        if (image != null && image.fillAmount > 0)
-        {
-            image.fillAmount -= 1 / cooldown * Time.deltaTime;
-        }
+        staminaSlider.maxValue = playerStats.maxStamina.GetValueWithModify();
+        playerStats.DecreaseStamina(0);
+    }
+
+    private void PlayerManager_OnUpdateExp(object sender, System.EventArgs e)
+    {
+        levelText.text = "Lvl " + playerManager.Level.ToString();
+        levelBar.fillAmount = (float)playerManager.CurrentExp / playerManager.LevelUpThreshold;
     }
 
     private void PlayerStats_OnInitHealth(object sender, System.EventArgs e)
@@ -105,23 +130,89 @@ public class InGameUI : MonoBehaviour
         healthSlider.value = playerStats.CurrentHealth;
     }
 
+    private void PlayerStats_OnInitStamina(object sender, System.EventArgs e)
+    {
+        staminaSlider.maxValue = playerStats.CurrentStamina;
+        staminaSlider.value = playerStats.CurrentStamina;
+    }
+
+    private void PlayerStats_OnStaminaChange(object sender, System.EventArgs e)
+    {
+        staminaSlider.value = playerStats.CurrentStamina;
+    }
+    #endregion
+
+    #region Skill cooldown
+    /// <summary>
+    /// Handles to set image fill amount.
+    /// </summary>
+    /// <param name="_image"></param>
+    private void SetImageFillAmount(Image _image)
+    {
+        if (_image.fillAmount <= 0)
+        {
+            _image.fillAmount = 1;
+        }
+    }
+
+    /// <summary>
+    /// Handles to update image fill amount by time.
+    /// </summary>
+    /// <param name="_image"></param>
+    /// <param name="_cooldown"></param>
+    private void UpdateImageCooldown(Image _image, float _cooldown, bool _isSkillUnlocked)
+    {
+        if (!_isSkillUnlocked) return;
+
+        if (_image != null && _image.fillAmount > 0)
+        {
+            _image.fillAmount -= 1 / _cooldown * Time.deltaTime;
+        }
+    }
+
     private void PlayerController_OnAimActionEnd(object sender, System.EventArgs e)
     {
+        SwordSkill swordSkill = skillManager.SwordSkill;
+        if (playerStats.CurrentStamina < swordSkill.SkillStaminaAmount || !swordSkill.IsRegularSwordUnlocked || player.Sword != null) return;
+
         SetImageFillAmount(swordCooldownImg);
     }
 
     private void PlayerController_OnSpellCastAction(object sender, System.EventArgs e)
     {
-       SetImageFillAmount(crystalCooldownImg);
+        CrystalSkill crystalSkill = skillManager.CrystalSkill;
+        if (playerStats.CurrentStamina < crystalSkill.SkillStaminaAmount || !crystalSkill.IsSpellCrystalUnlocked)
+            return;
+
+        if (crystalSkill.IsMultipleCrystalsUnlocked && crystalSkill.CrystalLeft.Count > 1)
+            return;
+
+        SetImageFillAmount(crystalCooldownImg);
     }
 
     private void PlayerController_OnDashAction(object sender, System.EventArgs e)
     {
+        DashSkill dashSkill = skillManager.DashSkill;
+        if (playerStats.CurrentStamina < dashSkill.SkillStaminaAmount || !dashSkill.IsDashUnlocked) return;
+
         SetImageFillAmount(dashCooldownImg);
+    }
+
+    private void PlayerController_OnBlockActionEnd(object sender, System.EventArgs e)
+    {
+        ParrySkill parrySkill = skillManager.ParrySkill;
+        if (playerStats.CurrentStamina < parrySkill.SkillStaminaAmount || !parrySkill.IsParryUnlocked) return;
+
+        SetImageFillAmount(parryCooldownImg);
     }
 
     private void PlayerController_OnUltimateAction(object sender, System.EventArgs e)
     {
+        UltimateSkill ultimateSkill = skillManager.UltimateSkill;
+        if (playerStats.CurrentStamina < ultimateSkill.SkillStaminaAmount || !ultimateSkill.IsUltimateUnlocked) return;
+
+        if (ultimateSkill.Type == UltimateType.FireSpin && player.FireSpin != null) return;
+
         SetImageFillAmount(ultimateCooldownImg);
     }
 
@@ -134,4 +225,32 @@ public class InGameUI : MonoBehaviour
     {
         SetImageFillAmount(crystalCooldownImg);
     }
+    #endregion
+
+    #region Getter
+    public Image SwordSkillImg
+    {
+        get { return swordCooldownImg; }
+    }
+
+    public Image CrystalSkillImg
+    {
+        get { return crystalCooldownImg; }
+    }
+
+    public Image DashSkillImg
+    {
+        get { return dashCooldownImg; }
+    }
+
+    public Image ParrySkillImg
+    {
+        get { return parryCooldownImg; }
+    }
+
+    public Image UltimateImg
+    {
+        get { return ultimateCooldownImg; }
+    }
+    #endregion
 }

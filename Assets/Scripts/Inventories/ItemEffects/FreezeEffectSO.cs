@@ -9,12 +9,11 @@ public class FreezeEffectSO : ItemEffectSO
     [SerializeField] private float radius = 10;
     [SerializeField] private float percentage = .15f;
     [SerializeField] private float freezeDuration = 2;
-    [SerializeField] private float slowPercentage = .3f;
 
     public override void ExecuteItemEffect(Transform _target)
     {
         PlayerStats player = PlayerManager.Instance.Player.GetComponent<PlayerStats>();
-        int chanceToFreeze = Mathf.RoundToInt(player.maxHealth.GetValue() * percentage);
+        int chanceToFreeze = Mathf.RoundToInt(player.maxHealth.GetValueWithModify() * percentage);
 
         if (player.CurrentHealth < chanceToFreeze && InventoryManager.Instance.CanUseArmorEffect())
         {
@@ -24,8 +23,7 @@ public class FreezeEffectSO : ItemEffectSO
             {
                 if (collider.TryGetComponent(out Enemy enemy))
                 {
-                    enemy.FX.PlayChilledFX(freezeDuration);
-                    enemy.SlowEntityEffect(slowPercentage, freezeDuration);
+                    enemy.FreezingEffect(freezeDuration);
                 }
             }
         }

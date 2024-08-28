@@ -5,6 +5,7 @@ using UnityEngine;
 public class Skill : MonoBehaviour
 {
     [SerializeField] protected float cooldown;
+    [SerializeField] protected int skillStaminaAmount;
 
     protected Player player;
     protected float cooldownTimer;
@@ -52,5 +53,10 @@ public class Skill : MonoBehaviour
     public float Cooldown
     {
         get { return cooldown; }
+    }
+
+    public int SkillStaminaAmount
+    {
+        get { return skillStaminaAmount; }
     }
 }

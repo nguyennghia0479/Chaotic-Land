@@ -44,7 +44,6 @@ public class PlayerAnimator : MonoBehaviour
                 if (enemy.GetComponent<Enemy>().IsDead) return;
 
                 player.Stats.DoPhysicalDamage(enemy);
-
                 GearSO weaponGear = player.InventoryManager.GetGearByGearType(GearType.Weapon);
                 if (weaponGear != null)
                 {
@@ -63,10 +62,10 @@ public class PlayerAnimator : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles to create fire spin.
+    /// Handles to perform ultimate skill.
     /// </summary>
-    private void AnimationPerformFireSpin()
+    private void AnimationPerformUltimateState()
     {
-        player.SkillManager.FireSpinSkill.CreateFireSpin();
+        player.SkillManager.UltimateSkill.PerformSkill();
     }
 }

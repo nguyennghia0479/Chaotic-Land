@@ -25,6 +25,7 @@ public class Enemy : Entity
     protected bool isCriticalAttack;
     protected bool canBeStunned;
     protected int defaultMoveSpeed;
+    protected bool isAddExp;
     #endregion
 
     protected override void Awake()
@@ -57,6 +58,20 @@ public class Enemy : Entity
     }
 
     /// <summary>
+    /// Handles to setup death of enemy.
+    /// </summary>
+    public override void SetupDeath()
+    {
+        base.SetupDeath();
+
+        if (!isAddExp)
+        {
+            isAddExp = true;
+            PlayerManager.Instance.IncreaseExp(Mathf.RoundToInt((Stats as EnemyStats).Exp.GetValueWithModify()));
+        }
+    }
+
+    /// <summary>
     /// Handles to detect player.
     /// </summary>
     /// <returns>True if detect player. False if not, beside if wall is detected will return false.</returns>
@@ -71,6 +86,7 @@ public class Enemy : Entity
         return hit.collider != null;
     }
 
+    #region Enemy animation
     /// <summary>
     /// Handles to trigger animation of the character
     /// </summary>
@@ -84,7 +100,7 @@ public class Enemy : Entity
     /// </remarks>
     public void AnimationPrepareAttack()
     {
-        int totalCritChance = Stats.critChance.GetValue() + Stats.dexterity.GetValue();
+        float totalCritChance = Stats.critChance.GetValueWithModify();
         if (Utils.RandomChance(totalCritChance))
         {
             isCriticalAttack = true;
@@ -98,7 +114,7 @@ public class Enemy : Entity
         if (isCriticalAttack)
         {
             criticalFX.gameObject.SetActive(true);
-        } 
+        }
     }
 
     /// <summary>
@@ -125,17 +141,47 @@ public class Enemy : Entity
 
         return false;
     }
+    #endregion
+
+    #region Enemy effect
+    /// <summary>
+    /// Handles to freezing enemy in duration.
+    /// </summary>
+    /// <param name="_duration"></param>
+    public void FreezingEffect(float _duration)
+    {
+        if (isDead) return;
+
+        ImmobilizedEffect(_duration);
+        FX.PlayChilledFX(_duration);
+    }
+
+    /// <summary>
+    /// Handles to make enemy immoblized in duration.
+    /// </summary>
+    /// <param name="_duration"></param>
+    public void ImmobilizedEffect(float _duration)
+    {
+        if (isDead) return;
+
+        SlowEntityEffect(0, _duration);
+    }
 
     /// <summary>
     /// Handles to make character speed slowly.
     /// </summary>
-    /// <param name="_slowPercentage">Value to slow speed</param>
+    /// <param name="_slowAffect">Value to slow speed</param>
     /// <param name="_duration">Time of slow effect</param>
-    public override void SlowEntityEffect(float _slowPercentage, float _duration)
+    public override void SlowEntityEffect(float _slowAffect, float _duration)
     {
-        base.SlowEntityEffect(_slowPercentage, _duration);
+        base.SlowEntityEffect(_slowAffect, _duration);
 
-        moveSpeed = Mathf.RoundToInt(moveSpeed * (1 - _slowPercentage));
+        if (_slowAffect == 0)
+        {
+            isImmobilized = true;
+        }
+
+        moveSpeed = Mathf.RoundToInt(moveSpeed * _slowAffect);
         Invoke(nameof(ResetDefaultSpeed), _duration);
     }
 
@@ -146,8 +192,10 @@ public class Enemy : Entity
     {
         base.ResetDefaultSpeed();
 
+        isImmobilized = false;
         moveSpeed = defaultMoveSpeed;
     }
+    #endregion
 
     protected override void OnDrawGizmos()
     {

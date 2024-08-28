@@ -7,6 +7,7 @@ public class PlayerState
     protected Player player;
     protected PlayerStateMachine stateMachine;
     protected PlayerController controller;
+    protected PlayerStats playerStats;
     protected Rigidbody2D rb;
     protected Animator anim;
     protected SkillManager skillManager;
@@ -31,6 +32,7 @@ public class PlayerState
         rb = player.Rb;
         anim = player.Animator;
         controller = player.Controller;
+        playerStats = player.PlayerStats;
         skillManager = player.SkillManager;
         player.Animator.SetBool(animName, true);
         triggerCalled = false;

@@ -12,7 +12,13 @@ public class PlayerJumpState : PlayerState
     {
         base.Enter();
 
-        player.AddForce(rb.velocity.x);
+        float xVelocity = rb.velocity.x;
+        if (Mathf.Abs(xVelocity) < .1f)
+        {
+            xVelocity = 0;
+        }
+
+        player.AddForce(xVelocity);
     }
 
     public override void Exit()

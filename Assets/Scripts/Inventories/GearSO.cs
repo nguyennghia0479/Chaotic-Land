@@ -15,15 +15,6 @@ public class GearSO : ItemSO
     public GearType gearType;
     public List<Inventory> craftingMaterials;
     [Range(0f, 1f)] public float loseConditionSpeed;
-    protected StringBuilder sb = new();
-
-    [Header("Attribute stats info")]
-    public int vitality;
-    public int endurance;
-    public int strength;
-    public int dexterity;
-    public int intelligence;
-    public int agility;
 
     [Header("General stats info")]
     public int maxHealth;
@@ -44,6 +35,8 @@ public class GearSO : ItemSO
     public List<ItemEffectSO> effects;
     public float cooldown;
 
+    protected StringBuilder sb = new();
+
     #region Modify stats
 
     /// <summary>
@@ -53,12 +46,6 @@ public class GearSO : ItemSO
     {
         PlayerStats playerStats = PlayerManager.Instance.Player.GetComponent<PlayerStats>();
 
-        playerStats.vitality.AddModify(vitality);
-        playerStats.endurance.AddModify(endurance);
-        playerStats.strength.AddModify(strength);
-        playerStats.dexterity.AddModify(dexterity);
-        playerStats.intelligence.AddModify(intelligence);
-        playerStats.agility.AddModify(agility);
         playerStats.physicsDamage.AddModify(physicsDamage);
         playerStats.critChance.AddModify(critChance);
         playerStats.critPower.AddModify(critPower);
@@ -75,12 +62,6 @@ public class GearSO : ItemSO
     {
         PlayerStats playerStats = PlayerManager.Instance.Player.GetComponent<PlayerStats>();
 
-        playerStats.vitality.RemoveModify(vitality);
-        playerStats.endurance.RemoveModify(endurance);
-        playerStats.strength.RemoveModify(strength);
-        playerStats.dexterity.RemoveModify(dexterity);
-        playerStats.intelligence.RemoveModify(intelligence);
-        playerStats.agility.RemoveModify(agility);
         playerStats.physicsDamage.RemoveModify(physicsDamage);
         playerStats.critChance.RemoveModify(critChance);
         playerStats.critPower.RemoveModify(critPower);
@@ -111,17 +92,12 @@ public class GearSO : ItemSO
     {
         sb.Clear();
 
-        AddDescription(vitality, "Vitality");
-        AddDescription(endurance, "Endurance");
-        AddDescription(strength, "Strength");
-        AddDescription(dexterity, "Dexterity");
-        AddDescription(intelligence, "Intelligence");
-        AddDescription(agility, "Agility");
         AddDescription(maxHealth, "Max health");
         AddDescription(stamina, "Stamina");
         AddDescription(physicsDamage, "Physics damage");
         AddDescription(critChance, "Critical chance");
         AddDescription(critPower, "Critical power");
+        AddDescription(magicDamage, "Magic damage");
         AddDescription(armor, "Armor");
         AddDescription(evasion, "Evasion");
         AddDescription(resistance, "Resistance");

@@ -5,19 +5,23 @@ using UnityEngine.Tilemaps;
 
 public enum SwordType
 {
-    Normal, Bounce, Pierce, Spin
+    Regular, Bounce, Pierce, Spin
 }
 
 public class SwordSkill : Skill
 {
     #region Variables
     [Header("Sword info")]
-    [SerializeField] private SwordType swordType = SwordType.Normal;
+    [SerializeField] private SwordSkillDropdown swordSkillDropdown;
     [SerializeField] private GameObject swordPrefab;
     [SerializeField] private Vector2 launchForce;
     [SerializeField] private float normalGravity = 2;
     [SerializeField] private float recallSpeed = 12;
     [SerializeField] private float swordAliveTime = 7;
+    [SerializeField] private float swordCooldown = 0;
+    [SerializeField] private float immobilizedDuration = 2;
+    [SerializeField] private float vulnerableDuration = 4;
+    [SerializeField] private float vulnerableRate = 1.5f;
 
     [Header("Bounce sword info")]
     [SerializeField] private int bounceAmount = 3;
@@ -51,10 +55,146 @@ public class SwordSkill : Skill
     [SerializeField] private LayerMask layerMask;
     [SerializeField] private TilemapCollider2D[] tilemapColliders;
 
+    [Header("Skills unlock info")]
+    [SerializeField] private SkillTreeUI regularSwordSkill;
+    [SerializeField] private SkillTreeUI pierceSwordSkill;
+    [SerializeField] private SkillTreeUI bounceSwordSkill;
+    [SerializeField] private SkillTreeUI spinSwordSkill;
+    [SerializeField] private SkillTreeUI immobilizedSkill;
+    [SerializeField] private SkillTreeUI vulnerableSkill;
+
     private GameObject[] dots;
     private Vector2 finalDir;
     private float swordGravity;
     private float dotRadius;
+    private SwordType swordType;
+    private bool isRegularSwordUnlocked;
+    private bool isPierceSwordUnlocked;
+    private bool isBounceSwordUnlocked;
+    private bool isSpinSwordUnlocked;
+    private bool isImmobilizedUnlocked;
+    private bool isVulnerableUnlocked;
+    #endregion
+
+    #region Skills unlocked
+    private void OnEnable()
+    {
+        if (regularSwordSkill != null)
+        {
+            regularSwordSkill.OnUnlocked += RegularSwordSkill_OnUnlocked;
+        }
+
+        if (pierceSwordSkill != null)
+        {
+            pierceSwordSkill.OnUnlocked += PierceSwordSkill_OnUnlocked;
+        }
+
+        if (bounceSwordSkill != null)
+        {
+            bounceSwordSkill.OnUnlocked += BounceSwordSkill_OnUnlocked;
+        }
+
+        if (spinSwordSkill != null)
+        {
+            spinSwordSkill.OnUnlocked += SpinSwordSkill_OnUnlocked;
+        }
+
+        if (immobilizedSkill != null)
+        {
+            immobilizedSkill.OnUnlocked += ImmobilizedSkill_OnUnlocked;
+        }
+
+        if (vulnerableSkill != null)
+        {
+            vulnerableSkill.OnUnlocked += VulnerableSkill_OnUnlocked;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (regularSwordSkill != null)
+        {
+            regularSwordSkill.OnUnlocked -= RegularSwordSkill_OnUnlocked;
+        }
+
+        if (pierceSwordSkill != null)
+        {
+            pierceSwordSkill.OnUnlocked -= PierceSwordSkill_OnUnlocked;
+        }
+
+        if (bounceSwordSkill != null)
+        {
+            bounceSwordSkill.OnUnlocked -= BounceSwordSkill_OnUnlocked;
+        }
+
+        if (spinSwordSkill != null)
+        {
+            spinSwordSkill.OnUnlocked -= SpinSwordSkill_OnUnlocked;
+        }
+
+        if (immobilizedSkill != null)
+        {
+            immobilizedSkill.OnUnlocked -= ImmobilizedSkill_OnUnlocked;
+        }
+
+        if (vulnerableSkill != null)
+        {
+            vulnerableSkill.OnUnlocked -= VulnerableSkill_OnUnlocked;
+        }
+    }
+
+    private void RegularSwordSkill_OnUnlocked(object sender, System.EventArgs e)
+    {
+        if (regularSwordSkill != null && regularSwordSkill.IsUnlocked)
+        {
+            isRegularSwordUnlocked = true;
+            swordSkillDropdown.AddOption(SwordType.Regular);
+            GameManager.Instance.InGameUI.SwordSkillImg.fillAmount = 0;
+        }
+    }
+
+    private void PierceSwordSkill_OnUnlocked(object sender, System.EventArgs e)
+    {
+        if (pierceSwordSkill != null && pierceSwordSkill.IsUnlocked)
+        {
+            isPierceSwordUnlocked = true;
+            swordSkillDropdown.AddOption(SwordType.Pierce);
+        }
+    }
+
+    private void BounceSwordSkill_OnUnlocked(object sender, System.EventArgs e)
+    {
+        if (bounceSwordSkill != null && bounceSwordSkill.IsUnlocked)
+        {
+            isBounceSwordUnlocked = true;
+            swordSkillDropdown.AddOption(SwordType.Bounce);
+        }
+    }
+
+    private void SpinSwordSkill_OnUnlocked(object sender, System.EventArgs e)
+    {
+        if (spinSwordSkill != null && spinSwordSkill.IsUnlocked)
+        {
+            isSpinSwordUnlocked = true;
+            swordSkillDropdown.AddOption(SwordType.Spin);
+        }
+    }
+
+    private void ImmobilizedSkill_OnUnlocked(object sender, System.EventArgs e)
+    {
+        if (immobilizedSkill != null && immobilizedSkill.IsUnlocked)
+        {
+            isImmobilizedUnlocked = true;
+        }
+    }
+
+    private void VulnerableSkill_OnUnlocked(object sender, System.EventArgs e)
+    {
+        if (vulnerableSkill != null && vulnerableSkill.IsUnlocked)
+        {
+            isVulnerableUnlocked = true;
+        }
+    }
     #endregion
 
     protected override void Start()
@@ -82,6 +222,13 @@ public class SwordSkill : Skill
         }
     }
 
+    public override bool CanUseSkill()
+    {
+        if (!isRegularSwordUnlocked) return false;
+
+        return base.CanUseSkill();
+    }
+
     #region Setup sword
     /// <summary>
     /// Handles create a sword and sword skill base on sword type.
@@ -89,9 +236,17 @@ public class SwordSkill : Skill
     public void ThrowSword()
     {
         GameObject newSword = Instantiate(swordPrefab, player.transform.position, Quaternion.identity);
-        SetSwordType(newSword);
+        SetSwordControllerType(newSword);
         newSword.GetComponent<SwordSkillController>().SetupSword(this);
         player.AssignSword(newSword);
+    }
+
+    public void UpdateSwordSkill(SwordType _swordType)
+    {
+        swordType = _swordType;
+        SetupSwordType();
+        cooldownTimer = cooldown;
+        GameManager.Instance.InGameUI.SwordSkillImg.fillAmount = 1;
     }
 
     /// <summary>
@@ -99,9 +254,10 @@ public class SwordSkill : Skill
     /// </summary>
     private void SetupSwordType()
     {
-        if (swordType == SwordType.Normal)
+        if (swordType == SwordType.Regular)
         {
             swordGravity = normalGravity;
+            cooldown = swordCooldown;
         }
         else if (swordType == SwordType.Bounce)
         {
@@ -125,19 +281,19 @@ public class SwordSkill : Skill
     /// Handles set sword skill base on sword type.
     /// </summary>
     /// <param name="_newSword">A sword has been created.</param>
-    private void SetSwordType(GameObject _newSword)
+    private void SetSwordControllerType(GameObject _newSword)
     {
         SwordSkillController swordSkillController = _newSword.GetComponent<SwordSkillController>();
-        /*SetupSwordType();*/
-        if (swordType == SwordType.Bounce)
-        {
-            swordSkillController.SetupBounceSword(bounceAmount, bounceRadius, bounceSpeed);
-        }
-        else if (swordType == SwordType.Pierce)
+
+        if (swordType == SwordType.Pierce && isPierceSwordUnlocked)
         {
             swordSkillController.SetupPierceSword(pierceAmount);
         }
-        else if (swordType == SwordType.Spin)
+        else if (swordType == SwordType.Bounce && isBounceSwordUnlocked)
+        {
+            swordSkillController.SetupBounceSword(bounceAmount, bounceRadius, bounceSpeed);
+        }
+        else if (swordType == SwordType.Spin && isSpinSwordUnlocked)
         {
             swordSkillController.SetupSpinSword(spinDuration, spinMaxDistance, spinHitCooldown, spinHitSpeed, spinHitRadius);
         }
@@ -292,6 +448,36 @@ public class SwordSkill : Skill
     public float SwordAliveTime
     {
         get { return swordAliveTime; }
+    }
+
+    public bool IsRegularSwordUnlocked
+    {
+        get { return isRegularSwordUnlocked; }
+    }
+
+    public bool IsImmobilziedUnlocked
+    {
+        get { return isImmobilizedUnlocked; }
+    }
+
+    public bool IsVulnerableUnlocked
+    {
+        get { return isVulnerableUnlocked; }
+    }
+
+    public float ImmobilizedDuration
+    {
+        get { return immobilizedDuration; }
+    }
+
+    public float VulnerableDuration
+    {
+        get { return vulnerableDuration; }
+    }
+
+    public float VulnerableRate
+    {
+        get { return vulnerableRate; }
     }
     #endregion
 }

@@ -66,13 +66,19 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler, IPointerEnterHandl
     {
         if (itemDurabilityBar == null || itemDurability == null) return;
 
+        float durabilityThreshold = .25f;
         if (_isActive)
         {
+            InventoryItem inventoryItem = item as InventoryItem;
             itemDurabilityBar.gameObject.SetActive(true);
-            itemDurability.fillAmount = (item as InventoryItem).Durability / 100;
-            if (itemDurability.fillAmount <= .25f)
+            itemDurability.fillAmount = inventoryItem.Durability / inventoryItem.MaxDurability;
+            if (itemDurability.fillAmount <= durabilityThreshold)
             {
                 itemDurability.color = Color.red;
+            }
+            else
+            {
+                itemDurability.color = Color.green;
             }
         }
         else

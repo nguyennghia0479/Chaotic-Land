@@ -16,7 +16,7 @@ public class ThunderStrikeSkill : MonoBehaviour
 
         float moveDelta = moveSpeed * Time.deltaTime;
         transform.position = Vector2.MoveTowards(transform.position, target.position, moveDelta);
-        transform.right = transform.position - target.transform.position;
+        transform.right = transform.position - target.position;
 
         if (Vector2.Distance(transform.position, target.position) < .1f)
         {
