@@ -125,6 +125,24 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DropItem"",
+                    ""type"": ""Button"",
+                    ""id"": ""66d8a99c-c491-4c67-a72a-ea73078ddb61"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""c5d64bb4-4522-41cc-b22e-9e90e3c4876b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -292,6 +310,28 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""57367108-71ad-49e9-ba68-8493dea5a492"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DropItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d0a24b9e-7b35-47cc-998e-0163ad1719d4"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -311,6 +351,8 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         m_Player_UseFlask = m_Player.FindAction("UseFlask", throwIfNotFound: true);
         m_Player_Tab = m_Player.FindAction("Tab", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
+        m_Player_DropItem = m_Player.FindAction("DropItem", throwIfNotFound: true);
+        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -383,6 +425,8 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_UseFlask;
     private readonly InputAction m_Player_Tab;
     private readonly InputAction m_Player_Pause;
+    private readonly InputAction m_Player_DropItem;
+    private readonly InputAction m_Player_Interact;
     public struct PlayerActions
     {
         private @InputControl m_Wrapper;
@@ -398,6 +442,8 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         public InputAction @UseFlask => m_Wrapper.m_Player_UseFlask;
         public InputAction @Tab => m_Wrapper.m_Player_Tab;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
+        public InputAction @DropItem => m_Wrapper.m_Player_DropItem;
+        public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -440,6 +486,12 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @DropItem.started += instance.OnDropItem;
+            @DropItem.performed += instance.OnDropItem;
+            @DropItem.canceled += instance.OnDropItem;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -477,6 +529,12 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @DropItem.started -= instance.OnDropItem;
+            @DropItem.performed -= instance.OnDropItem;
+            @DropItem.canceled -= instance.OnDropItem;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -507,5 +565,7 @@ public partial class @InputControl: IInputActionCollection2, IDisposable
         void OnUseFlask(InputAction.CallbackContext context);
         void OnTab(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnDropItem(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
 }

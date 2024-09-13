@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public event EventHandler OnUseFlaskAction;
     public event EventHandler OnTabAction;
     public event EventHandler OnPauseAction;
+    public event EventHandler OnInteractAction;
 
     private InputControl inputControl;
 
@@ -42,6 +43,7 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.UseFlask.performed += ctx => UseFlaskPerformed();
             inputControl.Player.Tab.performed += ctx => TabPerformed();
             inputControl.Player.Pause.performed += ctx => PausePerformed();
+            inputControl.Player.Interact.performed += ctx => InteractPerformed();
         }
     }
 
@@ -61,6 +63,7 @@ public class PlayerController : MonoBehaviour
             inputControl.Player.UseFlask.performed -= ctx => UseFlaskPerformed();
             inputControl.Player.Tab.performed -= ctx => TabPerformed();
             inputControl.Player.Pause.performed -= ctx => PausePerformed();
+            inputControl.Player.Interact.performed -= ctx => InteractPerformed();
             inputControl.Dispose();
         }
     }
@@ -171,6 +174,14 @@ public class PlayerController : MonoBehaviour
     private void PausePerformed()
     {
         OnPauseAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Handles interact object when performed by the player.
+    /// </summary>
+    private void InteractPerformed()
+    {
+        OnInteractAction?.Invoke(this, EventArgs.Empty);
     }
     #endregion
 }

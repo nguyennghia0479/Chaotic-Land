@@ -21,6 +21,11 @@ public class Enemy : Entity
     [SerializeField] protected float maxAttackCooldown = 1;
     [SerializeField] private Transform criticalFX;
 
+    [Space]
+    [SerializeField] protected bool isBoss;
+    [SerializeField] protected BossInfoUI bossInfoUI;
+    [SerializeField] protected Arena arena;
+
     protected EnemyStateMachine stateMachine;
     protected bool isCriticalAttack;
     protected bool canBeStunned;
@@ -68,6 +73,17 @@ public class Enemy : Entity
         {
             isAddExp = true;
             PlayerManager.Instance.IncreaseExp(Mathf.RoundToInt((Stats as EnemyStats).Exp.GetValueWithModify()));
+        }
+
+        if (isBoss)
+        {
+            Checkpoint checkpoint = FindObjectOfType<Checkpoint>();
+            if (checkpoint != null)
+            {
+                checkpoint.Active();
+            }
+
+            arena.BossFightEnd();
         }
     }
 
@@ -238,6 +254,16 @@ public class Enemy : Entity
     public bool IsCriticalAttack
     {
         get { return isCriticalAttack; }
+    }
+
+    public bool IsBoss
+    {
+        get { return isBoss; }
+    }
+
+    public BossInfoUI BossInfoUI
+    {
+        get { return bossInfoUI; }
     }
     #endregion
 }

@@ -59,6 +59,8 @@ public class Player : Entity
     private const string CATCH_SWORD = "CatchSword";
     private const string PERFORM_ULTIMATE = "PerformUltimate";
     private const string SPELL_CAST = "SpellCast";
+
+    public event EventHandler OnDie;
     #endregion
 
     protected override void Awake()
@@ -160,6 +162,7 @@ public class Player : Entity
     {
         stateMachine.ChangeState(DeathState);
         isDead = true;
+        OnDie?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>

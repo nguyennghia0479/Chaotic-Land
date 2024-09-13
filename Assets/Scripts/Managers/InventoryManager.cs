@@ -331,6 +331,24 @@ public class InventoryManager : Singleton<InventoryManager>
 
     #region Remove item
     /// <summary>
+    /// Handles to remove item.
+    /// </summary>
+    /// <param name="_item"></param>
+    public void RemoveItem(Inventory _item)
+    {
+        if (_item == null) return;
+
+        if (_item.itemSO.type == ItemType.Material)
+        {
+            RemoveMaterialFromInventory(_item.itemSO);
+        }
+        else
+        {
+            RemoveItemFromInventory(_item as InventoryItem);
+        }
+    }
+
+    /// <summary>
     /// Handles to remove material from inventory.
     /// </summary>
     /// <param name="_itemSO"></param>

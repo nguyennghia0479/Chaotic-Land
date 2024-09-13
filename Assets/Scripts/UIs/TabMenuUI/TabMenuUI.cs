@@ -52,7 +52,7 @@ public class TabMenuUI : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnTab += GameManager_OnTab;
+        GameManager.Instance.OnOpenTab += GameManager_OnOpenTab;
 
         tabBtns = tabHeader.GetComponentsInChildren<Button>();
         gameObject.SetActive(false);
@@ -61,7 +61,7 @@ public class TabMenuUI : MonoBehaviour
     /// <summary>
     /// Handles to open/close tab.
     /// </summary>
-    private void GameManager_OnTab(object sender, GameManager.OnTabEventArgs e)
+    private void GameManager_OnOpenTab(object sender, GameManager.OnOpenTabEventArgs e)
     {
         if (e.isOpenTab)
         {

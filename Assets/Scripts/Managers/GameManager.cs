@@ -5,16 +5,20 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] InGameUI inGameUI;
-    [SerializeField] TooltipUI[] tooltipUIs;
+    [SerializeField] private InGameUI inGameUI;
+    [SerializeField] private BossInfoUI bossInfoUI;
+    [SerializeField] private TooltipUI[] tooltipUIs;
+    [SerializeField] private Checkpoint[] checkpoints;
+    [SerializeField] private MapSelectionUI mapSelectionUI;
 
     private PlayerController playerController;
     private bool isOpenTab;
     private bool isGamePaused;
+    private bool isOpenMap;
 
     #region Events
-    public event EventHandler<OnTabEventArgs> OnTab;
-    public class OnTabEventArgs : EventArgs
+    public event EventHandler<OnOpenTabEventArgs> OnOpenTab;
+    public class OnOpenTabEventArgs : EventArgs
     {
         public bool isOpenTab;
     }
@@ -23,6 +27,12 @@ public class GameManager : Singleton<GameManager>
     public class OnGamePausedEventArgs : EventArgs
     {
         public bool isGamePaused;
+    }
+
+    public event EventHandler<OnOpenMapEventArgs> OnOpenMap;
+    public class OnOpenMapEventArgs : EventArgs
+    {
+        public bool isOpenMap;
     }
     #endregion
 
@@ -33,6 +43,7 @@ public class GameManager : Singleton<GameManager>
         {
             playerController.OnTabAction += PlayerController_OnTabAction;
             playerController.OnPauseAction += PlayerController_OnPauseAction;
+            playerController.OnInteractAction += PlayerController_OnInteractAction;
         }
     }
 
@@ -42,6 +53,7 @@ public class GameManager : Singleton<GameManager>
         {
             playerController.OnTabAction -= PlayerController_OnTabAction;
             playerController.OnPauseAction -= PlayerController_OnPauseAction;
+            playerController.OnInteractAction -= PlayerController_OnInteractAction;
         }
     }
 
@@ -66,6 +78,11 @@ public class GameManager : Singleton<GameManager>
         if (isOpenTab)
         {
             InvokeOpenTab();
+        }
+
+        if (isOpenMap)
+        {
+            InvokeOpenMap();
         }
     }
 
@@ -96,15 +113,55 @@ public class GameManager : Singleton<GameManager>
     }
 
     /// <summary>
-    /// Handles to invoke onTab event.
+    /// Handles to invoke onOpenTab event.
     /// </summary>
     private void InvokeOpenTab()
     {
         isOpenTab = !isOpenTab;
-        OnTab?.Invoke(this, new OnTabEventArgs
+        OnOpenTab?.Invoke(this, new OnOpenTabEventArgs
         {
             isOpenTab = isOpenTab,
         });
+    }
+    #endregion
+
+    #region Map selection.
+    /// <summary>
+    /// Handles to close map selection.
+    /// </summary>
+    public void CloseMapSelection()
+    {
+        isOpenMap = false;
+        ResumeGame();
+    }
+
+    /// <summary>
+    /// Handles to open map selection
+    /// </summary>
+    private void PlayerController_OnInteractAction(object sender, EventArgs e)
+    {
+        if ((isGamePaused && !isOpenMap) || isOpenMap) return;
+
+        InvokeOpenMap();
+        TogglePauseGamed(isOpenMap);
+    }
+
+    /// <summary>
+    /// Handles to invoke onOpenMap event.
+    /// </summary>
+    private void InvokeOpenMap()
+    {
+        foreach (Checkpoint checkpoint in checkpoints)
+        {
+            if (checkpoint.IsNearCheckpoint && checkpoint.IsBurning)
+            {
+                isOpenMap = !isOpenMap;
+                OnOpenMap?.Invoke(this, new OnOpenMapEventArgs
+                {
+                    isOpenMap = isOpenMap,
+                });
+            }
+        }
     }
     #endregion
 
@@ -114,16 +171,20 @@ public class GameManager : Singleton<GameManager>
     /// <param name="_isGamePaused"></param>
     private void TogglePauseGamed(bool _isGamePaused)
     {
+        if (inGameUI == null || bossInfoUI == null) return;
+
         isGamePaused = _isGamePaused;
         if (_isGamePaused)
         {
             Time.timeScale = 0;
             inGameUI.gameObject.SetActive(false);
+            bossInfoUI.gameObject.SetActive(false);
         }
         else
         {
             Time.timeScale = 1;
             inGameUI.gameObject.SetActive(true);
+            bossInfoUI.gameObject.SetActive(bossInfoUI.IsBossFight);
             HideAllTooltip();
         }
     }
