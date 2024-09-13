@@ -35,7 +35,6 @@ public class BanditGroundedState : EnemyState
         base.Update();
 
         if (bandit.IsImmobilized) return;
-
         if (bandit.IsPlayerDetected() || Vector2.Distance(bandit.transform.position, player.transform.position) < aggroDistance)
         {
             stateMachine.Changestate(bandit.AggroState);

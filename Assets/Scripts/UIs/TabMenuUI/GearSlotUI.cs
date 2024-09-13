@@ -1,24 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class GearSlotUI : ItemSlotUI
 {
     [SerializeField] private GearType slotType;
 
+    private InventoryItem itemDrop;
+
     private void OnValidate()
     {
-        gameObject.name = "GearSlot - " + slotType.ToString();
+        gameObject.name = slotType.ToString();
     }
 
     /// <summary>
-    /// Handles to unequip gear if inventory item has empty slot.
+    /// Handles to unequip gear.
     /// </summary>
-    public override void OnPointerDown(PointerEventData eventData)
+    protected override void HandleActionButton()
     {
-        if (item == null || item.itemSO == null) return;
+        if (actionBtn != null)
+        {
+            actionBtn.onClick.AddListener(() =>
+            {
+                if (CanUnequipGear())
+                {
+                    slotSelected.gameObject.SetActive(false);
+                    itemAction.gameObject.SetActive(false);
+                }
+            });
+        }
+    }
 
+    /// <summary>
+    /// Handles to drop gear.
+    /// </summary>
+    protected override void HandleDropButton()
+    {
+        if (dropBtn != null)
+        {
+            dropBtn.onClick.AddListener(() =>
+            {
+                if (CanUnequipGear())
+                {
+                    InventoryManager.Instance.RemoveItem(itemDrop);
+                    slotSelected.gameObject.SetActive(false);
+                    itemAction.gameObject.SetActive(false);
+                }
+            });
+        }
+    }
+
+    /// <summary>
+    /// Handles to unequip gear.
+    /// </summary>
+    /// <returns></returns>
+    private bool CanUnequipGear()
+    {
+        if (item == null || item.itemSO == null) return false;
+
+        itemDrop = item as InventoryItem;
         InventoryManager inventory = InventoryManager.Instance;
         if (inventory.CanAddItem())
         {
@@ -26,7 +64,10 @@ public class GearSlotUI : ItemSlotUI
             inventory.AddItemToInventory(item as InventoryItem);
             ClearSlot();
             itemTooltip.HideItemTooltip();
+            return true;
         }
+
+        return false;
     }
 
     public GearType SlotType

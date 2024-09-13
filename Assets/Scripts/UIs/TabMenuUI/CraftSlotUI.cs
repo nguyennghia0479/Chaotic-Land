@@ -15,6 +15,8 @@ public class CraftSlotUI : ItemSlotUI
     /// </summary>
     public override void OnPointerDown(PointerEventData eventData)
     {
+        if (tabMenu == null || tabMenu.CraftUI == null) return;
+
         tabMenu.CraftUI.SetupCraftUI(item.itemSO as GearSO);
     }
 

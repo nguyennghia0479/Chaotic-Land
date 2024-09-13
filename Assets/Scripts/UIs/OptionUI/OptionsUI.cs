@@ -45,7 +45,11 @@ public class OptionsUI : MonoBehaviour
         closeBtn.onClick.AddListener(() =>
         {
             HideOptionsUI();
-            gamePausedUI.ShowGamePausedUI();
+            if (gamePausedUI != null)
+            {
+                gamePausedUI.ShowGamePausedUI();
+            }
+
         });
     }
 
@@ -111,10 +115,7 @@ public class OptionsUI : MonoBehaviour
     #region Show, hide options ui
     private void GameManager_OnGamePaused(object sender, GameManager.OnGamePausedEventArgs e)
     {
-        if (!e.isGamePaused)
-        {
-            HideOptionsUI();
-        }
+        HideOptionsUI();
     }
 
     /// <summary>

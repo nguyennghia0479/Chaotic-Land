@@ -19,6 +19,7 @@ public class PlayerManager : Singleton<PlayerManager>
     protected override void Awake()
     {
         base.Awake();
+
         currentExp = 0;
         level = 1;
         levelUpThreshold = 100;

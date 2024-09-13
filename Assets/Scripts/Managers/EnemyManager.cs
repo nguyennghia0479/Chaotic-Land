@@ -33,10 +33,15 @@ public class EnemyManager : MonoBehaviour
                     enemyLevel = playerLevel - 2;
                 }
 
+                if (enemy.IsBoss && enemyStats.Level < playerLevel)
+                {
+                    enemyLevel = playerLevel;
+                }
+
                 enemyStats.LevelUp(enemyLevel);
             }
 
-            
+
         }
     }
 }

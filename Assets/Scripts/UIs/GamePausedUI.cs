@@ -11,6 +11,8 @@ public class GamePausedUI : MonoBehaviour
     [SerializeField] private Button quitBtn;
     [SerializeField] private OptionsUI optionsUI;
 
+    private LevelManager levelManager;
+
     private void Awake()
     {
         resumeBtn.onClick.AddListener(() =>
@@ -20,7 +22,7 @@ public class GamePausedUI : MonoBehaviour
 
         mainMenuBtn.onClick.AddListener(() =>
         {
-            Debug.Log("Return to main menu");
+            MainMenu();       
         });
 
         optionsBtn.onClick.AddListener(() =>
@@ -38,9 +40,23 @@ public class GamePausedUI : MonoBehaviour
 
     private void Start()
     {
+        levelManager = LevelManager.Instance;
         GameManager.Instance.OnGamePaused += GameManager_OnGamePaused;
 
         HideGamePausedUI();
+    }
+
+    /// <summary>
+    /// Handles to load main menu scene.
+    /// </summary>
+    private void MainMenu()
+    {
+        if (levelManager == null)
+        {
+            levelManager = LevelManager.Instance;
+        }
+
+        levelManager.LoadMainMenu();
     }
 
     private void GameManager_OnGamePaused(object sender, GameManager.OnGamePausedEventArgs e)
@@ -55,11 +71,17 @@ public class GamePausedUI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles to show game pause ui.
+    /// </summary>
     public void ShowGamePausedUI()
     {
         gameObject.SetActive(true);
     }
 
+    /// <summary>
+    /// Handles to hide game pause ui.
+    /// </summary>
     private void HideGamePausedUI()
     {
         gameObject.SetActive(false);
