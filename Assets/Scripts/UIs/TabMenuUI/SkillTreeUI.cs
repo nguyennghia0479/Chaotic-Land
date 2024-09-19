@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISaveManager
 {
     [SerializeField] private string skillName;
     [SerializeField][TextArea] private string skillDes;
@@ -16,7 +16,7 @@ public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [SerializeField] private SkillTreeUI[] optionalSkills;
     [SerializeField] private SkillTreeTooltipUI skillTreeTooltip;
 
-    private bool isUnlocked;
+    public bool isUnlocked;
     private bool isHolding;
     private float unlockSkillTimer;
     private readonly float unlockSkillTime = 3;
@@ -41,6 +41,7 @@ public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
     }
 
+    #region Setup unlock button
     /// <summary>
     /// Handles to setup event triggers.
     /// </summary>
@@ -84,7 +85,9 @@ public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         imgBG.fillAmount = 1;
         isHolding = false;
     }
+    #endregion
 
+    #region Unlocked skill
     /// <summary>
     /// Handles to check skill can unlock.
     /// </summary>
@@ -127,6 +130,7 @@ public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         OnUnlocked?.Invoke(this, EventArgs.Empty);
         skillTreeTooltip.ShowSkillTreeTooltip(skillName, skillDes, skillCooldown, skillUnlockedValue, isUnlocked, CanUnlockedSkill());
     }
+    #endregion
 
     /// <summary>
     /// Handles to show skill tree tooltip.
@@ -144,6 +148,42 @@ public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void OnPointerExit(PointerEventData eventData)
     {
         skillTreeTooltip.HideSkillTreeTooltip();
+    }
+
+    /// <summary>
+    /// Handles to save skill tree.
+    /// </summary>
+    /// <param name="_gameData"></param>
+    public void SaveData(ref GameData _gameData)
+    {
+        if (_gameData.skillTrees.TryGetValue(skillName, out _))
+        {
+            _gameData.skillTrees.Remove(skillName);
+            _gameData.skillTrees.Add(skillName, isUnlocked);
+        }
+        else
+        {
+            _gameData.skillTrees.Add(skillName, isUnlocked);
+        }
+    }
+
+    /// <summary>
+    /// Handles to load skill tree.
+    /// </summary>
+    /// <param name="_gameData"></param>
+    public void LoadData(GameData _gameData)
+    {
+        if (_gameData.skillTrees.TryGetValue(skillName, out bool _isUnlocked))
+        {
+            isUnlocked = _isUnlocked;
+        }
+
+        if (isUnlocked)
+        {
+            imgBG.color = Color.clear;
+            isUnlocked = true;
+            OnUnlocked?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public bool IsUnlocked

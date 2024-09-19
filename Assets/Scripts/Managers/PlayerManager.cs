@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerManager : Singleton<PlayerManager>
+public class PlayerManager : Singleton<PlayerManager>, ISaveManager
 {
     [SerializeField] private Player player;
+    [SerializeField] private EnemyManager enemyManager;
 
     private int currentExp;
-    private int level;
+    private int currentLevel;
     private int levelUpThreshold;
     private int currentPoint;
     private int pointAdded;
@@ -19,17 +20,6 @@ public class PlayerManager : Singleton<PlayerManager>
     protected override void Awake()
     {
         base.Awake();
-
-        currentExp = 0;
-        level = 1;
-        levelUpThreshold = 100;
-        currentPoint = 0;
-    }
-
-    protected void Start()
-    {
-        UpdateLevelUpThreshold();
-        InvokeUpdateExp();
     }
 
     #region Player EXP
@@ -39,7 +29,7 @@ public class PlayerManager : Singleton<PlayerManager>
 
         if (currentExp >= levelUpThreshold)
         {
-            level++;
+            currentLevel++;
             currentPoint += pointToAdd;
             currentExp -= levelUpThreshold;
             UpdateLevelUpThreshold();
@@ -48,6 +38,10 @@ public class PlayerManager : Singleton<PlayerManager>
         InvokeUpdateExp();
     }
 
+    /// <summary>
+    /// Handles to decrease player's EXP when skill unlocked.
+    /// </summary>
+    /// <param name="_requiredExp"></param>
     public void SkillUnlocked(int _requiredExp)
     {
         if (currentExp < _requiredExp) return;
@@ -56,15 +50,23 @@ public class PlayerManager : Singleton<PlayerManager>
         InvokeUpdateExp();
     }
 
+    /// <summary>
+    /// Handles to update level up threshold when player level up.
+    /// </summary>
     private void UpdateLevelUpThreshold()
     {
-        float levelUpRate = .5f;
-        for (int i = 1; i < level; i++)
+        float levelUpRate = .4f;
+        levelUpThreshold = 100;
+
+        for (int i = 1; i < currentLevel; i++)
         {
             levelUpThreshold += Mathf.RoundToInt(levelUpThreshold * levelUpRate);
         }
     }
 
+    /// <summary>
+    /// Handles to update player's EXP UI
+    /// </summary>
     private void InvokeUpdateExp()
     {
         OnUpdateExp?.Invoke(this, EventArgs.Empty);
@@ -94,6 +96,25 @@ public class PlayerManager : Singleton<PlayerManager>
     }
     #endregion
 
+    public void SaveData(ref GameData _gameData)
+    {
+        _gameData.currentExp = currentExp;
+        _gameData.currentLevel = currentLevel;
+        _gameData.currentPoint = currentPoint;
+    }
+
+    public void LoadData(GameData _gameData)
+    {
+        currentLevel = _gameData.currentLevel;
+        currentExp = _gameData.currentExp;
+        currentPoint = _gameData.currentPoint;
+
+        UpdateLevelUpThreshold();
+        InvokeUpdateExp();
+
+        enemyManager.SetupEnemyLevel();
+    }
+
     #region Getter
     public Player Player
     {
@@ -105,9 +126,9 @@ public class PlayerManager : Singleton<PlayerManager>
         get { return currentExp; }
     }
 
-    public int Level
+    public int CurrentLevel
     {
-        get { return level; }
+        get { return currentLevel; }
     }
 
     public int LevelUpThreshold

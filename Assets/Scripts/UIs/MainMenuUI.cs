@@ -17,7 +17,7 @@ public class MainMenuUI : MonoBehaviour
     {
         continueBtn.onClick.AddListener(() =>
         {
-            Debug.Log("Continue");
+            ContinueGame();
         });
 
         newGameBtn.onClick.AddListener(() =>
@@ -39,6 +39,24 @@ public class MainMenuUI : MonoBehaviour
     private void Start()
     {
         levelManager = LevelManager.Instance;
+
+        if (SaveManager.Instance != null && !SaveManager.Instance.HasSaveFile())
+        {
+            continueBtn.gameObject.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// Handles to load game scene.
+    /// </summary>
+    private void ContinueGame()
+    {
+        if (levelManager == null)
+        {
+            levelManager = LevelManager.Instance;
+        }
+
+        levelManager.LoadContinueGame();
     }
 
     /// <summary>

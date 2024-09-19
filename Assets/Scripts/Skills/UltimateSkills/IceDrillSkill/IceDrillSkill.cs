@@ -18,6 +18,7 @@ public class IceDrillSkill : Skill
     private bool isIceDrillUnlocked;
     private List<Transform> targets;
 
+    #region Skill unlocked
     private void OnEnable()
     {
         if (iceDrillSkill != null)
@@ -36,12 +37,30 @@ public class IceDrillSkill : Skill
 
     private void IceDrillSkill_OnUnlocked(object sender, System.EventArgs e)
     {
+        UnlockedIceDrillSkill();
+    }
+
+    /// <summary>
+    /// Handles to unlocked ice drill skill.
+    /// </summary>
+    public void UnlockedIceDrillSkill()
+    {
+        if (SkillManager.Instance == null || SkillManager.Instance.UltimateSkill == null) return;
+
         if (iceDrillSkill != null && iceDrillSkill.IsUnlocked)
         {
             isIceDrillUnlocked = true;
             SkillManager.Instance.UltimateSkill.UnlockUltiamteSkill(UltimateType.IceDrill, isIceDrillUnlocked, cooldown, skillStaminaAmount);
             ultimateSkillDropdown.AddOption(UltimateType.IceDrill);
         }
+    }
+    #endregion
+
+    protected override void Start()
+    {
+        base.Start();
+
+        UnlockedIceDrillSkill();
     }
 
     public override bool CanUseSkill()

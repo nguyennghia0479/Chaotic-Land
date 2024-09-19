@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerStats : EntityStats
+public class PlayerStats : EntityStats, ISaveManager
 {
     private Player player;
 
@@ -14,6 +14,7 @@ public class PlayerStats : EntityStats
         player = PlayerManager.Instance.Player;
     }
 
+    #region Player stats
     /// <summary>
     /// Handles to init stats of player.
     /// </summary>
@@ -29,6 +30,19 @@ public class PlayerStats : EntityStats
         resistance.UpdateBaseValue(CalculateStatModify(StatType.Resistance, intelligence.GetValueWithModify()));
     }
 
+    /// <summary>
+    /// Handles to increase player's stat.
+    /// </summary>
+    /// <param name="_type"></param>
+    /// <param name="_point"></param>
+    public void IncreaseStat(StatType _type, float _point)
+    {
+        Stat stat = GetStatByType(_type);
+        stat.UpdateBaseValue(stat.GetValueWithoutModify(_point));
+    }
+    #endregion
+
+    #region Player attack and decrease health.
     /// <summary>
     /// Handles to make physical damage by clone.
     /// </summary>
@@ -79,15 +93,33 @@ public class PlayerStats : EntityStats
             armorGear.ExecuteItemEffects(null);
         }
     }
+    #endregion
 
     /// <summary>
-    /// Handles to increase player's stat.
+    /// Handles to save player's stats.
     /// </summary>
-    /// <param name="_type"></param>
-    /// <param name="_point"></param>
-    public void IncreaseStat(StatType _type, float _point)
+    /// <param name="_gameData"></param>
+    public void SaveData(ref GameData _gameData)
     {
-        Stat stat = GetStatByType(_type);
-        stat.UpdateBaseValue(stat.GetValueWithoutModify(_point));
+        _gameData.vitality = vitality.GetValueWithModify();
+        _gameData.endurance = endurance.GetValueWithModify();
+        _gameData.strength = strength.GetValueWithModify();
+        _gameData.dexterity = dexterity.GetValueWithModify();
+        _gameData.intelligence = intelligence.GetValueWithModify();
+        _gameData.agility = agility.GetValueWithModify();
+    }
+
+    /// <summary>
+    /// Handles to load player's stats.
+    /// </summary>
+    /// <param name="_gameData"></param>
+    public void LoadData(GameData _gameData)
+    {
+        vitality.UpdateBaseValue(_gameData.vitality);
+        endurance.UpdateBaseValue(_gameData.endurance);
+        strength.UpdateBaseValue(_gameData.strength);
+        dexterity.UpdateBaseValue(_gameData.dexterity);
+        intelligence.UpdateBaseValue(_gameData.intelligence);
+        agility.UpdateBaseValue(_gameData.agility);
     }
 }

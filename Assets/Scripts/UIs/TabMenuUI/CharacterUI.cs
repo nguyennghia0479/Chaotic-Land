@@ -33,7 +33,7 @@ public class CharacterUI : MonoBehaviour
         InitCharater();
         UpdateStats();
 
-        int level = playerManager.Level;
+        int level = playerManager.CurrentLevel;
         int currentExp = playerManager.CurrentExp;
         int levelUpThreshold = playerManager.LevelUpThreshold;
         int point = playerManager.CurrentPoint;

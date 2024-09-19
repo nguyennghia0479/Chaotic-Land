@@ -53,14 +53,17 @@ public class UltimateSkill : Skill
     /// <param name="_isUltimateUnlocked"></param>
     /// <param name="_cooldown"></param>
     /// <param name="_skillStaminaAmount"></param>
-    public void UpdateUltimateSkillInfo(UltimateType _type, bool _isUltimateUnlocked, float _cooldown, int _skillStaminaAmount)
+    public void UpdateUltimateSkillInfo(UltimateType _type, bool _isUltimateUnlocked, float _cooldown, int _skillStaminaAmount, bool _isSkillReseted)
     {
         type = _type;
         isUltimateUnlocked = _isUltimateUnlocked;
         skillStaminaAmount = _skillStaminaAmount;
-        cooldown = _cooldown;
-        cooldownTimer = _cooldown;
-        GameManager.Instance.InGameUI.UltimateImg.fillAmount = 1;
+        if (_isSkillReseted)
+        {
+            cooldown = _cooldown;
+            cooldownTimer = _cooldown;
+            GameManager.Instance.InGameUI.UltimateImg.fillAmount = 1;
+        }
     }
 
     /// <summary>

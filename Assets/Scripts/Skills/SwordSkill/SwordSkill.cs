@@ -67,7 +67,7 @@ public class SwordSkill : Skill
     private Vector2 finalDir;
     private float swordGravity;
     private float dotRadius;
-    private SwordType swordType;
+    public SwordType swordType;
     private bool isRegularSwordUnlocked;
     private bool isPierceSwordUnlocked;
     private bool isBounceSwordUnlocked;
@@ -241,12 +241,15 @@ public class SwordSkill : Skill
         player.AssignSword(newSword);
     }
 
-    public void UpdateSwordSkill(SwordType _swordType)
+    public void UpdateSwordSkill(SwordType _swordType, bool isReseted)
     {
         swordType = _swordType;
         SetupSwordType();
-        cooldownTimer = cooldown;
-        GameManager.Instance.InGameUI.SwordSkillImg.fillAmount = 1;
+        if (isReseted)
+        {
+            cooldownTimer = cooldown;
+            GameManager.Instance.InGameUI.SwordSkillImg.fillAmount = 1;
+        }
     }
 
     /// <summary>
