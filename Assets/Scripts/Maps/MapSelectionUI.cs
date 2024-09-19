@@ -102,6 +102,8 @@ public class MapSelectionUI : MonoBehaviour
         {
             levelManager = LevelManager.Instance;
         }
+
+        levelManager.SaveGame();
         levelManager.LoadScene(mapSceneName);
     }
     #endregion

@@ -8,7 +8,9 @@ public class LevelManager : Singleton<LevelManager>
 {
     [SerializeField] private LoadingUI loadingUI;
     [SerializeField] private Slider loadingSlider;
-    
+
+    private SaveManager saveManager;
+
     protected override void Awake()
     {
         base.Awake();
@@ -16,11 +18,17 @@ public class LevelManager : Singleton<LevelManager>
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Start()
+    {
+        saveManager = SaveManager.Instance;
+    }
+
     /// <summary>
     /// Handles to load main menu scene.
     /// </summary>
     public void LoadMainMenu()
     {
+        SaveGame();
         LoadScene("MainMenu");
     }
 
@@ -28,6 +36,20 @@ public class LevelManager : Singleton<LevelManager>
     /// Handles to load new game scene.
     /// </summary>
     public void LoadNewGame()
+    {
+        if (saveManager == null)
+        {
+            saveManager = SaveManager.Instance;
+        }
+
+        saveManager.DeleteSaveGame();
+        LoadScene("OakWoodsMap2");
+    }
+
+    /// <summary>
+    /// Handles to load continue game.
+    /// </summary>
+    public void LoadContinueGame()
     {
         LoadScene("OakWoodsMap2");
     }
@@ -47,8 +69,22 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     public void LoadCurrentScene()
     {
+        SaveGame();
         Scene currentScene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(currentScene.name);
+    }
+
+    /// <summary>
+    /// Handles to save game.
+    /// </summary>
+    public void SaveGame()
+    {
+        if (saveManager == null)
+        {
+            saveManager = SaveManager.Instance;
+        }
+
+        saveManager.SaveGame();
     }
 
     /// <summary>
@@ -61,7 +97,7 @@ public class LevelManager : Singleton<LevelManager>
         Time.timeScale = 1.0f;
         float maxProgress = .9f;
         loadingSlider.value = 0f;
-        
+
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(_sceneName);
         asyncOperation.allowSceneActivation = false;
 
@@ -69,9 +105,9 @@ public class LevelManager : Singleton<LevelManager>
         {
             loadingSlider.value = Mathf.Clamp01(asyncOperation.progress / maxProgress);
 
-            if (asyncOperation.progress >= maxProgress )
+            if (asyncOperation.progress >= maxProgress)
             {
-                
+
                 asyncOperation.allowSceneActivation = true;
             }
 

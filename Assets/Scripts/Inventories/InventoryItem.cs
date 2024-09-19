@@ -25,11 +25,11 @@ public class InventoryItem : Inventory
     /// Handles to transfer data.
     /// </summary>
     /// <param name="_itemSO"></param>
-    /// <param name="_condition"></param>
+    /// <param name="durability"></param>
     /// <param name="_itemId"></param>
-    public InventoryItem(ItemSO _itemSO, float _condition, string _itemId) : base(_itemSO)
+    public InventoryItem(ItemSO _itemSO, float durability, string _itemId) : base(_itemSO)
     {
-        durability = _condition;
+        this.durability = durability;
         itemId = _itemId;
     }
 

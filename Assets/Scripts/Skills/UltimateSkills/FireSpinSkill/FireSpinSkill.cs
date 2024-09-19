@@ -37,14 +37,32 @@ public class FireSpinSkill : Skill
 
     private void FireSpinSkill_OnUnlocked(object sender, System.EventArgs e)
     {
+        UnlockedFireSpinSkill();
+    }
+
+    /// <summary>
+    /// Handles to unlocked fire spin skill.
+    /// </summary>
+    public void UnlockedFireSpinSkill()
+    {
+        if (SkillManager.Instance == null || SkillManager.Instance.UltimateSkill == null) return;
+
         if (fireSpinSkill != null && fireSpinSkill.IsUnlocked)
         {
             isFireSpinUnlocked = true;
             SkillManager.Instance.UltimateSkill.UnlockUltiamteSkill(UltimateType.FireSpin, isFireSpinUnlocked, cooldown, skillStaminaAmount);
             ultimateSkillDropdown.AddOption(UltimateType.FireSpin);
         }
+
     }
     #endregion
+
+    protected override void Start()
+    {
+        base.Start();
+
+        UnlockedFireSpinSkill();
+    }
 
     public override bool CanUseSkill()
     {

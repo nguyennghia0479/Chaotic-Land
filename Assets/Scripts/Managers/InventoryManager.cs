@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public class InventoryManager : Singleton<InventoryManager>
+public class InventoryManager : Singleton<InventoryManager>, ISaveManager
 {
     #region Variables
     [Header("Material info")]
@@ -22,15 +23,18 @@ public class InventoryManager : Singleton<InventoryManager>
     private List<GearSlotUI> gearSlots;
     [SerializeField] private List<InventoryItem> gears;
     private Dictionary<GearSO, InventoryItem> gearDictionaries;
+    private float lastTimeUseFlask;
+    private float flaskCooldown;
+    private float lastTimeUseArmor;
+    private float armorCooldown;
 
     [Header("Stats info")]
     [SerializeField] private GameObject inventoryStats;
     private StatUI[] statUIs;
 
-    private float lastTimeUseFlask;
-    private float flaskCooldown;
-    private float lastTimeUseArmor;
-    private float armorCooldown;
+    [Header("Database")]
+    [SerializeField] private List<Inventory> loadedItems;
+    [SerializeField] private List<InventoryItem> loadedGears;
     #endregion
 
     private void Start()
@@ -49,8 +53,11 @@ public class InventoryManager : Singleton<InventoryManager>
 
         gears = new List<InventoryItem>();
         gearDictionaries = new Dictionary<GearSO, InventoryItem>();
+
+        SetupItemLoaded();
     }
 
+    #region Setup slot and item loaded
     /// <summary>
     /// Handles to setup gear slots ui.
     /// </summary>
@@ -65,6 +72,34 @@ public class InventoryManager : Singleton<InventoryManager>
             }
         }
     }
+
+    /// <summary>
+    /// Handles to setup item loaded.
+    /// </summary>
+    private void SetupItemLoaded()
+    {
+        foreach (Inventory item in loadedItems)
+        {
+            if (item.itemSO.type == ItemType.Material)
+            {
+                for (int i = 0; i < item.GetQuantity(); i++)
+                {
+                    AddMaterialToInventory(item.itemSO);
+                }
+            }
+            else if (item.itemSO.type == ItemType.Gear)
+            {
+                AddItemToInventory(item as InventoryItem);
+            }
+
+        }
+
+        foreach (InventoryItem gear in loadedGears)
+        {
+            EquipGear(gear);
+        }
+    }
+    #endregion
 
     #region Gear durability
     /// <summary>
@@ -463,6 +498,102 @@ public class InventoryManager : Singleton<InventoryManager>
             stat.UpdateStatUI();
             stat.UpdateModifyUI();
         }
+    }
+    #endregion
+
+    #region Save and Load
+    /// <summary>
+    /// Handles to save inventory item.
+    /// </summary>
+    /// <param name="_gameData"></param>
+    public void SaveData(ref GameData _gameData)
+    {
+        _gameData.materials.Clear();
+        _gameData.items.Clear();
+        _gameData.gears.Clear();
+
+        foreach (KeyValuePair<ItemSO, Inventory> material in materialDictionaries)
+        {
+            _gameData.materials.Add(material.Key.itemId, material.Value.GetQuantity());
+        }
+
+        foreach (KeyValuePair<string, InventoryItem> item in itemDictionaries)
+        {
+            ItemData itemData = new(item.Key, item.Value.itemSO.itemId, item.Value.Durability);
+            _gameData.items.Add(itemData);
+        }
+
+        foreach (KeyValuePair<GearSO, InventoryItem> gear in gearDictionaries)
+        {
+            ItemData itemData = new(gear.Value.ItemId, gear.Value.itemSO.itemId, gear.Value.Durability);
+            _gameData.gears.Add(itemData);
+        }
+    }
+
+    /// <summary>
+    /// Handles to load inventory item.
+    /// </summary>
+    /// <param name="_gameData"></param>
+    public void LoadData(GameData _gameData)
+    {
+        List<ItemSO> itemDatabases = GetAllItemDatabase();
+
+        foreach (KeyValuePair<string, int> material in _gameData.materials)
+        {
+            foreach (ItemSO itemSO in itemDatabases)
+            {
+                if (itemSO != null && itemSO.itemId == material.Key)
+                {
+                    Inventory materialToLoad = new(itemSO, material.Value);
+                    loadedItems.Add(materialToLoad);
+                    break;
+                }
+            }
+        }
+
+        foreach (ItemData item in _gameData.items)
+        {
+            foreach (ItemSO itemSO in itemDatabases)
+            {
+                if (itemSO != null && itemSO.itemId == item.itemId)
+                {
+                    InventoryItem itemToLoad = new(itemSO, item.durability, item.id);
+                    loadedItems.Add(itemToLoad);
+                    break;
+                }
+            }
+        }
+
+        foreach (ItemData gear in _gameData.gears)
+        {
+            foreach (ItemSO itemSO in itemDatabases)
+            {
+                if (itemSO != null && itemSO.itemId == gear.itemId)
+                {
+                    InventoryItem gearToLoad = new(itemSO, gear.durability, gear.id);
+                    loadedGears.Add(gearToLoad);
+                    break;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles to get all item from unity assets.
+    /// </summary>
+    /// <returns></returns>
+    private List<ItemSO> GetAllItemDatabase()
+    {
+        List<ItemSO> itemDatabases = new();
+        string[] assetsNames = AssetDatabase.FindAssets("", new[] { "Assets/Data/Items" });
+        foreach (string soName in assetsNames)
+        {
+            string soPath = AssetDatabase.GUIDToAssetPath(soName);
+            ItemSO itemSO = AssetDatabase.LoadAssetAtPath<ItemSO>(soPath);
+            itemDatabases.Add(itemSO);
+        }
+
+        return itemDatabases;
     }
     #endregion
 }

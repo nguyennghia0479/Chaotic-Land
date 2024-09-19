@@ -115,7 +115,7 @@ public class InGameUI : MonoBehaviour
 
     private void PlayerManager_OnUpdateExp(object sender, System.EventArgs e)
     {
-        levelText.text = "Lvl " + playerManager.Level.ToString();
+        levelText.text = playerManager.CurrentLevel.ToString();
         levelBar.fillAmount = (float)playerManager.CurrentExp / playerManager.LevelUpThreshold;
     }
 

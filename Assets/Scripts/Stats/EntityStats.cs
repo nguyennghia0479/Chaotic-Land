@@ -95,6 +95,7 @@ public class EntityStats : MonoBehaviour
         }
     }
 
+    #region Vulnerable
     /// <summary>
     /// Handles to make character vulnerable.
     /// </summary>
@@ -119,6 +120,7 @@ public class EntityStats : MonoBehaviour
         isVulnerable = false;
         vulnerableRate = 0;
     }
+    #endregion
 
     /// <summary>
     /// Handles to make physical damage.
@@ -126,7 +128,7 @@ public class EntityStats : MonoBehaviour
     /// <param name="_targetStats"></param>
     public virtual void DoPhysicalDamage(EntityStats _targetStats)
     {
-        if (_targetStats == null || CanTargetEvadeAttack(_targetStats) || entity.IsDead) return;
+        if (_targetStats == null || _targetStats.entity.IsDead || CanTargetEvadeAttack(_targetStats)) return;
 
         float totalDamage = physicsDamage.GetValueWithModify();
         bool canCrit = CanDoCritDamage();
@@ -246,7 +248,7 @@ public class EntityStats : MonoBehaviour
     /// <param name="_type"></param>
     public virtual void DoMagicDamage(EntityStats _targetStats, AilmentType _type)
     {
-        if (_targetStats == null || CanTargetEvadeAttack(_targetStats) || entity.IsDead) return;
+        if (_targetStats == null || _targetStats.entity.IsDead || CanTargetEvadeAttack(_targetStats)) return;
 
         float totalDamage = magicDamage.GetValueWithModify();
         totalDamage = CheckTargetResistance(_targetStats, totalDamage);
@@ -304,6 +306,10 @@ public class EntityStats : MonoBehaviour
     /// </summary>
     public float CalculateStatModify(StatType _type, float _point)
     {
+        int maxHealthAdjust = 10;
+        int staminaAndPhysicsDamageAdjust = 2;
+        float critPowerAndResistanceAdjust = .25f;
+
         return _type switch
         {
             StatType.Vitality => vitality.GetValueWithModify() + _point,
@@ -312,15 +318,15 @@ public class EntityStats : MonoBehaviour
             StatType.Dexterity => dexterity.GetValueWithModify() + _point,
             StatType.Intelligence => intelligence.GetValueWithModify() + _point,
             StatType.Agility => agility.GetValueWithModify() + _point,
-            StatType.MaxHealth => maxHealth.GetValueWithModify() + _point * 10,
-            StatType.Stamina => maxStamina.GetValueWithModify() + _point * 2,
-            StatType.PhysicsDamage => physicsDamage.GetValueWithModify() + _point * 2,
+            StatType.MaxHealth => maxHealth.GetValueWithModify() + _point * maxHealthAdjust,
+            StatType.Stamina => maxStamina.GetValueWithModify() + _point * staminaAndPhysicsDamageAdjust,
+            StatType.PhysicsDamage => physicsDamage.GetValueWithModify() + _point * staminaAndPhysicsDamageAdjust,
             StatType.CritChance => critChance.GetValueWithModify() + _point,
-            StatType.CritPower => critPower.GetValueWithModify() + _point * .25f,
+            StatType.CritPower => critPower.GetValueWithModify() + _point * critPowerAndResistanceAdjust,
             StatType.MagicDamage => magicDamage.GetValueWithModify() + _point,
             StatType.Evasion => evasion.GetValueWithModify() + _point,
             StatType.Armor => armor.GetValueWithModify(),
-            StatType.Resistance => resistance.GetValueWithModify() + _point * .25f,
+            StatType.Resistance => resistance.GetValueWithModify() + _point * critPowerAndResistanceAdjust,
             _ => 0
         };
     }

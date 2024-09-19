@@ -4,25 +4,16 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    private Enemy[] enemies;
-    private PlayerManager playerManager;
-
-    private void Start()
-    {
-        enemies = GetComponentsInChildren<Enemy>();
-        playerManager = PlayerManager.Instance;
-
-        SetupEnemyLevel();
-    }
-
     /// <summary>
     /// Handles to setup enemies's level
     /// </summary>
-    private void SetupEnemyLevel()
+    public void SetupEnemyLevel()
     {
+        PlayerManager playerManager = PlayerManager.Instance;
         if (playerManager == null) return;
 
-        int playerLevel = playerManager.Level;
+        Enemy[] enemies = GetComponentsInChildren<Enemy>();
+        int playerLevel = playerManager.CurrentLevel;
         foreach (Enemy enemy in enemies)
         {
             if (enemy.TryGetComponent(out EnemyStats enemyStats))
@@ -40,8 +31,6 @@ public class EnemyManager : MonoBehaviour
 
                 enemyStats.LevelUp(enemyLevel);
             }
-
-
         }
     }
 }
