@@ -17,22 +17,26 @@ public class GamePausedUI : MonoBehaviour
     {
         resumeBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             GameManager.Instance.ResumeGame();
         });
 
         mainMenuBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             MainMenu();       
         });
 
         optionsBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             HideGamePausedUI();
             optionsUI.ShowOptionsUI();
         });
 
         quitBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             Debug.Log("Quit game!");
             Application.Quit();
         });
@@ -85,5 +89,16 @@ public class GamePausedUI : MonoBehaviour
     private void HideGamePausedUI()
     {
         gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Handles to play menu sounds.
+    /// </summary>
+    private void PlayMenuSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayMenuSound();
+        }
     }
 }

@@ -21,6 +21,8 @@ public class PlayerDashState : PlayerState
         {
             dashSkill.CreateCloneOnDash();
         }
+
+        soundManager.PlayDashSound(player.transform.position);
     }
 
     public override void Exit()

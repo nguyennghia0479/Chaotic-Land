@@ -69,6 +69,7 @@ public class KnockBack : MonoBehaviour
         {
             knockBackX -= knockBackX * knockBackWithBlock;
             knockBackY -= knockBackY * knockBackWithBlock;
+            PlayBlockSound();
         }
         else if(isCriticalAttack)
         {
@@ -78,5 +79,16 @@ public class KnockBack : MonoBehaviour
         }
 
         rb.velocity = new Vector2(knockBackX * knockBackDir, knockBackY);
+    }
+
+    /// <summary>
+    /// Handles to play block sound
+    /// </summary>
+    private void PlayBlockSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayBlockSound(transform.position);
+        }
     }
 }

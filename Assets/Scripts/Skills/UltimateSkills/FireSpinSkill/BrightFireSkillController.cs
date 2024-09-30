@@ -38,13 +38,9 @@ public class BrightFireSkillController : MonoBehaviour
             if (enemy.GetComponent<Enemy>().IsDead) return;
 
             player.Stats.DoMagicDamage(enemy, ailementType);
-            GearSO amuletGear = player.InventoryManager.GetGearByGearType(GearType.Amulet);
-            if (amuletGear != null)
-            {
-                amuletGear.ExecuteItemEffects(enemy.transform);
-            }
         }
 
+        PlayBrightFireSound();
         Destroy(gameObject);
     }
 
@@ -56,5 +52,16 @@ public class BrightFireSkillController : MonoBehaviour
     {
         rb.velocity = new Vector3(Random.Range(-_fireSpinSize, _fireSpinSize), -_fireSpinSize);
         Destroy(gameObject, timeToDestroy);
+    }
+
+    /// <summary>
+    /// Handles to play bright fire sound.
+    /// </summary>
+    private void PlayBrightFireSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayBrightFireSound(transform.position);
+        }
     }
 }

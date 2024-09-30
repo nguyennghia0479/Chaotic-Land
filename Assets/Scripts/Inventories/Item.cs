@@ -20,11 +20,12 @@ public class Item : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out Player _))
+        if (collision.TryGetComponent(out Player player))
         {
-            if (InventoryManager.Instance.CanAddMaterial(itemSO))
+            if (InventoryManager.Instance != null && InventoryManager.Instance.CanAddMaterial(itemSO))
             {
                 InventoryManager.Instance.AddMaterialToInventory(itemSO);
+                PlayPickupItemSound(player.transform.position);
                 Destroy(gameObject);
             }
         }
@@ -43,5 +44,17 @@ public class Item : MonoBehaviour
         spriteRenderer.sprite = itemSO.sprite;
         gameObject.name = "Item - " + itemSO.name;
         rb.velocity = _velocity;
+    }
+
+    /// <summary>
+    /// Handles to ply pickup item sound.
+    /// </summary>
+    /// <param name="_position"></param>
+    private void PlayPickupItemSound(Vector3 _position)
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayPickupItemSound(_position);
+        }
     }
 }

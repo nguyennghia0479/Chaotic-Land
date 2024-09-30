@@ -21,6 +21,9 @@ public class FireSpinSkillController : MonoBehaviour
     private bool isTriggered;
     private float spinHitTimer;
     private readonly float epsilon = .01f;
+    private float fireSoundTimer;
+    private readonly float fireSoundTimerMax = 10;
+    private AudioSource fireLoop;
 
     private void Update()
     {
@@ -28,7 +31,41 @@ public class FireSpinSkillController : MonoBehaviour
         GrowFireSpin();
         ShirnkFireSpin();
         FireSpinHit();
+        PlayFireLoopSound();
     }
+
+    #region Play sound
+    /// <summary>
+    /// Handles to play fire loop sound.
+    /// </summary>
+    private void PlayFireLoopSound()
+    {
+        fireSoundTimer -= Time.deltaTime;
+        if (fireSoundTimer < 0)
+        {
+            fireSoundTimer = fireSoundTimerMax;
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlayFireLoopSound(transform.position);
+                if (fireLoop == null)
+                {
+                    fireLoop = SoundManager.Instance.AudioSource;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles to stop play sound.
+    /// </summary>
+    private void StopPlaySound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.StopPlaySound(fireLoop);
+        }
+    }
+    #endregion
 
     #region Fire spin skill
     /// <summary>
@@ -113,6 +150,7 @@ public class FireSpinSkillController : MonoBehaviour
             transform.localScale = Vector3.Lerp(transform.localScale, Vector3.zero, scaleSpeed * Time.deltaTime);
             if (transform.localScale.x < .5f || transform.localScale.y < .5f)
             {
+                StopPlaySound();
                 Destroy(gameObject);
             }
         }

@@ -12,6 +12,18 @@ public class ThunderStrikeSkillController : MonoBehaviour
 
             PlayerStats player = PlayerManager.Instance.Player.GetComponent<PlayerStats>();
             player.DoMagicDamage(enemy, AilmentType.None);
+            PlayThunderSound();
+        }
+    }
+
+    /// <summary>
+    /// Handles to play thunder sound.
+    /// </summary>
+    private void PlayThunderSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayThunderSound(transform.position);
         }
     }
 }

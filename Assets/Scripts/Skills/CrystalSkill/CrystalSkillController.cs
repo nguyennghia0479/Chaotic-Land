@@ -55,11 +55,13 @@ public class CrystalSkillController : MonoBehaviour
                 isExplore = true;
                 canMove = false;
                 lifeTimer = 1;
+                PlayCrystalExplosionSound();
             }
 
             if (enemy.GetComponent<Enemy>().IsDead) return;
 
             player.Stats.DoMagicDamage(enemy, ailementType);
+            PlayCrystalHitSound();
             GearSO amuletGear = player.InventoryManager.GetGearByGearType(GearType.Amulet);
             if (amuletGear != null)
             {
@@ -109,4 +111,28 @@ public class CrystalSkillController : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, enemyTarget.position, moveSpeed * Time.deltaTime);
         }
     }
+
+    #region
+    /// <summary>
+    /// Handles to play crystal explosion sound.
+    /// </summary>
+    private void PlayCrystalExplosionSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayCrystalExplosionSound(transform.position);
+        }
+    }
+
+    /// <summary>
+    /// Handles to play crystal hit sound.
+    /// </summary>
+    private void PlayCrystalHitSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayCrystalHitSound(transform.position);
+        }
+    }
+    #endregion
 }

@@ -31,22 +31,25 @@ public class TabMenuUI : MonoBehaviour
         characterBtn.onClick.AddListener(() =>
         {
             ShowCharacterUI();
+            PlayMenuSound();
         });
 
         inventoryBtn.onClick.AddListener(() =>
         {
-            SwitchToMenuTab(TabMenu.Inventory);
-            InventoryManager.Instance.UpdateStatUIs();
+            ShowInventoryUI();
+            PlayMenuSound();
         });
 
         craftBtn.onClick.AddListener(() =>
         {
             ShowCraftUI();
+            PlayMenuSound();
         });
 
         skillTreeBtn.onClick.AddListener(() =>
         {
             SwitchToMenuTab(TabMenu.SkillTree);
+            PlayMenuSound();
         });
     }
 
@@ -75,6 +78,7 @@ public class TabMenuUI : MonoBehaviour
         }
     }
 
+    #region Update menu header
     /// <summary>
     /// Handles to switch to menu tab.
     /// </summary>
@@ -134,6 +138,7 @@ public class TabMenuUI : MonoBehaviour
             _ => 0,
         };
     }
+    #endregion
 
     /// <summary>
     /// Handles to show character ui.
@@ -142,6 +147,18 @@ public class TabMenuUI : MonoBehaviour
     {
         SwitchToMenuTab(TabMenu.Character);
         UpdateCharacterUI();
+    }
+
+    /// <summary>
+    /// Handles to show inventory ui.
+    /// </summary>
+    private void ShowInventoryUI()
+    {
+        SwitchToMenuTab(TabMenu.Inventory);
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.UpdateStatUIs();
+        }
     }
 
     /// <summary>
@@ -167,6 +184,17 @@ public class TabMenuUI : MonoBehaviour
                 ui.UpdateCharacter();
                 break;
             }
+        }
+    }
+
+    /// <summary>
+    /// Handles to play menu sound.
+    /// </summary>
+    private void PlayMenuSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayMenuSound();
         }
     }
 

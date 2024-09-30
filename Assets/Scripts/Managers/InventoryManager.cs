@@ -193,7 +193,11 @@ public class InventoryManager : Singleton<InventoryManager>, ISaveManager
     /// <param name="_itemToCraft"></param>
     public void CraftItem(GearSO _itemToCraft)
     {
-        if (!CanAddItem() || !CanCraft(_itemToCraft)) return;
+        if (!CanAddItem() || !CanCraft(_itemToCraft))
+        {
+            PlayCannotCraftingSound();
+            return;
+        }
 
         foreach (Inventory requiredMaterial in _itemToCraft.craftingMaterials)
         {
@@ -207,6 +211,7 @@ public class InventoryManager : Singleton<InventoryManager>, ISaveManager
         items.Add(newItem);
         itemDictionaries.Add(newItem.ItemId, newItem);
         UpdateItemSlotUI(_itemToCraft);
+        PlayCraftingSound();
     }
 
     /// <summary>
@@ -237,6 +242,22 @@ public class InventoryManager : Singleton<InventoryManager>, ISaveManager
         }
 
         return true;
+    }
+
+    private void PlayCraftingSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayCraftItemSound();
+        }
+    }
+
+    private void PlayCannotCraftingSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayDenySound();
+        }
     }
     #endregion
 
@@ -508,6 +529,8 @@ public class InventoryManager : Singleton<InventoryManager>, ISaveManager
     /// <param name="_gameData"></param>
     public void SaveData(ref GameData _gameData)
     {
+        if (_gameData == null) return;
+
         _gameData.materials.Clear();
         _gameData.items.Clear();
         _gameData.gears.Clear();
@@ -536,6 +559,8 @@ public class InventoryManager : Singleton<InventoryManager>, ISaveManager
     /// <param name="_gameData"></param>
     public void LoadData(GameData _gameData)
     {
+        if (_gameData == null) return;
+
         List<ItemSO> itemDatabases = GetAllItemDatabase();
 
         foreach (KeyValuePair<string, int> material in _gameData.materials)

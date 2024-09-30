@@ -9,7 +9,7 @@ public class IceDrillSkill : Skill
     [SerializeField] private GameObject iceDrillPrefab;
     [SerializeField] private int moveSpeed = 10;
     [SerializeField] private float radius = 10;
-    [SerializeField] private float yOffset = 5;
+    [SerializeField] private float yOffset = 10;
     [SerializeField] private float freezingDuration = 4;
     [SerializeField] private LayerMask enemyLayerMask;
     [Header("Skill unlocked")]
@@ -99,6 +99,19 @@ public class IceDrillSkill : Skill
             Vector2 offset = new(target.position.x, target.position.y + yOffset);
             GameObject newIceDrill = Instantiate(iceDrillPrefab, offset, Quaternion.Euler(0, 0, -90));
             newIceDrill.GetComponentInChildren<IceDrillController>().SetupIceDrill(this, target);
+            PlayIceDrillSound(target.position);
+        }
+    }
+
+    /// <summary>
+    /// Handles to play ice drill sound.
+    /// </summary>
+    /// <param name="_position"></param>
+    private void PlayIceDrillSound(Vector3 _position)
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayIceDrillSound(_position);
         }
     }
 

@@ -67,5 +67,6 @@ public class PlayerAimSwordState : PlayerState
         player.IsAiming = false;
         player.HasThrown = true;
         playerStats.DecreaseStamina(skillManager.SwordSkill.SkillStaminaAmount);
+        soundManager.PlayThrowSwordSound(player.transform.position);
     }
 }

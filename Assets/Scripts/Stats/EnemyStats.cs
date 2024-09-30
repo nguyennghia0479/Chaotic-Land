@@ -23,7 +23,11 @@ public class EnemyStats : EntityStats
     /// <param name="_targetStats">Target's be taken damage</param>
     public override void DoPhysicalDamage(EntityStats _targetStats)
     {
-        if (CanTargetEvadeAttack(_targetStats)) return;
+        if (_targetStats == null || _targetStats.Entity.IsDead || CanTargetEvadeAttack(_targetStats))
+        {
+            PlayMissAttackSound();
+            return;
+        }
 
         float totalDamage = physicsDamage.GetValueWithModify();
         if (enemy.IsCriticalAttack)
@@ -33,6 +37,7 @@ public class EnemyStats : EntityStats
 
         totalDamage = CheckTargetArmor(_targetStats, totalDamage);
         _targetStats.TakeDamage(transform, totalDamage, enemy.IsCriticalAttack);
+        PlayHitAttackSound();
     }
 
     /// <summary>

@@ -27,15 +27,19 @@ public class EnemyAnimator : MonoBehaviour
     /// </remarks>
     private void AnimationAttack()
     {
+        bool isHit = false;
         Collider2D[] colliders = Physics2D.OverlapCircleAll(enemy.AttackCheck.position, enemy.AttackRadius);
 
         foreach (Collider2D collider in colliders)
         {
             if (collider.TryGetComponent(out PlayerStats player))
             {
+                isHit = true;
                 enemy.Stats.DoPhysicalDamage(player);
             }
         }
+
+        PlayAttackSound(isHit);
     }
 
     /// <summary>
@@ -52,5 +56,16 @@ public class EnemyAnimator : MonoBehaviour
     private void AnimationAttackFinished()
     {
         enemy.AnimationAttackFinished();
+    }
+
+    /// <summary>
+    /// Handles to play attack sound.
+    /// </summary>
+    /// <param name="_hit"></param>
+    private void PlayAttackSound(bool _hit)
+    {
+        if (_hit) return;
+
+        enemy.SoundManager.PlayAttackSound(transform.position);
     }
 }

@@ -32,6 +32,7 @@ public class CloneSkillAnimator : MonoBehaviour
     /// </remarks>
     private void AnimationAttack()
     {
+        bool isHit = false;
         Collider2D[] colliders = Physics2D.OverlapCircleAll(attackCheck.position, attackRadius);
 
         foreach (Collider2D collider in colliders)
@@ -40,6 +41,7 @@ public class CloneSkillAnimator : MonoBehaviour
             {
                 if (enemy.GetComponent<Enemy>().IsDead) return;
 
+                isHit = true;
                 player.GetComponent<PlayerStats>().CloneAttackDamage(enemy, cloneSkillController.CloneDamageRate);
 
                 if (cloneSkillController.IsMultipleClonesUnlocked && Utils.RandomChance(cloneSkillController.ChanceToMulti) && !HasMaxNumberOfClone())
@@ -49,6 +51,8 @@ public class CloneSkillAnimator : MonoBehaviour
                 }
             }
         }
+
+        PlayAttackSound(isHit);
     }
 
     /// <summary>
@@ -60,5 +64,23 @@ public class CloneSkillAnimator : MonoBehaviour
         CloneSkillController[] clones = FindObjectsOfType<CloneSkillController>();
 
         return clones.Length >= cloneSkillController.MaxClones;
+    }
+
+    /// <summary>
+    /// Handles to play attack sound.
+    /// </summary>
+    /// <param name="_isHit"></param>
+    private void PlayAttackSound(bool _isHit)
+    {
+        if (SoundManager.Instance == null) return;
+
+        if (_isHit)
+        {
+            SoundManager.Instance.PlayHitAttackSound(transform.position);
+        }
+        else
+        {
+            SoundManager.Instance.PlayAttackSound(transform.position);
+        }
     }
 }

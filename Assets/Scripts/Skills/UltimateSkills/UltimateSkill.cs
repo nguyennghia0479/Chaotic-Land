@@ -58,9 +58,9 @@ public class UltimateSkill : Skill
         type = _type;
         isUltimateUnlocked = _isUltimateUnlocked;
         skillStaminaAmount = _skillStaminaAmount;
+        cooldown = _cooldown;
         if (_isSkillReseted)
         {
-            cooldown = _cooldown;
             cooldownTimer = _cooldown;
             GameManager.Instance.InGameUI.UltimateImg.fillAmount = 1;
         }

@@ -18,6 +18,8 @@ public class PlayerAirState : PlayerState
     public override void Exit()
     {
         base.Exit();
+
+        soundManager.PlayJumpLandSound(player.transform.position);
     }
 
     public override void FixedUpdate()

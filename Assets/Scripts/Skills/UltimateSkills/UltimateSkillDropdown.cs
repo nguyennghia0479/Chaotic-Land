@@ -136,7 +136,7 @@ public class UltimateSkillDropdown : MonoBehaviour, ISaveManager
     /// <param name="_gameData"></param>
     public void SaveData(ref GameData _gameData)
     {
-        if (ultimateDictionaries == null) return;
+        if (_gameData == null || ultimateDictionaries == null) return;
 
         _gameData.ultimateIdSelected = currentIndex;
         _gameData.ultimateTypes.Clear();
@@ -152,6 +152,8 @@ public class UltimateSkillDropdown : MonoBehaviour, ISaveManager
     /// <param name="_gameData"></param>
     public void LoadData(GameData _gameData)
     {
+        if (_gameData == null) return;
+
         gameData = _gameData;
         if (gameData.ultimateTypes.Count > 0)
         {

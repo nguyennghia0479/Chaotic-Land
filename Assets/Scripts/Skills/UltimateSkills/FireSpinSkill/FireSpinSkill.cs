@@ -81,6 +81,18 @@ public class FireSpinSkill : Skill
         GameObject newFireSpin = Instantiate(fireSpinPrefab, fireSpinPos, Quaternion.identity);
         newFireSpin.GetComponent<FireSpinSkillController>().SetupFireSpin(this);
         player.AssignFireSpin(newFireSpin);
+        PlayFireSpinSound();
+    }
+
+    /// <summary>
+    /// Handles to play fire spin sound.
+    /// </summary>
+    private void PlayFireSpinSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayFireSpinSound(transform.position);
+        }
     }
 
     #region Getter

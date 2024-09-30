@@ -117,6 +117,7 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     private void InvokeOpenTab()
     {
+        PlayOpenPanelSound();
         isOpenTab = !isOpenTab;
         OnOpenTab?.Invoke(this, new OnOpenTabEventArgs
         {
@@ -155,6 +156,7 @@ public class GameManager : Singleton<GameManager>
         {
             if (checkpoint.IsNearCheckpoint && checkpoint.IsBurning)
             {
+                PlayOpenPanelSound();
                 isOpenMap = !isOpenMap;
                 OnOpenMap?.Invoke(this, new OnOpenMapEventArgs
                 {
@@ -198,6 +200,17 @@ public class GameManager : Singleton<GameManager>
         {
             tooltipUI.SetDefaultPosition();
             tooltipUI.gameObject.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// Handles to play open panel sound.
+    /// </summary>
+    private void PlayOpenPanelSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayOpenPanelSound();
         }
     }
 

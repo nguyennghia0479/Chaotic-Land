@@ -67,6 +67,18 @@ public class Checkpoint : MonoBehaviour
         icon.gameObject.SetActive(true);
         burnText.gameObject.SetActive(true);
         unBurnText.gameObject.SetActive(false);
+        PlayLightTorchSound();
+    }
+
+    /// <summary>
+    /// Handles to play light torch sound.
+    /// </summary>
+    private void PlayLightTorchSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayLightTorchSound(transform.position);
+        }
     }
 
     public bool IsBurning

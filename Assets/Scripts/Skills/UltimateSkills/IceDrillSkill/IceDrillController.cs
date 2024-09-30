@@ -25,6 +25,7 @@ public class IceDrillController : MonoBehaviour
         IceDrillMovement();
     }
 
+    #region Ice drill skill
     /// <summary>
     /// Handles to setup ice drill info.
     /// </summary>
@@ -66,8 +67,11 @@ public class IceDrillController : MonoBehaviour
         animator.SetTrigger(HIT);
         playerStats.DoMagicDamage(enemyStats, AilmentType.None);
         enemyStats.GetComponent<Enemy>().FreezingEffect(freezingDuration);
+        PlayIceDrillHitSound();
     }
+    #endregion
 
+    #region Animation methods
     /// <summary>
     /// Handles to destroy when finish animation.
     /// </summary>
@@ -84,5 +88,31 @@ public class IceDrillController : MonoBehaviour
         Transform spawnPos = enemyStats.GetComponent<Enemy>().GroundCheck.transform;
         GameObject newIceBerg = Instantiate(iceBergPrefab, spawnPos.position, Quaternion.identity);
         newIceBerg.GetComponentInChildren<IceBergSkillController>().SetupIceBerg(playerStats, enemyStats);
+        PlayIceBergeSound();
     }
+    #endregion
+
+    #region Play sound
+    /// <summary>
+    /// Handles to play ice drill hit  sound.
+    /// </summary>
+    private void PlayIceDrillHitSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayIceDrillHitSound(transform.position);
+        }
+    }
+
+    /// <summary>
+    /// Handles to play ice berge sound.
+    /// </summary>
+    private void PlayIceBergeSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayIceBergeSound(transform.position);
+        }
+    }
+    #endregion
 }

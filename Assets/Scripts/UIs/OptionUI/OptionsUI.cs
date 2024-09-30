@@ -29,27 +29,30 @@ public class OptionsUI : MonoBehaviour
     {
         audioBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             SwitchToOptionMenu(OptionMenu.Audio);
         });
 
         inputBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             SwitchToOptionMenu(OptionMenu.Input);
         });
 
         othersBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             SwitchToOptionMenu(OptionMenu.Others);
         });
 
         closeBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             HideOptionsUI();
             if (gamePausedUI != null)
             {
                 gamePausedUI.ShowGamePausedUI();
             }
-
         });
     }
 
@@ -135,4 +138,15 @@ public class OptionsUI : MonoBehaviour
         gameObject.SetActive(false);
     }
     #endregion
+
+    /// <summary>
+    /// Handles to play menu sound.
+    /// </summary>
+    private void PlayMenuSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayMenuSound();
+        }
+    }
 }

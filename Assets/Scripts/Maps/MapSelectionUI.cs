@@ -19,6 +19,7 @@ public class MapSelectionUI : MonoBehaviour
         {
             playBtn.onClick.AddListener(() =>
             {
+                PlayMenuSound();
                 LoadMap();
             });
         }
@@ -28,6 +29,7 @@ public class MapSelectionUI : MonoBehaviour
             closeBtn.onClick.AddListener(() =>
             {
                 GameManager.Instance.CloseMapSelection();
+                PlayMenuSound();
                 HideMapSelectionUI();
             });
         }
@@ -107,4 +109,15 @@ public class MapSelectionUI : MonoBehaviour
         levelManager.LoadScene(mapSceneName);
     }
     #endregion
+
+    /// <summary>
+    /// Handles to play menu sound.
+    /// </summary>
+    private void PlayMenuSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayMenuSound();
+        }
+    }
 }

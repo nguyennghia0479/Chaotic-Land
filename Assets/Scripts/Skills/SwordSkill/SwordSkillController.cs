@@ -17,6 +17,9 @@ public class SwordSkillController : MonoBehaviour
     private float swordAliveTimer;
     private bool isImmobilizedUnlocked;
     private bool isVulnerableUnlocked;
+    private float spinSwordTimer;
+    private readonly float spinSwordTimerMax = 2;
+    private AudioSource spinSwordAudio;
 
     [Header("Bounce sword info")]
     private bool isBounceSword;
@@ -87,8 +90,10 @@ public class SwordSkillController : MonoBehaviour
     /// </remarks>
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        bool hitEnemy = false;
         if (collision.TryGetComponent(out Enemy enemy))
         {
+            hitEnemy = true;
             SetTargetForBounceSwordSkill();
 
             if (!isSpinSword)
@@ -100,6 +105,7 @@ public class SwordSkillController : MonoBehaviour
         }
 
         HitCollision(collision);
+        PlayHitTargetSound(hitEnemy);
     }
 
     #region Setup sword
@@ -205,9 +211,13 @@ public class SwordSkillController : MonoBehaviour
             transform.position = Vector2.MoveTowards(transform.position, player.transform.position, recallSpeed * Time.deltaTime);
             if (Vector2.Distance(transform.position, player.transform.position) < 1)
             {
+                StopPlaySound();
                 isRecalling = false;
                 player.CatchSword();
+                return;
             }
+
+            PlaySpinSwordSound();
         }
     }
     #endregion
@@ -394,4 +404,46 @@ public class SwordSkillController : MonoBehaviour
 
         player.Stats.DoPhysicalDamage(_enemy.Stats);
     }
+
+    #region Play sound
+    /// <summary>
+    /// Handles to play hit target sound.
+    /// </summary>
+    /// <param name="_isHitEnemy"></param>
+    private void PlayHitTargetSound(bool _isHitEnemy)
+    {
+        if (!_isHitEnemy && SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayAttackSound(transform.position);
+        }
+    }
+
+    /// <summary>
+    /// Handles to play spin sword sound.
+    /// </summary>
+    private void PlaySpinSwordSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            spinSwordTimer -= Time.deltaTime;
+            if (spinSwordTimer < 0)
+            {
+                spinSwordTimer = spinSwordTimerMax;
+                SoundManager.Instance.PlaySpinSwordSound(transform.position);
+                spinSwordAudio = SoundManager.Instance.AudioSource;
+            } 
+        }
+    }
+
+    /// <summary>
+    /// Handles to stop play sound.
+    /// </summary>
+    private void StopPlaySound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.StopPlaySound(spinSwordAudio);
+        }
+    }
+    #endregion
 }

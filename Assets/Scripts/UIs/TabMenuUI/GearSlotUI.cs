@@ -22,6 +22,7 @@ public class GearSlotUI : ItemSlotUI
             {
                 if (CanUnequipGear())
                 {
+                    PlayUnequipItemSound();
                     slotSelected.gameObject.SetActive(false);
                     itemAction.gameObject.SetActive(false);
                 }
@@ -41,6 +42,7 @@ public class GearSlotUI : ItemSlotUI
                 if (CanUnequipGear())
                 {
                     InventoryManager.Instance.RemoveItem(itemDrop);
+                    PlayDropItemSound();
                     slotSelected.gameObject.SetActive(false);
                     itemAction.gameObject.SetActive(false);
                 }
@@ -68,6 +70,17 @@ public class GearSlotUI : ItemSlotUI
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Handle sto play unequip item sound.
+    /// </summary>
+    private void PlayUnequipItemSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayUnequipItemSound();
+        }
     }
 
     public GearType SlotType

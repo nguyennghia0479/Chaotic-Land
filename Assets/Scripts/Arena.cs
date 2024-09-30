@@ -23,6 +23,7 @@ public class Arena : MonoBehaviour
             isBossFight = true;
             enemy.BossInfoUI.SetupBossInfo(enemyStats, isBossFight);
             confinerController.EnterArena();
+            MusicManager.Instance.TooglePauseMusic();
         }
     }
 
@@ -45,6 +46,7 @@ public class Arena : MonoBehaviour
         isBossFight = false;
         enemy.BossInfoUI.SetupBossInfo(null, isBossFight);
         confinerController.ExitArena();
+        MusicManager.Instance.TooglePauseMusic();
         Destroy(gameObject);
     }
 }

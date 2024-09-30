@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerState
 {
+    #region Variables
     protected Player player;
     protected PlayerStateMachine stateMachine;
     protected PlayerController controller;
@@ -11,6 +12,7 @@ public class PlayerState
     protected Rigidbody2D rb;
     protected Animator anim;
     protected SkillManager skillManager;
+    protected SoundManager soundManager;
     protected float stateTimer;
     protected float xInput;
     protected float yInput;
@@ -19,6 +21,7 @@ public class PlayerState
     private readonly string animName;
 
     private const string Y_VELOCITY = "yVelocity";
+    #endregion
 
     public PlayerState(Player _player, PlayerStateMachine _stateMachine, string _animName)
     {
@@ -34,6 +37,7 @@ public class PlayerState
         controller = player.Controller;
         playerStats = player.PlayerStats;
         skillManager = player.SkillManager;
+        soundManager = player.SoundManager;
         player.Animator.SetBool(animName, true);
         triggerCalled = false;
     }

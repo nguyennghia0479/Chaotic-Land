@@ -18,6 +18,7 @@ public class CraftSlotUI : ItemSlotUI
         if (tabMenu == null || tabMenu.CraftUI == null) return;
 
         tabMenu.CraftUI.SetupCraftUI(item.itemSO as GearSO);
+        PlayMenuSound();
     }
 
     /// <summary>
@@ -31,5 +32,16 @@ public class CraftSlotUI : ItemSlotUI
         item.itemSO = _itemSO;
         itemIcon.sprite = _itemSO.sprite;
         itemText.text = _itemSO.name;
+    }
+
+    /// <summary>
+    /// Handles to play menu sound.
+    /// </summary>
+    private void PlayMenuSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayMenuSound();
+        }
     }
 }

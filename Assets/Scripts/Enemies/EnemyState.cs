@@ -8,6 +8,7 @@ public class EnemyState
     protected EnemyStateMachine stateMachine;
     protected Rigidbody2D rb;
     protected Animator anim;
+    protected SoundManager soundManager;
     protected float stateTimer;
     protected bool triggerCalled;
     protected float lastTimeAttacked;
@@ -25,6 +26,7 @@ public class EnemyState
         rb = enemy.Rb;
         anim = enemy.Animator;
         enemy.Animator.SetBool(animName, true);
+        soundManager = enemy.SoundManager;
         triggerCalled = false;
     }
 
