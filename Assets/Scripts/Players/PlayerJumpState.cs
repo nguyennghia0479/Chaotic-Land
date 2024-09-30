@@ -19,6 +19,7 @@ public class PlayerJumpState : PlayerState
         }
 
         player.AddForce(xVelocity);
+        soundManager.PlayJumpSound(player.transform.position);
     }
 
     public override void Exit()

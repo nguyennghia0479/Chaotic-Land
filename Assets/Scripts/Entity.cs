@@ -26,6 +26,7 @@ public class Entity : MonoBehaviour
     protected KnockBack knockBack;
     protected EntityFX fx;
     protected EntityStats stats;
+    protected SoundManager soundManager;
     protected int facingDir = 1;
     protected bool isFacingRight = true;
     protected bool isBlocking;
@@ -46,6 +47,7 @@ public class Entity : MonoBehaviour
         knockBack = GetComponent<KnockBack>();
         fx = GetComponent<EntityFX>();
         stats = GetComponent<EntityStats>();
+        soundManager = SoundManager.Instance;
     }
 
     protected virtual void Update()
@@ -279,6 +281,11 @@ public class Entity : MonoBehaviour
     public EntityStats Stats
     {
         get { return stats; }
+    }
+
+    public SoundManager SoundManager
+    {
+        get { return soundManager; }
     }
 
     public bool IsBlocking

@@ -30,6 +30,7 @@ public class PlayerAnimator : MonoBehaviour
     /// </remarks>
     private void AnimationAttack()
     {
+        bool hit = false;
         Collider2D[] colliders = Physics2D.OverlapCircleAll(player.AttackCheck.position, player.AttackRadius, enemyLayerMask);
 
         if (colliders.Length > 0)
@@ -43,6 +44,7 @@ public class PlayerAnimator : MonoBehaviour
             {
                 if (enemy.GetComponent<Enemy>().IsDead) return;
 
+                hit = true;
                 player.Stats.DoPhysicalDamage(enemy);
                 GearSO weaponGear = player.InventoryManager.GetGearByGearType(GearType.Weapon);
                 if (weaponGear != null)
@@ -51,6 +53,8 @@ public class PlayerAnimator : MonoBehaviour
                 }
             }
         }
+
+        PlayAttackSound(hit);
     }
 
     /// <summary>
@@ -67,5 +71,16 @@ public class PlayerAnimator : MonoBehaviour
     private void AnimationPerformUltimateState()
     {
         player.SkillManager.UltimateSkill.PerformSkill();
+    }
+
+    /// <summary>
+    /// Handles to play attack sound.
+    /// </summary>
+    /// <param name="_hit"></param>
+    private void PlayAttackSound(bool _hit)
+    {
+        if (_hit) return;
+
+        player.SoundManager.PlayAttackSound(transform.position);
     }
 }

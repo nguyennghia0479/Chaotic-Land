@@ -98,6 +98,8 @@ public class PlayerManager : Singleton<PlayerManager>, ISaveManager
 
     public void SaveData(ref GameData _gameData)
     {
+        if (_gameData == null) return;
+
         _gameData.currentExp = currentExp;
         _gameData.currentLevel = currentLevel;
         _gameData.currentPoint = currentPoint;
@@ -105,6 +107,8 @@ public class PlayerManager : Singleton<PlayerManager>, ISaveManager
 
     public void LoadData(GameData _gameData)
     {
+        if (_gameData == null) return;
+
         currentLevel = _gameData.currentLevel;
         currentExp = _gameData.currentExp;
         currentPoint = _gameData.currentPoint;

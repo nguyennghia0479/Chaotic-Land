@@ -127,7 +127,7 @@ public class SwordSkillDropdown : MonoBehaviour, ISaveManager
     /// <param name="_gameData"></param>
     public void SaveData(ref GameData _gameData)
     {
-        if (swordSkillDictionaries == null) return;
+        if (_gameData == null || swordSkillDictionaries == null) return;
 
         _gameData.swordIdSelected = currentIndex;
         _gameData.swordTypes.Clear();
@@ -143,6 +143,8 @@ public class SwordSkillDropdown : MonoBehaviour, ISaveManager
     /// <param name="_gameData"></param>
     public void LoadData(GameData _gameData)
     {
+        if (_gameData == null) return;
+
         gameData = _gameData;
         if (gameData.swordTypes.Count > 0)
         {

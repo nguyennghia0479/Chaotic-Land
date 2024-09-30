@@ -40,6 +40,7 @@ public class CraftListUI : MonoBehaviour, IPointerDownHandler
         icon.color = Color.white;
         tabMenu.CraftUI.ClearCraftPanel();
         SetupCraftList();
+        PlayMenuSound();
     }
 
     /// <summary>
@@ -75,6 +76,17 @@ public class CraftListUI : MonoBehaviour, IPointerDownHandler
 
             craftList.menuBG.color = inactiveColor;
             craftList.icon.color = inactiveColor;
+        }
+    }
+
+    /// <summary>
+    /// Handles to play menu sound.
+    /// </summary>
+    private void PlayMenuSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayMenuSound();
         }
     }
 }

@@ -37,6 +37,7 @@ public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             if (timer > unlockSkillTime)
             {
                 UnlockedSkill();
+                PlayUnlockSkillSound();
             }
         }
     }
@@ -69,7 +70,11 @@ public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     /// </summary>
     private void HoldingButton()
     {
-        if (isUnlocked || !CanUnlockedSkill() || skillUnlockedValue > PlayerManager.Instance.CurrentExp) return;
+        if (isUnlocked || !CanUnlockedSkill() || skillUnlockedValue > PlayerManager.Instance.CurrentExp)
+        {
+            PlayDenySound();
+            return;
+        }
 
         isHolding = true;
         unlockSkillTimer = Time.unscaledTime;
@@ -150,12 +155,15 @@ public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         skillTreeTooltip.HideSkillTreeTooltip();
     }
 
+    #region Save and Load
     /// <summary>
     /// Handles to save skill tree.
     /// </summary>
     /// <param name="_gameData"></param>
     public void SaveData(ref GameData _gameData)
     {
+        if (_gameData == null) return;
+
         if (_gameData.skillTrees.TryGetValue(skillName, out _))
         {
             _gameData.skillTrees.Remove(skillName);
@@ -173,6 +181,8 @@ public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     /// <param name="_gameData"></param>
     public void LoadData(GameData _gameData)
     {
+        if (_gameData == null) return;
+
         if (_gameData.skillTrees.TryGetValue(skillName, out bool _isUnlocked))
         {
             isUnlocked = _isUnlocked;
@@ -185,6 +195,31 @@ public class SkillTreeUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             OnUnlocked?.Invoke(this, EventArgs.Empty);
         }
     }
+    #endregion
+
+    #region Play sound
+    /// <summary>
+    /// Handles to play deny sound.
+    /// </summary>
+    private void PlayDenySound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayDenySound();
+        }
+    }
+
+    /// <summary>
+    /// Handles to play unlock skill sound.
+    /// </summary>
+    public void PlayUnlockSkillSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayUpgradeSound();
+        }
+    }
+    #endregion
 
     public bool IsUnlocked
     {

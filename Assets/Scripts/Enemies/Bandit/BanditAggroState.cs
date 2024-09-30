@@ -11,6 +11,8 @@ public class BanditAggroState : EnemyState
     private float attackCooldown;
     private readonly int aggroTime = 3;
     private readonly int aggroDistance = 5;
+    private float footstepTimer;
+    private readonly float footstepTimerMax = .4f;
 
     private const string X_VELOCITY = "xVelocity";
 
@@ -141,9 +143,25 @@ public class BanditAggroState : EnemyState
         {
             facingDir = (player.transform.position.x < bandit.transform.position.x) ? -1 : 1;
             if (bandit.IsWallDetected())
+            {
                 bandit.SetZeroVelocity();
+            }
             else
+            {
                 bandit.SetVelocityWithFlip(bandit.AggroSpeed * facingDir, rb.velocity.y);
+                PlayFootstepsSound();
+            }
+
+        }
+    }
+
+    private void PlayFootstepsSound()
+    {
+        footstepTimer -= Time.deltaTime;
+        if (footstepTimer < 0)
+        {
+            footstepTimer = footstepTimerMax;
+            soundManager.PlayFootstepSound(enemy.transform.position);
         }
     }
 }

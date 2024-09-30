@@ -19,7 +19,10 @@ public class CraftUI : MonoBehaviour
     {
         craftBtn.onClick.AddListener(() =>
         {
-            InventoryManager.Instance.CraftItem(craftItem);
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.CraftItem(craftItem);
+            }
         });
     }
 
@@ -34,9 +37,9 @@ public class CraftUI : MonoBehaviour
         for (int i = 0; i < _item.craftingMaterials.Count; i++)
         {
             materials[i].color = Color.white;
-            ItemSlotUI material =  materials[i].GetComponentInChildren<ItemSlotUI>();
+            ItemSlotUI material = materials[i].GetComponentInChildren<ItemSlotUI>();
             material.itemIcon.sprite = _item.craftingMaterials[i].itemSO.sprite;
-            material.itemIcon.color = Color.white; 
+            material.itemIcon.color = Color.white;
             material.itemText.text = _item.craftingMaterials[i].GetQuantity().ToString();
             material.item.itemSO = _item;
             material.itemTooltip = materialTooltip;

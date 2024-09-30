@@ -22,6 +22,10 @@ public class CharacterUI : MonoBehaviour
         confirmBtn.onClick.AddListener(() =>
         {
             ConfirmUpgradeStats();
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlayUpgradeSound();
+            }
         });
     }
 
@@ -119,7 +123,7 @@ public class CharacterUI : MonoBehaviour
                 attribute.UpgradeStats();
             }
         }
-                
+
         UpdateStats();
         playerManager.UpdatePoint();
         pointText.text = playerManager.CurrentPoint.ToString();

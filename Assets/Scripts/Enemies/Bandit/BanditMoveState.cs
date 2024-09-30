@@ -5,6 +5,8 @@ using UnityEngine;
 public class BanditMoveState : BanditGroundedState
 {
     private float slopedSpeed = 0;
+    private float footstepTimer;
+    private readonly float footstepTimerMax = .5f;
 
     public BanditMoveState(Enemy _enemy, EnemyStateMachine _stateMachine, string _animName, Bandit _bandit) : base(_enemy, _stateMachine, _animName, _bandit)
     {
@@ -26,6 +28,7 @@ public class BanditMoveState : BanditGroundedState
 
         int moveSpeed = Mathf.CeilToInt(bandit.MoveSpeed + bandit.MoveSpeed * slopedSpeed);
         bandit.SetVelocityWithFlip(moveSpeed * bandit.FacingDir, rb.velocity.y);
+        PlayFootstepsSound();
     }
 
     public override void Update()
@@ -40,6 +43,16 @@ public class BanditMoveState : BanditGroundedState
         {
             bandit.Flip();
             stateMachine.Changestate(bandit.IdleState);
+        }
+    }
+
+    private void PlayFootstepsSound()
+    {
+        footstepTimer -= Time.deltaTime;
+        if (footstepTimer < 0)
+        {
+            footstepTimer = footstepTimerMax;
+            soundManager.PlayFootstepSound(enemy.transform.position);
         }
     }
 }

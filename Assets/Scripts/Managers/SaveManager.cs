@@ -59,6 +59,16 @@ public class SaveManager : Singleton<SaveManager>
     }
 
     /// <summary>
+    /// Handles to save game.
+    /// </summary>
+    /// <param name="_saveManager"></param>
+    public void SaveGame(ISaveManager _saveManager)
+    {
+        _saveManager.SaveData(ref gameData);
+        dataHandler.SaveData(gameData);
+    }
+
+    /// <summary>
     /// Handles to delete save game.
     /// </summary>
     [ContextMenu("Delete save file")]

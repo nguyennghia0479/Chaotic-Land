@@ -44,6 +44,9 @@ public class GameData
     public int ultimateIdSelected;
     public Dictionary<int, UltimateType> ultimateTypes;
 
+    [Header("Setting info")]
+    public Dictionary<string, float> volumes;
+
     public GameData()
     {
         currentLevel = 1;
@@ -63,5 +66,6 @@ public class GameData
         swordTypes = new Dictionary<int, SwordType>();
         ultimateIdSelected = 0;
         ultimateTypes = new Dictionary<int, UltimateType>();
+        volumes = new Dictionary<string, float>();
     }
 }

@@ -101,6 +101,8 @@ public class PlayerStats : EntityStats, ISaveManager
     /// <param name="_gameData"></param>
     public void SaveData(ref GameData _gameData)
     {
+        if (_gameData == null) return;
+
         _gameData.vitality = vitality.GetValueWithModify();
         _gameData.endurance = endurance.GetValueWithModify();
         _gameData.strength = strength.GetValueWithModify();
@@ -115,6 +117,8 @@ public class PlayerStats : EntityStats, ISaveManager
     /// <param name="_gameData"></param>
     public void LoadData(GameData _gameData)
     {
+        if (_gameData == null) return;
+
         vitality.UpdateBaseValue(_gameData.vitality);
         endurance.UpdateBaseValue(_gameData.endurance);
         strength.UpdateBaseValue(_gameData.strength);

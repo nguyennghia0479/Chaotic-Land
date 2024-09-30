@@ -160,6 +160,7 @@ public class Player : Entity
     /// </summary>
     public override void SetupDeath()
     {
+        soundManager.PlayDeathSound(transform.position);
         stateMachine.ChangeState(DeathState);
         isDead = true;
         OnDie?.Invoke(this, EventArgs.Empty);
@@ -196,6 +197,7 @@ public class Player : Entity
     public void CatchSword()
     {
         stateMachine.ChangeState(catchSwordState);
+        soundManager.PlayCatchSwordSound(transform.position);
         Destroy(sword);
     }
 
@@ -340,6 +342,7 @@ public class Player : Entity
         if (isDead || gameManager.IsGamePaused) return;
 
         InventoryManager.UseFlask();
+        soundManager.PlayUsePotionSound(transform.position);
     }
     #endregion
 

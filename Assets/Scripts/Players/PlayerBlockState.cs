@@ -7,6 +7,7 @@ public class PlayerBlockState : PlayerState
     private readonly float timeToParry = .2f;
     private const string COUNTER_SUCCESS = "CounterSuccess";
     private bool hasCreateClone;
+    private bool hasPlaySound;
 
     public PlayerBlockState(Player _player, PlayerStateMachine _stateMachine, string _animName) : base(_player, _stateMachine, _animName)
     {
@@ -20,6 +21,7 @@ public class PlayerBlockState : PlayerState
         stateTimer = timeToParry;
         anim.SetBool(COUNTER_SUCCESS, false); // Reset to block animation.
         hasCreateClone = false;
+        hasPlaySound = false;
     }
 
     public override void Exit()
@@ -67,6 +69,7 @@ public class PlayerBlockState : PlayerState
                 {
                     anim.SetBool(COUNTER_SUCCESS, true);
                     skillManager.ParrySkill.RestoreHealth();
+                    PlayParrySound();
 
                     if (!hasCreateClone)
                     {
@@ -75,6 +78,18 @@ public class PlayerBlockState : PlayerState
                     }
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Handles to play parry sound.
+    /// </summary>
+    private void PlayParrySound()
+    {
+        if (SoundManager.Instance != null && !hasPlaySound)
+        {
+            hasPlaySound = true;
+            SoundManager.Instance.PlayParrySound(player.transform.position);
         }
     }
 }

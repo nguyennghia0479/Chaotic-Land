@@ -195,11 +195,12 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler, IPointerEnterHandl
         {
             actionBtn.onClick.AddListener(() =>
             {
-                if (item == null || item.itemSO == null) return;
+                if (item == null || item.itemSO == null || InventoryManager.Instance == null) return;
 
                 if (item.itemSO.type == ItemType.Gear)
                 {
                     InventoryManager.Instance.EquipGear(item as InventoryItem);
+                    PlayEquipItemSound();
                     itemTooltip.HideItemTooltip();
                 }
 
@@ -218,12 +219,37 @@ public class ItemSlotUI : MonoBehaviour, IPointerDownHandler, IPointerEnterHandl
         {
             dropBtn.onClick.AddListener(() =>
             {
-                if (item == null || item.itemSO == null) return;
+                if (item == null || item.itemSO == null || InventoryManager.Instance == null) return;
 
                 InventoryManager.Instance.RemoveItem(item);
+                PlayDropItemSound();
                 slotSelected.gameObject.SetActive(false);
                 itemAction.gameObject.SetActive(false);
             });
+        }
+    }
+    #endregion
+
+    #region Play sound
+    /// <summary>
+    /// Handles to drop item sound.
+    /// </summary>
+    protected void PlayDropItemSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayDropItemSound();
+        }
+    }
+
+    /// <summary>
+    /// Handles to equip item sound.
+    /// </summary>
+    private void PlayEquipItemSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayEquipItemSound();
         }
     }
     #endregion

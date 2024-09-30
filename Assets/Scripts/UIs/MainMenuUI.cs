@@ -17,23 +17,28 @@ public class MainMenuUI : MonoBehaviour
     {
         continueBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             ContinueGame();
         });
 
         newGameBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             NewGame();
         });
 
         optionsBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             optionsUI.ShowOptionsUI();
         });
 
         quitBtn.onClick.AddListener(() =>
         {
+            PlayMenuSound();
             Application.Quit();
         });
+
     }
 
     private void Start()
@@ -70,5 +75,16 @@ public class MainMenuUI : MonoBehaviour
         }
 
         levelManager.LoadNewGame();
+    }
+
+    /// <summary>
+    /// Handles to play menu sound.
+    /// </summary>
+    private void PlayMenuSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayMenuSound();
+        }
     }
 }

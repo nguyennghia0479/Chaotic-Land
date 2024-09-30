@@ -28,11 +28,13 @@ public class AttributeUI : MonoBehaviour
         decreaseBtn.onClick.AddListener(() =>
         {
             DecreaseButton();
+            PlayAttributeSound();
         });
 
         increaseBtn.onClick.AddListener(() =>
         {
             IncreaseButton();
+            PlayAttributeSound();
         });
     }
 
@@ -138,6 +140,17 @@ public class AttributeUI : MonoBehaviour
         foreach (StatUI statUI in referenceStatUIs)
         {
             statUI.UpdateStatModify(point);
+        }
+    }
+
+    /// <summary>
+    /// Handles to play attribute sound.
+    /// </summary>
+    private void PlayAttributeSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayAttributeSound();
         }
     }
 

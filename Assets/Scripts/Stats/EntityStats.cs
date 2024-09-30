@@ -128,7 +128,11 @@ public class EntityStats : MonoBehaviour
     /// <param name="_targetStats"></param>
     public virtual void DoPhysicalDamage(EntityStats _targetStats)
     {
-        if (_targetStats == null || _targetStats.entity.IsDead || CanTargetEvadeAttack(_targetStats)) return;
+        if (_targetStats == null || _targetStats.entity.IsDead || CanTargetEvadeAttack(_targetStats))
+        {
+            PlayMissAttackSound();
+            return;
+        }
 
         float totalDamage = physicsDamage.GetValueWithModify();
         bool canCrit = CanDoCritDamage();
@@ -140,6 +144,7 @@ public class EntityStats : MonoBehaviour
 
         totalDamage = CheckTargetArmor(_targetStats, totalDamage);
         _targetStats.TakeDamage(transform, totalDamage, canCrit);
+        PlayHitAttackSound();
     }
 
     /// <summary>
@@ -172,6 +177,8 @@ public class EntityStats : MonoBehaviour
     /// <param name="_damage"></param>
     protected virtual void DecreaseHealth(float _damage)
     {
+        if (entity.IsDead) return;
+
         if (isVulnerable && vulnerableRate > 0)
         {
             _damage = Mathf.RoundToInt(_damage * vulnerableRate);
@@ -481,6 +488,30 @@ public class EntityStats : MonoBehaviour
     }
     #endregion
 
+    #region Play sound
+    /// <summary>
+    /// Handles to play miss attack sound.
+    /// </summary>
+    protected void PlayMissAttackSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayMissAttackSound(transform.position);
+        }
+    }
+
+    /// <summary>
+    /// Handles to play hit attach sound.
+    /// </summary>
+    protected void PlayHitAttackSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayHitAttackSound(transform.position);
+        }
+    }
+    #endregion
+
     public float CurrentHealth
     {
         get { return currentHealth; }
@@ -489,5 +520,10 @@ public class EntityStats : MonoBehaviour
     public float CurrentStamina
     {
         get { return currentStamina; }
+    }
+
+    public Entity Entity
+    {
+        get { return entity; }
     }
 }
