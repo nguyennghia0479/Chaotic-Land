@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BanditDeathState : EnemyState
 {
-    private Bandit bandit;
+    private readonly Bandit bandit;
     private bool isPlayDeathFX;
 
     public BanditDeathState(Enemy _enemy, EnemyStateMachine _stateMachine, string _animName, Bandit _bandit) : base(_enemy, _stateMachine, _animName)

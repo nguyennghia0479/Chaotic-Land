@@ -11,7 +11,8 @@ public class EnemyStatsUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private Slider healthSlider;
 
-    private EnemyStats stats;
+    private EnemyStats enemyStats;
+    private HealthBarShrinkUI healthBarShrink;
 
     /// <summary>
     /// Handles to subscribe events.
@@ -24,7 +25,7 @@ public class EnemyStatsUI : MonoBehaviour
 
             if (entity.TryGetComponent(out EnemyStats stats))
             {
-                this.stats = stats;
+                enemyStats = stats;
                 UpdateLevelUI();
                 stats.OnInitHealth += EntityStats_OnInitHealth;
                 stats.OnHealthChange += EntityStats_OnHealthChange;
@@ -43,11 +44,16 @@ public class EnemyStatsUI : MonoBehaviour
             entity.OnFlipped -= Entity_OnFlipped;
         }
 
-        if (stats != null)
+        if (enemyStats != null)
         {
-            stats.OnInitHealth -= EntityStats_OnInitHealth;
-            stats.OnHealthChange -= EntityStats_OnHealthChange;
+            enemyStats.OnInitHealth -= EntityStats_OnInitHealth;
+            enemyStats.OnHealthChange -= EntityStats_OnHealthChange;
         }
+    }
+
+    private void Start()
+    {
+        healthBarShrink = GetComponentInChildren<HealthBarShrinkUI>();
     }
 
     /// <summary>
@@ -55,7 +61,7 @@ public class EnemyStatsUI : MonoBehaviour
     /// </summary>
     public void UpdateLevelUI()
     {
-        levelText.text = stats.Level.ToString();
+        levelText.text = enemyStats.Level.ToString();
     }
 
     /// <summary>
@@ -63,7 +69,7 @@ public class EnemyStatsUI : MonoBehaviour
     /// </summary>
     private void Entity_OnFlipped(object sender, System.EventArgs e)
     {
-        rectTransform.Rotate(0, -180, 0);
+        transform.Rotate(0, -180, 0);
     }
 
     /// <summary>
@@ -71,8 +77,8 @@ public class EnemyStatsUI : MonoBehaviour
     /// </summary>
     private void EntityStats_OnInitHealth(object sender, System.EventArgs e)
     {
-        healthSlider.maxValue = stats.CurrentHealth;
-        healthSlider.value = stats.CurrentHealth;
+        healthSlider.maxValue = enemyStats.CurrentHealth;
+        healthSlider.value = enemyStats.CurrentHealth;
     }
 
     /// <summary>
@@ -80,7 +86,11 @@ public class EnemyStatsUI : MonoBehaviour
     /// </summary>
     private void EntityStats_OnHealthChange(object sender, System.EventArgs e)
     {
-        healthSlider.value = stats.CurrentHealth;
+        if (healthBarShrink == null) return;
+
+        float healthBarFillAmount = enemyStats.CurrentHealth / healthSlider.maxValue;
+        healthBarShrink.DecreaseHealth(healthBarFillAmount);
+        healthSlider.value = enemyStats.CurrentHealth;
         if (healthSlider.value <= 0)
         {
             gameObject.SetActive(false);

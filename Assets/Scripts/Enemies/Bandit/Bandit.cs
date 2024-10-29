@@ -5,20 +5,19 @@ using UnityEngine;
 public class Bandit : Enemy
 {
     #region variables and states
-    private readonly int defaultFacingDir = -1;
-    private BanditIdleState idleState;
-    private BanditMoveState moveState;
-    private BanditAggroState aggroState;
-    private BanditAttackState attackState;
-    private BanditDeathState deathState;
-    private BanditStunnedState stunnedState;
+    protected BanditIdleState idleState;
+    protected BanditMoveState moveState;
+    protected BanditAggroState aggroState;
+    protected BanditAttackState attackState;
+    protected BanditDeathState deathState;
+    protected BanditStunnedState stunnedState;
 
-    private const string IDLE = "Idle";
-    private const string MOVE = "Move";
-    private const string AGGRO = "Aggro";
-    private const string ATTACK = "Attack";
-    private const string DIE = "Die";
-    private const string STUNNED = "Stunned";
+    protected const string IDLE = "Idle";
+    protected const string MOVE = "Move";
+    protected const string AGGRO = "Aggro";
+    protected const string ATTACK = "Attack";
+    protected const string DIE = "Die";
+    protected const string STUNNED = "Stunned";
     #endregion
 
     protected override void Awake()
@@ -38,7 +37,6 @@ public class Bandit : Enemy
         base.Start();
 
         stateMachine.InitializedState(idleState);
-        SetDefaultFacingDir(defaultFacingDir);
     }
 
     /// <summary>
@@ -48,6 +46,17 @@ public class Bandit : Enemy
     {
         base.SetupDeath();
 
+        if (isImmobilized)
+        {
+            ResetDefaultSpeed();
+        }
+
+        stateMachine.Changestate(deathState);
+        Destroy(gameObject, 3);
+    }
+
+    public override void InstantDeath()
+    {
         if (isImmobilized)
         {
             ResetDefaultSpeed();

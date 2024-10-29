@@ -46,10 +46,14 @@ public class EnemyStats : EntityStats
     /// <param name="_level"></param>
     public void LevelUp(int _level)
     {
-        level = _level;
-        ModifiyStatsByLevel();
-        InitStats();
-        GetComponentInChildren<EnemyStatsUI>().UpdateLevelUI();
+        EnemyStatsUI statsUI = GetComponentInChildren<EnemyStatsUI>();
+        if (statsUI != null)
+        {
+            level = _level;
+            ModifiyStatsByLevel();
+            InitStats();
+            statsUI.UpdateLevelUI();
+        }
     }
 
     /// <summary>

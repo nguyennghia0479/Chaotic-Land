@@ -122,6 +122,7 @@ public class CrystalSkill : Skill
     {
         Vector3 offset = new(1 * player.FacingDir, 0);
         GameObject newCrystal = Instantiate(crystalPrefab, player.transform.position + offset, Quaternion.identity);
+        player.AssignCrystal(newCrystal);
         newCrystal.GetComponent<CrystalSkillController>().SetupCrystal(this);
     }
 

@@ -349,6 +349,14 @@ public class SwordSkillController : MonoBehaviour
     /// <param name="_collision">The value to determine object is triggered</param>
     private void HitCollision(Collider2D _collision)
     {
+        if (_collision.TryGetComponent(out EnemyStats enemyStats))
+        {
+            if (enemyStats.IsInvisible)
+            {
+                return;
+            }
+        }
+
         swordAliveTimer = swordAliveTime;
 
         if (pierceAmount > 0 && _collision.TryGetComponent(out Enemy _))
@@ -392,6 +400,8 @@ public class SwordSkillController : MonoBehaviour
     /// <param name="_enemy"></param>
     private void SwordSkillDamage(Enemy _enemy)
     {
+        if (_enemy.Stats.IsInvisible) return;
+
         if (isImmobilizedUnlocked)
         {
             _enemy.ImmobilizedEffect(immobilizedDuration);

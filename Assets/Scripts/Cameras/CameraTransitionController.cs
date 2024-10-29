@@ -10,7 +10,6 @@ public class CameraTransitionController : MonoBehaviour
     private CinemachineConfiner confiner;
     private Coroutine currentTransition;
     private readonly float transitionDuration = 1f;
-    private readonly int damping = 2;
     private readonly float camSize = 5f;
 
     private void Start()
@@ -25,7 +24,6 @@ public class CameraTransitionController : MonoBehaviour
         if (vcam == null || !collision.TryGetComponent(out Player _)) return;
 
         StartTransition(camSize);
-        confiner.m_Damping = damping;
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -33,7 +31,6 @@ public class CameraTransitionController : MonoBehaviour
         if (vcam == null || !collision.TryGetComponent(out Player _)) return;
 
         StartTransition(defaultCamSize);
-        confiner.m_Damping = 0;
     }
 
     private void StartTransition(float _targetSize)

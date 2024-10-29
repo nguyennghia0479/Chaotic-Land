@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,6 +44,11 @@ public class MapSelectionUI : MonoBehaviour
         HideMapSelectionUI();
     }
 
+    private void OnDisable()
+    {
+        SetMapSceneName(null);
+    }
+
     private void GameManager_OnOpenMap(object sender, GameManager.OnOpenMapEventArgs e)
     {
         if (e.isOpenMap)
@@ -71,6 +77,27 @@ public class MapSelectionUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Handles to update play button UI.
+    /// </summary>
+    private void UpdatePlayButton()
+    {
+        TextMeshProUGUI playText = playBtn.GetComponentInChildren<TextMeshProUGUI>();
+
+        if (mapSceneName == null)
+        {
+            float alpha = 100;
+            Color color = playText.color;
+            playText.color = new Color(color.r, color.g, color.b, alpha / 255);
+            playBtn.enabled = false;
+        }
+        else
+        {
+            playText.color = Color.white;
+            playBtn.enabled = true;
+        }
+    }
+
     #region Map
     /// <summary>
     /// Handles to set map scene name.
@@ -79,6 +106,7 @@ public class MapSelectionUI : MonoBehaviour
     public void SetMapSceneName(string _mapSceneName)
     {
         mapSceneName = _mapSceneName;
+        UpdatePlayButton();
     }
 
     /// <summary>
@@ -107,6 +135,7 @@ public class MapSelectionUI : MonoBehaviour
 
         levelManager.SaveGame();
         levelManager.LoadScene(mapSceneName);
+
     }
     #endregion
 

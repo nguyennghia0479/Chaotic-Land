@@ -17,11 +17,6 @@ public class PlayerManager : Singleton<PlayerManager>, ISaveManager
 
     public event EventHandler OnUpdateExp;
 
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
     #region Player EXP
     public void IncreaseExp(int _exp)
     {
@@ -32,7 +27,9 @@ public class PlayerManager : Singleton<PlayerManager>, ISaveManager
             currentLevel++;
             currentPoint += pointToAdd;
             currentExp -= levelUpThreshold;
+            enemyManager.SetupEnemyLevel();
             UpdateLevelUpThreshold();
+            player.ShowLevelUp();
         }
 
         InvokeUpdateExp();

@@ -59,10 +59,13 @@ public class EntityStats : MonoBehaviour
     protected float igniteTimer;
     protected float igniteHitTimer;
     protected bool isChilled;
+    protected float chilledTimer;
     protected bool isVulnerable;
+    protected bool isInvisible;
     protected float vulnerableRate;
-    protected float currentHealth;
+    [SerializeField] protected float currentHealth;
     protected float currentStamina;
+    protected bool isCriticalAttack;
     private Coroutine rechargeCoroutine;
     #endregion
 
@@ -83,6 +86,7 @@ public class EntityStats : MonoBehaviour
     {
         igniteTimer -= Time.deltaTime;
         igniteHitTimer -= Time.deltaTime;
+        chilledTimer -= Time.deltaTime;
 
         if (igniteTimer < 0)
         {
@@ -92,6 +96,11 @@ public class EntityStats : MonoBehaviour
         if (isIgnite)
         {
             DoIgniteDamage();
+        }
+
+        if (chilledTimer < 0)
+        {
+            isChilled = false;
         }
     }
 
@@ -120,6 +129,8 @@ public class EntityStats : MonoBehaviour
         isVulnerable = false;
         vulnerableRate = 0;
     }
+
+    public void MarkInvisible(bool _isInvisible) => isInvisible = _isInvisible;
     #endregion
 
     /// <summary>
@@ -128,7 +139,7 @@ public class EntityStats : MonoBehaviour
     /// <param name="_targetStats"></param>
     public virtual void DoPhysicalDamage(EntityStats _targetStats)
     {
-        if (_targetStats == null || _targetStats.entity.IsDead || CanTargetEvadeAttack(_targetStats))
+        if (_targetStats == null || _targetStats.entity.IsDead || CanTargetEvadeAttack(_targetStats) || _targetStats.isInvisible)
         {
             PlayMissAttackSound();
             return;
@@ -136,7 +147,7 @@ public class EntityStats : MonoBehaviour
 
         float totalDamage = physicsDamage.GetValueWithModify();
         bool canCrit = CanDoCritDamage();
-
+        isCriticalAttack = canCrit;
         if (canCrit)
         {
             totalDamage = CalculateCritDamage(totalDamage);
@@ -155,6 +166,8 @@ public class EntityStats : MonoBehaviour
     /// <param name="_isCriticalAttack"></param>
     public virtual void TakeDamage(Transform _damageDealer, float _damage, bool _isCriticalAttack)
     {
+        if (isInvisible) return;
+
         entity.SetupKnockBack(_damageDealer, _isCriticalAttack);
         if (entity.IsBlocking && !_isCriticalAttack)
         {
@@ -166,7 +179,9 @@ public class EntityStats : MonoBehaviour
             return;
         }
 
+        fx.PlayHitFX(_isCriticalAttack);
         fx.PlayFlashFX();
+        fx.PlayPopupDamageText(_damage.ToString(), _isCriticalAttack);
         DecreaseHealth(_damage);
     }
 
@@ -175,7 +190,7 @@ public class EntityStats : MonoBehaviour
     /// Handles to decrease health.
     /// </summary>
     /// <param name="_damage"></param>
-    protected virtual void DecreaseHealth(float _damage)
+    public virtual void DecreaseHealth(float _damage)
     {
         if (entity.IsDead) return;
 
@@ -283,6 +298,7 @@ public class EntityStats : MonoBehaviour
         else if (_type == AilmentType.Chill && !isChilled)
         {
             isChilled = true;
+            chilledTimer = chilledDuration;
             fx.PlayChilledFX(chilledDuration);
             entity.SlowEntityEffect(slowPercentage, chilledDuration);
         }
@@ -525,5 +541,15 @@ public class EntityStats : MonoBehaviour
     public Entity Entity
     {
         get { return entity; }
+    }
+
+    public bool IsInvisible
+    {
+        get { return isInvisible; }
+    }
+
+    public bool IsCriticalAttack
+    {
+        get { return isCriticalAttack; }
     }
 }

@@ -12,7 +12,7 @@ public class VolumeUI : MonoBehaviour, ISaveManager
     [SerializeField] private float multiplier = 30;
     [SerializeField] private float offset = 0;
 
-    private void Start()
+    private void Awake()
     {
         slider.onValueChanged.AddListener(SetSliderValue);
     }
