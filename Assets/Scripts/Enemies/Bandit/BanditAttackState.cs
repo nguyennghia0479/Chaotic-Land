@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BanditAttackState : EnemyState
 {
-    private Bandit bandit;
+    private readonly Bandit bandit;
 
     public BanditAttackState(Enemy _enemy, EnemyStateMachine _stateMachine, string _animName, Bandit _bandit) : base(_enemy, _stateMachine, _animName)
     {
@@ -14,6 +14,8 @@ public class BanditAttackState : EnemyState
     public override void Enter()
     {
         base.Enter();
+
+        bandit.IsCombat = true;
     }
 
     public override void Exit()
@@ -21,6 +23,7 @@ public class BanditAttackState : EnemyState
         base.Exit();
 
         lastTimeAttacked = Time.time;
+        bandit.IsCombat = false;
     }
 
     public override void FixedUpdate()

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class EnemyAnimator : MonoBehaviour
 {
-    private Enemy enemy;
+    protected Enemy enemy;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         enemy = GetComponentInParent<Enemy>();
     }
@@ -14,7 +14,7 @@ public class EnemyAnimator : MonoBehaviour
     /// <summary>
     /// Handles to finish animation of the character.
     /// </summary>
-    private void AnimationFinished()
+    protected void AnimationFinished()
     {
         enemy.AnimationTrigger();
     }
@@ -25,7 +25,7 @@ public class EnemyAnimator : MonoBehaviour
     /// <remarks>
     /// The characters receive damage will be knock back.
     /// </remarks>
-    private void AnimationAttack()
+    protected void AnimationAttack()
     {
         bool isHit = false;
         Collider2D[] colliders = Physics2D.OverlapCircleAll(enemy.AttackCheck.position, enemy.AttackRadius);
@@ -45,7 +45,7 @@ public class EnemyAnimator : MonoBehaviour
     /// <summary>
     /// Handles to setup of pre attack.
     /// </summary>
-    private void AnimationPrepareAttack()
+    protected void AnimationPrepareAttack()
     {
         enemy.AnimationPrepareAttack();
     }
@@ -53,7 +53,7 @@ public class EnemyAnimator : MonoBehaviour
     /// <summary>
     /// Handles to setup of finish attack.
     /// </summary>
-    private void AnimationAttackFinished()
+    protected void AnimationAttackFinished()
     {
         enemy.AnimationAttackFinished();
     }
@@ -62,7 +62,7 @@ public class EnemyAnimator : MonoBehaviour
     /// Handles to play attack sound.
     /// </summary>
     /// <param name="_hit"></param>
-    private void PlayAttackSound(bool _hit)
+    protected void PlayAttackSound(bool _hit)
     {
         if (_hit) return;
 

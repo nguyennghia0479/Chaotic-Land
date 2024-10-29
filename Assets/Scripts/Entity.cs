@@ -291,6 +291,7 @@ public class Entity : MonoBehaviour
     public bool IsBlocking
     {
         get { return isBlocking; }
+        set { isBlocking = value; }
     }
 
     public bool IsDead

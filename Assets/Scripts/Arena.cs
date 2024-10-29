@@ -1,9 +1,12 @@
+using System.Collections;
 using UnityEngine;
 
 public class Arena : MonoBehaviour
 {
     [SerializeField] private Enemy enemy;
-    [SerializeField] private BoxCollider2D arenaTrigger;
+    [SerializeField] private GameObject arenaTrigger;
+    [SerializeField] private LayerMask groundLayerMask;
+    [SerializeField] private BoxCollider2D arenaTriggerCollider;
     [SerializeField] private CameraConfinerController confinerController;
 
     private bool isBossFight;
@@ -14,9 +17,7 @@ public class Arena : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isBossFight) return;
-
-        if (!collision.TryGetComponent(out Player _)) return;
+        if (isBossFight ||!collision.TryGetComponent(out Player _)) return;
 
         if (enemy.TryGetComponent(out EnemyStats enemyStats))
         {
@@ -33,9 +34,11 @@ public class Arena : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (!collision.TryGetComponent(out Player _)) return;
+        if (!arenaTriggerCollider.isTrigger || groundLayerMask.value == 0 || !collision.TryGetComponent(out Player _)) return;
 
-        arenaTrigger.isTrigger = false;
+        int layer = (int)Mathf.Log(groundLayerMask.value, 2);
+        arenaTrigger.layer = layer;
+        arenaTriggerCollider.isTrigger = false;
     }
 
     /// <summary>
@@ -43,8 +46,15 @@ public class Arena : MonoBehaviour
     /// </summary>
     public void BossFightEnd()
     {
-        isBossFight = false;
         enemy.BossInfoUI.SetupBossInfo(null, isBossFight);
+        StartCoroutine(ExitArenaRoutine());
+    }
+
+    private IEnumerator ExitArenaRoutine()
+    {
+        yield return new WaitForSeconds(3);
+
+        isBossFight = false;
         confinerController.ExitArena();
         MusicManager.Instance.TooglePauseMusic();
         Destroy(gameObject);

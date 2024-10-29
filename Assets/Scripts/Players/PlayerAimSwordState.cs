@@ -37,16 +37,6 @@ public class PlayerAimSwordState : PlayerState
         HandleAimPosition();
     }
 
-    public override void Update()
-    {
-        base.Update();
-
-        if (player.HasThrown)
-        {
-            stateMachine.ChangeState(player.IdleState);
-        }
-    }
-
     /// <summary>
     /// Handles to set aim position by mouse.
     /// </summary>
@@ -68,5 +58,6 @@ public class PlayerAimSwordState : PlayerState
         player.HasThrown = true;
         playerStats.DecreaseStamina(skillManager.SwordSkill.SkillStaminaAmount);
         soundManager.PlayThrowSwordSound(player.transform.position);
+        stateMachine.ChangeState(player.IdleState);
     }
 }

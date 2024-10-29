@@ -16,6 +16,8 @@ public class EnemyManager : MonoBehaviour
         int playerLevel = playerManager.CurrentLevel;
         foreach (Enemy enemy in enemies)
         {
+            if (enemy.IsCombat) continue;
+
             if (enemy.TryGetComponent(out EnemyStats enemyStats))
             {
                 int enemyLevel = enemyStats.Level;
@@ -32,5 +34,26 @@ public class EnemyManager : MonoBehaviour
                 enemyStats.LevelUp(enemyLevel);
             }
         }
+    }
+
+    /// <summary>
+    /// Handles to find boss.
+    /// </summary>
+    /// <returns></returns>
+    public Enemy FindBoss()
+    {
+        Enemy[] enemies = GetComponentsInChildren<Enemy>();
+        Enemy boss = null;
+
+        foreach (Enemy enemy in enemies)
+        {
+            if (enemy.IsBoss)
+            {
+                boss = enemy;
+                break;
+            }
+        }
+
+        return boss;
     }
 }

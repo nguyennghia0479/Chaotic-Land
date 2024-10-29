@@ -36,13 +36,13 @@ public class PlayerAttackState : PlayerState
     public override void FixedUpdate()
     {
         base.FixedUpdate();
+
+        player.SetZeroVelocity();
     }
 
     public override void Update()
     {
         base.Update();
-
-        player.SetZeroVelocity();
 
         if (triggerCalled)
         {

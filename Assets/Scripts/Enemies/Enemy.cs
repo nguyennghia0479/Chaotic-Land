@@ -1,15 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum DefaultFacingDir
+{
+    Left = -1, Right = 1
+}
+
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent (typeof(CapsuleCollider2D))]
+[RequireComponent(typeof(KnockBack))]
+[RequireComponent(typeof(EntityFX))]
+[RequireComponent(typeof(EnemyStats))]
+[RequireComponent(typeof(ItemDrop))]
 public class Enemy : Entity
 {
     #region Variables
     [Header("Move info")]
+    [SerializeField] protected DefaultFacingDir defaultFacingDir;
     [SerializeField] protected int moveSpeed = 2;
     [SerializeField] protected float idleTime = 1;
 
     [Header("Aggro info")]
+    [HideInInspector] protected bool isCombat;
     [SerializeField] protected int aggroSpeed = 4;
     [SerializeField] protected Transform playerCheck;
     [SerializeField] protected float playerCheckDistance = 10;
@@ -19,10 +33,11 @@ public class Enemy : Entity
     [SerializeField] protected float attackDistance = 2;
     [SerializeField] protected float minAttackCooldown = 1;
     [SerializeField] protected float maxAttackCooldown = 1;
-    [SerializeField] private Transform criticalFX;
+    [SerializeField] protected Transform criticalFX;
 
     [Space]
     [SerializeField] protected bool isBoss;
+    [SerializeField] protected string bossName;
     [SerializeField] protected BossInfoUI bossInfoUI;
     [SerializeField] protected Arena arena;
 
@@ -31,6 +46,8 @@ public class Enemy : Entity
     protected bool canBeStunned;
     protected int defaultMoveSpeed;
     protected bool isAddExp;
+
+    public event EventHandler OnDie;
     #endregion
 
     protected override void Awake()
@@ -46,6 +63,7 @@ public class Enemy : Entity
         base.Start();
 
         defaultMoveSpeed = moveSpeed;
+        SetDefaultFacingDir((int)defaultFacingDir);
     }
 
     protected override void Update()
@@ -83,8 +101,13 @@ public class Enemy : Entity
                 checkpoint.Active();
             }
 
+            OnDie?.Invoke(this, EventArgs.Empty);
             arena.BossFightEnd();
         }
+    }
+
+    public virtual void InstantDeath()
+    {
     }
 
     /// <summary>
@@ -94,7 +117,7 @@ public class Enemy : Entity
     public bool IsPlayerDetected()
     {
         RaycastHit2D hit = Physics2D.Raycast(playerCheck.position, Vector2.right * facingDir, playerCheckDistance, playerLayerMask);
-        if (IsWallDetected())
+        if (IsWallDetected() || !IsGroundDetected())
         {
             return false;
         }
@@ -236,6 +259,12 @@ public class Enemy : Entity
         get { return aggroSpeed; }
     }
 
+    public bool IsCombat
+    {
+        get { return isCombat; }
+        set { isCombat = value; }
+    }
+
     public float AttackDistance
     {
         get { return attackDistance; }
@@ -259,6 +288,11 @@ public class Enemy : Entity
     public bool IsBoss
     {
         get { return isBoss; }
+    }
+
+    public string BossName
+    {
+        get { return bossName; }
     }
 
     public BossInfoUI BossInfoUI

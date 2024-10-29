@@ -24,10 +24,13 @@ public class Player : Entity
     private SkillManager skillManager;
     private InventoryManager inventoryManager;
     private GameManager gameManager;
+    private PlayerLevelUpUI playerLevelUpUI;
     private GameObject sword;
     private GameObject fireSpin;
+    private GameObject crystal;
     private bool isAiming;
     private bool hasThrown;
+
 
     private PlayerStateMachine stateMachine;
     private PlayerIdleState idleState;
@@ -61,6 +64,7 @@ public class Player : Entity
     private const string SPELL_CAST = "SpellCast";
 
     public event EventHandler OnDie;
+    public event EventHandler OnAttack;
     #endregion
 
     protected override void Awake()
@@ -94,6 +98,7 @@ public class Player : Entity
 
         if (controller != null)
         {
+            controller.OnAttackAction += PlayerController_OnAttackAction;
             controller.OnDashAction += PlayerController_OnDashAction;
             controller.OnBlockActionStart += PlayerController_OnBlockActionStart;
             controller.OnBlockActionEnd += PlayerController_OnBlockActionEnd;
@@ -107,6 +112,7 @@ public class Player : Entity
         skillManager = SkillManager.Instance;
         inventoryManager = InventoryManager.Instance;
         gameManager = GameManager.Instance;
+        playerLevelUpUI = GetComponentInChildren<PlayerLevelUpUI>();
 
         stateMachine.IntializedState(idleState);
     }
@@ -129,6 +135,7 @@ public class Player : Entity
     {
         if (controller != null)
         {
+            controller.OnAttackAction -= PlayerController_OnAttackAction;
             controller.OnDashAction -= PlayerController_OnDashAction;
             controller.OnBlockActionStart -= PlayerController_OnBlockActionStart;
             controller.OnBlockActionEnd -= PlayerController_OnBlockActionEnd;
@@ -211,6 +218,15 @@ public class Player : Entity
     }
 
     /// <summary>
+    /// Handles to set crystal.
+    /// </summary>
+    /// <param name="_crystal"></param>
+    public void AssignCrystal(GameObject _crystal)
+    {
+        crystal = _crystal;
+    }
+
+    /// <summary>
     /// Handles to update physics material of the character.
     /// </summary>
     /// <param name="_physicsMaterial"></param>
@@ -222,6 +238,9 @@ public class Player : Entity
         }
     }
 
+    /// <summary>
+    /// Handles to cancel block.
+    /// </summary>
     public void CancelBlock()
     {
         if (isDead) return;
@@ -229,9 +248,35 @@ public class Player : Entity
         isBlocking = false;
         stateMachine.ChangeState(idleState);
     }
+
+    /// <summary>
+    /// Handles to show level up.
+    /// </summary>
+    public void ShowLevelUp()
+    {
+        playerLevelUpUI.ShowLevelUp();
+    }
     #endregion
 
     #region private methods
+    /// <summary>
+    /// Handles to perform attack of the character.
+    /// </summary>
+    private void PlayerController_OnAttackAction(object sender, EventArgs e)
+    {
+        if (gameManager.IsGamePaused || playerStats.CurrentStamina < attackStaminaAmount) return;
+
+        int staminaPenalty = 1;
+        if (!IsGroundDetected() && !IsSlopeDetected())
+        {
+            staminaPenalty = 3;
+        }
+
+        OnAttack?.Invoke(this, EventArgs.Empty);
+        playerStats.DecreaseStamina(attackStaminaAmount * staminaPenalty);
+        stateMachine.ChangeState(attackState);
+    }
+
     /// <summary>
     /// Handles to perform dash of the character.
     /// </summary>
@@ -254,11 +299,8 @@ public class Player : Entity
     {
         if (isDead || gameManager.IsGamePaused) return;
 
-        if (skillManager.ParrySkill.CanUseSkill())
-        {
-            isBlocking = true;
-            stateMachine.ChangeState(blockState);
-        }
+        isBlocking = true;
+        stateMachine.ChangeState(blockState);
     }
 
     /// <summary>
@@ -416,6 +458,11 @@ public class Player : Entity
     public GameObject FireSpin
     {
         get { return fireSpin; }
+    }
+
+    public GameObject Crystal
+    {
+        get { return crystal; }
     }
 
     public bool IsAiming

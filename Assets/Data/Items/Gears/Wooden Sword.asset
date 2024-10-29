@@ -16,17 +16,12 @@ MonoBehaviour:
   sprite: {fileID: -441671917, guid: c6856cc3c11c2e04194736ac915afa00, type: 3}
   dropChance: 0
   type: 1
+  itemId: 4c6d127ffd1b46241b49e0e5b12e0a47
   gearType: 0
   craftingMaterials:
-  - itemSO: {fileID: 11400000, guid: 69213c0dfac89be4aa5cdab406efa11b, type: 2}
+  - itemSO: {fileID: 11400000, guid: 968d188910803274080f46bc08f94567, type: 2}
     quantity: 1
-  loseConditionSpeed: 0.1
-  vitality: 0
-  endurance: 0
-  strength: 0
-  dexterity: 0
-  intelligence: 0
-  agility: 0
+  loseConditionSpeed: 0
   maxHealth: 0
   stamina: 0
   physicsDamage: 5

@@ -1,25 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class LevelManager : Singleton<LevelManager>
 {
-    [SerializeField] private LoadingUI loadingUI;
-    [SerializeField] private Slider loadingSlider;
-
+    private Animator animator;
     private SaveManager saveManager;
-
-    protected override void Awake()
-    {
-        base.Awake();
-
-        DontDestroyOnLoad(gameObject);
-    }
 
     private void Start()
     {
+        animator = GetComponentInChildren<Animator>();
         saveManager = SaveManager.Instance;
     }
 
@@ -43,7 +33,7 @@ public class LevelManager : Singleton<LevelManager>
         }
 
         saveManager.DeleteSaveGame();
-        LoadScene("OakWoodsMap2");
+        LoadScene("OakWoodsSF");
     }
 
     /// <summary>
@@ -51,7 +41,7 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     public void LoadContinueGame()
     {
-        LoadScene("OakWoodsMap2");
+        LoadScene("MedievalCastleSF");
     }
 
     /// <summary>
@@ -60,8 +50,7 @@ public class LevelManager : Singleton<LevelManager>
     /// <param name="_sceneName"></param>
     public void LoadScene(string _sceneName)
     {
-        loadingUI.ShowLoadingUI();
-        StartCoroutine(LoadSceneAsyncRoutine(_sceneName));
+        StartCoroutine(LoadSceneRoutine(_sceneName));
     }
 
     /// <summary>
@@ -87,34 +76,11 @@ public class LevelManager : Singleton<LevelManager>
         saveManager.SaveGame();
     }
 
-    /// <summary>
-    /// Handles to load scene async.
-    /// </summary>
-    /// <param name="_sceneName"></param>
-    /// <returns></returns>
-    private IEnumerator LoadSceneAsyncRoutine(string _sceneName)
+    private IEnumerator LoadSceneRoutine(string _sceneName)
     {
-        Time.timeScale = 1.0f;
-        float maxProgress = .9f;
-        loadingSlider.value = 0f;
-
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(_sceneName);
-        asyncOperation.allowSceneActivation = false;
-
-        while (!asyncOperation.isDone)
-        {
-            loadingSlider.value = Mathf.Clamp01(asyncOperation.progress / maxProgress);
-
-            if (asyncOperation.progress >= maxProgress)
-            {
-
-                asyncOperation.allowSceneActivation = true;
-            }
-
-            yield return null;
-        }
-
-        loadingSlider.value = 1;
-        loadingUI.HideLoadingUI();
+        Time.timeScale = 1f;
+        animator.SetTrigger("Start");
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(_sceneName);
     }
 }

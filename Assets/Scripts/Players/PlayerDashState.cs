@@ -57,5 +57,7 @@ public class PlayerDashState : PlayerState
         {
             stateMachine.ChangeState(player.WallGrabState);
         }
+
+        (player.FX as PlayerFX).PlayAfterImage();
     }
 }

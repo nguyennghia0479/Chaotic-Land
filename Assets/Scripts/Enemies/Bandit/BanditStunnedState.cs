@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BanditStunnedState : EnemyState
 {
-    private Bandit bandit;
+    private readonly Bandit bandit;
 
     public BanditStunnedState(Enemy _enemy, EnemyStateMachine _stateMachine, string _animName, Bandit _bandit) : base(_enemy, _stateMachine, _animName)
     {
@@ -17,11 +17,14 @@ public class BanditStunnedState : EnemyState
 
         stateTimer = bandit.StunnedDuration;
         StunnedVelocity();
+        bandit.FX.PlayStunnedFX();
     }
 
     public override void Exit()
     {
         base.Exit();
+
+        bandit.FX.ResetDefaultColor();
     }
 
     public override void FixedUpdate()

@@ -9,11 +9,13 @@ public class BossInfoUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI bossName;
     [SerializeField] private Slider healthSlider;
 
-    private EnemyStats stats;
+    private EnemyStats enemyStats;
+    private HealthBarShrinkUI healthBarShrinkUI;
     private bool isBossFight;
 
     private void Start()
     {
+        healthBarShrinkUI = GetComponentInChildren<HealthBarShrinkUI>();
         gameObject.SetActive(false);
     }
 
@@ -24,13 +26,14 @@ public class BossInfoUI : MonoBehaviour
     /// <param name="_isBossFight"></param>
     public void SetupBossInfo(EnemyStats _enemyStats, bool _isBossFight)
     {
-        stats = _enemyStats;
+        enemyStats = _enemyStats;
         isBossFight = _isBossFight;
 
-        if (stats != null)
+        if (enemyStats != null)
         {
-            stats.OnHealthChange += EnemyStats_OnHealthChange;
-            healthSlider.maxValue = stats.maxHealth.GetValueWithModify();
+            enemyStats.OnHealthChange += EnemyStats_OnHealthChange;
+            bossName.text = enemyStats.GetComponent<Enemy>().BossName;
+            healthSlider.maxValue = enemyStats.maxHealth.GetValueWithModify();
             healthSlider.value = healthSlider.maxValue;
             gameObject.SetActive(true);
         }
@@ -42,9 +45,9 @@ public class BossInfoUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (stats != null)
+        if (enemyStats != null)
         {
-            stats.OnHealthChange -= EnemyStats_OnHealthChange;
+            enemyStats.OnHealthChange -= EnemyStats_OnHealthChange;
         }
     }
 
@@ -53,7 +56,11 @@ public class BossInfoUI : MonoBehaviour
     /// </summary>
     private void EnemyStats_OnHealthChange(object sender, System.EventArgs e)
     {
-        healthSlider.value = stats.CurrentHealth;
+        if (healthBarShrinkUI == null) return;
+
+        float healthBarFillAmount = enemyStats.CurrentHealth / healthSlider.maxValue;
+        healthBarShrinkUI.DecreaseHealth(healthBarFillAmount);
+        healthSlider.value = enemyStats.CurrentHealth;
         if (healthSlider.value <= 0)
         {
             gameObject.SetActive(false);

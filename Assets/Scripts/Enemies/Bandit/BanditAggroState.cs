@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BanditAggroState : EnemyState
 {
-    private Bandit bandit;
+    private readonly Bandit bandit;
     private Player player;
     private int facingDir;
     private bool canMove = true;
@@ -25,6 +25,7 @@ public class BanditAggroState : EnemyState
     {
         base.Enter();
 
+        bandit.IsCombat = true;
         player = PlayerManager.Instance.Player;
         if (player != null && player.IsDead)
         {
@@ -35,6 +36,8 @@ public class BanditAggroState : EnemyState
     public override void Exit()
     {
         base.Exit();
+
+        bandit.IsCombat = false;
     }
 
     public override void FixedUpdate()

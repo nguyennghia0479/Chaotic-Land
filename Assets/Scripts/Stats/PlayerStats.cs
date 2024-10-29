@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerStats : EntityStats, ISaveManager
 {
     private Player player;
+    private bool isLoaded;
 
     protected override void Start()
     {
@@ -20,6 +21,8 @@ public class PlayerStats : EntityStats, ISaveManager
     /// </summary>
     public override void InitStats()
     {
+        if (!isLoaded) return;
+
         base.InitStats();
 
         physicsDamage.UpdateBaseValue(CalculateStatModify(StatType.PhysicsDamage, strength.GetValueWithModify()));
@@ -28,6 +31,7 @@ public class PlayerStats : EntityStats, ISaveManager
         magicDamage.UpdateBaseValue(CalculateStatModify(StatType.MagicDamage, intelligence.GetValueWithModify()));
         evasion.UpdateBaseValue(CalculateStatModify(StatType.Evasion, agility.GetValueWithModify()));
         resistance.UpdateBaseValue(CalculateStatModify(StatType.Resistance, intelligence.GetValueWithModify()));
+        isLoaded = false;
     }
 
     /// <summary>
@@ -37,8 +41,20 @@ public class PlayerStats : EntityStats, ISaveManager
     /// <param name="_point"></param>
     public void IncreaseStat(StatType _type, float _point)
     {
+        float healthAdd = 0;
         Stat stat = GetStatByType(_type);
+
+        if (_type == StatType.MaxHealth)
+        {
+            healthAdd = _point - maxHealth.GetValueWithModify();
+        }
+
         stat.UpdateBaseValue(stat.GetValueWithoutModify(_point));
+
+        if (healthAdd > 0)
+        {
+            IncreaseHealth((int)healthAdd);
+        }
     }
     #endregion
 
@@ -82,7 +98,7 @@ public class PlayerStats : EntityStats, ISaveManager
     /// <remarks>
     /// If player has equip armor can execute item effect.
     /// </remarks>
-    protected override void DecreaseHealth(float _damage)
+    public override void DecreaseHealth(float _damage)
     {
         base.DecreaseHealth(_damage);
 
@@ -125,5 +141,8 @@ public class PlayerStats : EntityStats, ISaveManager
         dexterity.UpdateBaseValue(_gameData.dexterity);
         intelligence.UpdateBaseValue(_gameData.intelligence);
         agility.UpdateBaseValue(_gameData.agility);
+
+        isLoaded = true;
+        InitStats();
     }
 }

@@ -54,7 +54,7 @@ public class InventoryManager : Singleton<InventoryManager>, ISaveManager
         gears = new List<InventoryItem>();
         gearDictionaries = new Dictionary<GearSO, InventoryItem>();
 
-        SetupItemLoaded();
+        Invoke(nameof(SetupItemLoaded), .1f);
     }
 
     #region Setup slot and item loaded
@@ -370,6 +370,7 @@ public class InventoryManager : Singleton<InventoryManager>, ISaveManager
             }
             else
             {
+                PlayerManager.Instance.Player.FX.PlayPopupText("Inventory is full");
                 return false;
             }
         }
@@ -562,9 +563,9 @@ public class InventoryManager : Singleton<InventoryManager>, ISaveManager
         if (_gameData == null) return;
 
         List<ItemSO> itemDatabases = GetAllItemDatabase();
-
+        
         foreach (KeyValuePair<string, int> material in _gameData.materials)
-        {
+        { 
             foreach (ItemSO itemSO in itemDatabases)
             {
                 if (itemSO != null && itemSO.itemId == material.Key)

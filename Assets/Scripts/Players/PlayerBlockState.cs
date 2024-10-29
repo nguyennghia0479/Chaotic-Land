@@ -65,6 +65,8 @@ public class PlayerBlockState : PlayerState
         {
             if (collider.TryGetComponent(out Enemy enemy))
             {
+                if (!skillManager.ParrySkill.CanUseSkill() || enemy.IsBoss) return;
+
                 if (stateTimer > 0 && enemy.CanBeStunned())
                 {
                     anim.SetBool(COUNTER_SUCCESS, true);
