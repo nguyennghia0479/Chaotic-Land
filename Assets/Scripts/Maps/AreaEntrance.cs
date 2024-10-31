@@ -4,21 +4,18 @@ using UnityEngine;
 
 public class AreaEntrance : MonoBehaviour
 {
-    [SerializeField] private string entranceName;
+    [SerializeField] private AreaGate entranceName;
 
     /// <summary>
     /// Handles to set player position when load scene done.
     /// </summary>
     private void Start()
     {
-        if (AreaManager.Instance != null)
+        if (AreaManager.Instance != null && entranceName.ToString() == AreaManager.Instance.AreaSpawn)
         {
-            if (entranceName == AreaManager.Instance.AreaSpawn)
+            if (PlayerManager.Instance != null || PlayerManager.Instance.Player)
             {
-                if (PlayerManager.Instance != null || PlayerManager.Instance.Player)
-                {
-                    PlayerManager.Instance.Player.transform.position = transform.position;
-                }
+                PlayerManager.Instance.Player.transform.position = transform.position;
             }
         }
     }

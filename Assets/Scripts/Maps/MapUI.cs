@@ -12,7 +12,7 @@ public class MapUI : MonoBehaviour, IPointerDownHandler
     [SerializeField] private TextMeshProUGUI mapName;
     [SerializeField] private TextMeshProUGUI mapRecommendedLevel;
 
-    private string mapSceneName;
+    private GameScene gameScene;
     private MapSelectionUI mapSelectionUI;
 
     private void Start()
@@ -47,7 +47,7 @@ public class MapUI : MonoBehaviour, IPointerDownHandler
             mapUI.map.color = new Color(color.r, color.g, color.b, alpha);
         }
 
-        mapSelectionUI.SetMapSceneName(mapSceneName);
+        mapSelectionUI.SetMapSceneName(gameScene);
     }
 
     /// <summary>
@@ -56,12 +56,12 @@ public class MapUI : MonoBehaviour, IPointerDownHandler
     /// <param name="_sprite"></param>
     /// <param name="_name"></param>
     /// <param name="_recommendedLevel"></param>
-    /// <param name="_mapSceneName"></param>
-    public void SetupMap(Sprite _sprite, string _name, int _recommendedLevel, string _mapSceneName)
+    /// <param name="_gameScene"></param>
+    public void SetupMap(Sprite _sprite, string _name, int _recommendedLevel, GameScene _gameScene)
     {
         mapIcon.sprite = _sprite;
         mapName.text = _name;
         mapRecommendedLevel.text = _recommendedLevel.ToString();
-        mapSceneName = _mapSceneName;
+        gameScene = _gameScene;
     }
 }

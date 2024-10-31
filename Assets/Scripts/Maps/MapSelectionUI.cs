@@ -11,7 +11,7 @@ public class MapSelectionUI : MonoBehaviour
     [SerializeField] private Button playBtn;
     [SerializeField] private Button closeBtn;
 
-    private string mapSceneName;
+    private GameScene gameScene;
     private LevelManager levelManager;
 
     private void Awake()
@@ -46,7 +46,7 @@ public class MapSelectionUI : MonoBehaviour
 
     private void OnDisable()
     {
-        SetMapSceneName(null);
+        SetMapSceneName(GameScene.None);
     }
 
     private void GameManager_OnOpenMap(object sender, GameManager.OnOpenMapEventArgs e)
@@ -84,7 +84,7 @@ public class MapSelectionUI : MonoBehaviour
     {
         TextMeshProUGUI playText = playBtn.GetComponentInChildren<TextMeshProUGUI>();
 
-        if (mapSceneName == null)
+        if (gameScene == GameScene.None)
         {
             float alpha = 100;
             Color color = playText.color;
@@ -102,10 +102,10 @@ public class MapSelectionUI : MonoBehaviour
     /// <summary>
     /// Handles to set map scene name.
     /// </summary>
-    /// <param name="_mapSceneName"></param>
-    public void SetMapSceneName(string _mapSceneName)
+    /// <param name="_gameScene"></param>
+    public void SetMapSceneName(GameScene _gameScene)
     {
-        mapSceneName = _mapSceneName;
+        gameScene = _gameScene;
         UpdatePlayButton();
     }
 
@@ -126,7 +126,7 @@ public class MapSelectionUI : MonoBehaviour
     /// </summary>
     private void LoadMap()
     {
-        if (mapSceneName == null) return;
+        if (gameScene == GameScene.None) return;
 
         if (levelManager == null)
         {
@@ -134,7 +134,7 @@ public class MapSelectionUI : MonoBehaviour
         }
 
         levelManager.SaveGame();
-        levelManager.LoadScene(mapSceneName);
+        levelManager.LoadScene(gameScene);
 
     }
     #endregion

@@ -60,7 +60,7 @@ public class OptionsUI : MonoBehaviour
     {
         GameManager.Instance.OnGamePaused += GameManager_OnGamePaused;
         optionsBtn = options.GetComponentsInChildren<Button>();
-        HideOptionsUI();
+        Invoke(nameof(HideOptionsUI), .1f); // fixed to set volume value first
     }
 
     #region Options menu

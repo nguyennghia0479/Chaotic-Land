@@ -34709,11 +34709,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1111647785592440794, guid: f4d16b0dd5a9e4247b98d94048f25f43, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 106.19
+      value: -54.2
       objectReference: {fileID: 0}
     - target: {fileID: 1111647785592440794, guid: f4d16b0dd5a9e4247b98d94048f25f43, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.47
+      value: -0.45
       objectReference: {fileID: 0}
     - target: {fileID: 1111647785592440794, guid: f4d16b0dd5a9e4247b98d94048f25f43, type: 3}
       propertyPath: m_LocalPosition.z
@@ -35499,11 +35499,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1036213503151086757, guid: c1fc969bcf1e6b947b77b35f65706339, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 106.19
+      value: -54.2
       objectReference: {fileID: 0}
     - target: {fileID: 1036213503151086757, guid: c1fc969bcf1e6b947b77b35f65706339, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.47
+      value: -0.45
       objectReference: {fileID: 0}
     - target: {fileID: 2144751353562594223, guid: c1fc969bcf1e6b947b77b35f65706339, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[0].x
@@ -35603,11 +35603,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4560197163402672086, guid: c1fc969bcf1e6b947b77b35f65706339, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 106.19
+      value: -45.77627
       objectReference: {fileID: 0}
     - target: {fileID: 4560197163402672086, guid: c1fc969bcf1e6b947b77b35f65706339, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.47
+      value: -0.1499998
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -36264,7 +36264,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1307217178561506092, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: sceneToLoad
-      value: MedievalCastleS2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1307217178561506092, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: entranceName
@@ -36276,7 +36276,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031316176611286610, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: entranceName
-      value: EEntry
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3140333652814631300, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: m_LocalPosition.x

@@ -2,15 +2,26 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class LevelManager : Singleton<LevelManager>
+public enum GameScene
+{
+    OakWoodsS1, OakWoodsS2, OakWoodsSF,
+    MedievalCastleS1, MedievalCastleS2, MedievalCastleSF,
+    MainMenu, None
+}
+
+public class LevelManager : Singleton<LevelManager>, ISaveManager
 {
     private Animator animator;
     private SaveManager saveManager;
+    private GameScene currentScene;
+
+    private const string START = "Start";
 
     private void Start()
     {
         animator = GetComponentInChildren<Animator>();
         saveManager = SaveManager.Instance;
+        currentScene = AreaManager.Instance.CurrentScene;
     }
 
     /// <summary>
@@ -19,7 +30,8 @@ public class LevelManager : Singleton<LevelManager>
     public void LoadMainMenu()
     {
         SaveGame();
-        LoadScene("MainMenu");
+        LoadScene(GameScene.MainMenu);
+        AreaManager.Instance.SetAreaEntranceName(null);
     }
 
     /// <summary>
@@ -33,7 +45,8 @@ public class LevelManager : Singleton<LevelManager>
         }
 
         saveManager.DeleteSaveGame();
-        LoadScene("OakWoodsSF");
+        currentScene = GameScene.OakWoodsS1;
+        LoadScene(currentScene);
     }
 
     /// <summary>
@@ -41,26 +54,35 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     public void LoadContinueGame()
     {
-        LoadScene("MedievalCastleSF");
+        if (currentScene == GameScene.None || currentScene == GameScene.MainMenu) return;
+
+        LoadScene(currentScene);
     }
 
     /// <summary>
-    /// Handles to show and start loading scene.
+    /// Handles to start load scene.
     /// </summary>
-    /// <param name="_sceneName"></param>
-    public void LoadScene(string _sceneName)
+    /// <param name="_gameScene"></param>
+    public void LoadScene(GameScene _gameScene)
     {
-        StartCoroutine(LoadSceneRoutine(_sceneName));
+        if (_gameScene == GameScene.None) return;
+
+        if (_gameScene != GameScene.MainMenu)
+        {
+            AreaManager.Instance.SetCurrentScene(_gameScene);
+        }
+
+        StartCoroutine(LoadSceneRoutine(_gameScene.ToString()));
     }
 
     /// <summary>
-    /// Handles to load current scene.
+    /// Handles to load active scene.
     /// </summary>
-    public void LoadCurrentScene()
+    public void LoadActiveScene()
     {
         SaveGame();
-        Scene currentScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(currentScene.name);
+        Scene activeScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(activeScene.name);
     }
 
     /// <summary>
@@ -76,11 +98,41 @@ public class LevelManager : Singleton<LevelManager>
         saveManager.SaveGame();
     }
 
+    /// <summary>
+    /// Handles to show and start loading scene.
+    /// </summary>
+    /// <param name="_sceneName"></param>
     private IEnumerator LoadSceneRoutine(string _sceneName)
     {
         Time.timeScale = 1f;
-        animator.SetTrigger("Start");
+        animator.SetTrigger(START);
         yield return new WaitForSeconds(1f);
         SceneManager.LoadScene(_sceneName);
+    }
+
+    /// <summary>
+    /// Handles to save game scene active.
+    /// </summary>
+    /// <param name="_gameData"></param>
+    public void SaveData(ref GameData _gameData)
+    {
+        Scene activeScene = SceneManager.GetActiveScene();
+        if (activeScene.name == GameScene.MainMenu.ToString()) return;
+
+        currentScene = AreaManager.Instance.CurrentScene;
+        if (currentScene == GameScene.None || currentScene == GameScene.MainMenu) return;
+
+        _gameData.currentScene = currentScene;
+    }
+
+    /// <summary>
+    /// Handles to load last game scene active.
+    /// </summary>
+    /// <param name="_gameData"></param>
+    public void LoadData(GameData _gameData)
+    {
+        if (_gameData.currentScene == GameScene.None || _gameData.currentScene == GameScene.MainMenu) return;
+
+        currentScene = _gameData.currentScene;
     }
 }
