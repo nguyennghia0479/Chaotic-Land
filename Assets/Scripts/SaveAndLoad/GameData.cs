@@ -44,8 +44,7 @@ public class GameData
     public int ultimateIdSelected;
     public Dictionary<int, UltimateType> ultimateTypes;
 
-    [Header("Setting info")]
-    public Dictionary<string, float> volumes;
+    public GameScene currentScene;
 
     public GameData()
     {
@@ -66,6 +65,6 @@ public class GameData
         swordTypes = new Dictionary<int, SwordType>();
         ultimateIdSelected = 0;
         ultimateTypes = new Dictionary<int, UltimateType>();
-        volumes = new Dictionary<string, float>();
+        currentScene = GameScene.None;
     }
 }

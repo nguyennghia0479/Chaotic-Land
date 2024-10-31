@@ -46,6 +46,6 @@ public class DeathUI : MonoBehaviour
     /// </summary>
     private void AnimationFinish()
     {
-        LevelManager.Instance.LoadCurrentScene();
+        LevelManager.Instance.LoadActiveScene();
     }
 }

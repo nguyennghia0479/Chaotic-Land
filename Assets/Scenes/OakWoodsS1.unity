@@ -45983,11 +45983,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1307217178561506092, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: sceneToLoad
-      value: OakWoodsS2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1307217178561506092, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: entranceName
-      value: EEntry
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1670030479657825861, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: m_Name

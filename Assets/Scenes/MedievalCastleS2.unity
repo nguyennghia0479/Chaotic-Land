@@ -36803,11 +36803,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1307217178561506092, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: sceneToLoad
-      value: MedievalCastleSF
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1307217178561506092, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: entranceName
-      value: EEntry
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1670030479657825861, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: m_Name
@@ -38211,11 +38211,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1307217178561506092, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: sceneToLoad
-      value: MedievalCastleS1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1307217178561506092, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: entranceName
-      value: WEntry
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1670030479657825861, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: m_Name
@@ -38223,7 +38223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031316176611286610, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: entranceName
-      value: EEntry
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3140333652814631300, guid: 6e90ef794e4a75a4db35d4adc0b0c7fb, type: 3}
       propertyPath: m_LocalPosition.x

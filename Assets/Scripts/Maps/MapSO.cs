@@ -8,5 +8,5 @@ public class MapSO : ScriptableObject
     public Sprite mapIcon;
     public string mapName;
     public int mapRecommendedLevel;
-    public string mapSceneName;
+    public GameScene mapSceneName;
 }

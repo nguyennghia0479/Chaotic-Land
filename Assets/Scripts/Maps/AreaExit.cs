@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class AreaExit : MonoBehaviour
 {
-    [SerializeField] private string sceneToLoad;
-    [SerializeField] private string entranceName;
+    [SerializeField] private GameScene sceneToLoad;
+    [SerializeField] private AreaGate entranceName;
 
     /// <summary>
     /// Handles to change scene when entered.
@@ -17,7 +17,7 @@ public class AreaExit : MonoBehaviour
 
         if (LevelManager.Instance != null && AreaManager.Instance != null)
         {
-            AreaManager.Instance.SetAreaEntranceName(entranceName);
+            AreaManager.Instance.SetAreaEntranceName(entranceName.ToString());
             LevelManager.Instance.SaveGame();
             LevelManager.Instance.LoadScene(sceneToLoad);
         }
