@@ -148,7 +148,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -454,7 +454,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -844,6 +844,7 @@ MonoBehaviour:
   igniteFX: {fileID: 5196994134747103223, guid: ac607c878f83791439460bb90b197d6c, type: 3}
   chilledFX: {fileID: 7326528399532069867, guid: 0953c83dfe12274438fb35c41a5ca5d5, type: 3}
   popupTextPrefab: {fileID: 3222331702893993281, guid: 8b2c5f1ad52695c4f8a031325bfb3f1f, type: 3}
+  missText: Miss
   afterImagePrefab: {fileID: 710878909128232362, guid: 5f7e3d61cb2351241b4a53b74ac7555e, type: 3}
   colorLossingSpeed: 1
   afterImageCooldown: 0.04
@@ -889,58 +890,73 @@ MonoBehaviour:
   vitality:
     baseValue: 0
     modifiers: []
+    defaultValue: 0
   endurance:
     baseValue: 0
     modifiers: []
+    defaultValue: 0
   strength:
     baseValue: 0
     modifiers: []
+    defaultValue: 0
   dexterity:
     baseValue: 0
     modifiers: []
+    defaultValue: 0
   intelligence:
     baseValue: 0
     modifiers: []
+    defaultValue: 0
   agility:
     baseValue: 0
     modifiers: []
+    defaultValue: 0
   maxHealth:
-    baseValue: 100
+    baseValue: 200
     modifiers: []
+    defaultValue: 0
   maxStamina:
     baseValue: 50
     modifiers: []
+    defaultValue: 0
   physicsDamage:
-    baseValue: 10
+    baseValue: 20
     modifiers: []
+    defaultValue: 0
   critChance:
-    baseValue: 50
+    baseValue: 5
     modifiers: []
+    defaultValue: 0
   critPower:
-    baseValue: 150
+    baseValue: 100
     modifiers: []
+    defaultValue: 0
   magicDamage:
-    baseValue: 10
+    baseValue: 0
     modifiers: []
+    defaultValue: 0
   evasion:
     baseValue: 0
     modifiers: []
+    defaultValue: 0
   armor:
-    baseValue: 0
+    baseValue: 10
     modifiers: []
+    defaultValue: 0
   resistance:
     baseValue: 0
     modifiers: []
+    defaultValue: 0
   igniteDamage:
     baseValue: 2
     modifiers: []
+    defaultValue: 0
   ignitedDuration: 3
   igniteHitCooldown: 0.5
   chilledDuration: 2
   slowPercentage: 0.2
   rechargeDelay: 1.5
   rechargeRate: 25
-  currentHealth: 0
 --- !u!1001 &8861239345149350787
 PrefabInstance:
   m_ObjectHideFlags: 0

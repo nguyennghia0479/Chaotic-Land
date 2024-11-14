@@ -45,6 +45,7 @@ public class GameData
     public Dictionary<int, UltimateType> ultimateTypes;
 
     public GameScene currentScene;
+    public Dictionary<string, bool> checkpoints;
 
     public GameData()
     {
@@ -66,5 +67,6 @@ public class GameData
         ultimateIdSelected = 0;
         ultimateTypes = new Dictionary<int, UltimateType>();
         currentScene = GameScene.None;
+        checkpoints = new Dictionary<string, bool>();
     }
 }

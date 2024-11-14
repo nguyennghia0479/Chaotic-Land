@@ -37,7 +37,7 @@ public class BanditMoveState : BanditGroundedState
 
         if (bandit.IsImmobilized) return;
 
-        slopedSpeed = bandit.IsSlopeDetected() ? .15f : 0;
+        slopedSpeed = bandit.IsSlopeDetected() ? .2f : 0;
 
         if (bandit.IsWallDetected() || (!bandit.IsGroundDetected() && !bandit.IsSlopeDetected()))
         {

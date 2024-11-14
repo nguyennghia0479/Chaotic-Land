@@ -45,7 +45,7 @@ public class FireSpinSkill : Skill
     /// </summary>
     public void UnlockedFireSpinSkill()
     {
-        if (SkillManager.Instance == null || SkillManager.Instance.UltimateSkill == null) return;
+        if (SkillManager.Instance == null || SkillManager.Instance.UltimateSkill == null || ultimateSkillDropdown == null) return;
 
         if (fireSpinSkill != null && fireSpinSkill.IsUnlocked)
         {

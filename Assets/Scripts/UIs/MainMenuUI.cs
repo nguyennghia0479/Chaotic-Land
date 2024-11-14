@@ -10,6 +10,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button optionsBtn;
     [SerializeField] private Button quitBtn;
     [SerializeField] private OptionsUI optionsUI;
+    [SerializeField] private GuideUI guideUI;
 
     private LevelManager levelManager;
 
@@ -24,7 +25,7 @@ public class MainMenuUI : MonoBehaviour
         newGameBtn.onClick.AddListener(() =>
         {
             PlayMenuSound();
-            NewGame();
+            guideUI.ShowGuideUI();
         });
 
         optionsBtn.onClick.AddListener(() =>
@@ -67,7 +68,7 @@ public class MainMenuUI : MonoBehaviour
     /// <summary>
     /// Handles to load new game scene.
     /// </summary>
-    private void NewGame()
+    public void NewGame()
     {
         if (levelManager == null)
         {

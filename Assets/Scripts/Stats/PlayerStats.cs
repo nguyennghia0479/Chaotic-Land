@@ -69,7 +69,7 @@ public class PlayerStats : EntityStats, ISaveManager
         if (entity.IsDead) return;
 
         float totalDamage = physicsDamage.GetValueWithModify();
-        totalDamage = Mathf.RoundToInt(totalDamage * (1 - attackPercentage));
+        totalDamage = Mathf.RoundToInt(totalDamage * attackPercentage);
 
         totalDamage = CheckTargetArmor(_targetStats, totalDamage);
         _targetStats.TakeDamage(transform, totalDamage, false);

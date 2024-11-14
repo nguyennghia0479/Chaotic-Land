@@ -20,6 +20,7 @@ public class PlayerWallSlideState : PlayerState
         }
 
         isJumping = false;
+        player.IsWallGrab = true;
     }
     
     public override void Exit()
@@ -32,6 +33,7 @@ public class PlayerWallSlideState : PlayerState
         }
 
         isJumping = false;
+        player.IsWallGrab = false;
     }
 
     public override void FixedUpdate()

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7a0828fddf4414f980e6ac67ed3636, type: 3}
+  m_Name: Herbal
+  m_EditorClassIdentifier: 
+  itemName: Herbal
+  sprite: {fileID: -66376214, guid: c6856cc3c11c2e04194736ac915afa00, type: 3}
+  dropChance: 40
+  type: 0
+  itemId: 21f0b9c22025f5a42b55858107a065ad

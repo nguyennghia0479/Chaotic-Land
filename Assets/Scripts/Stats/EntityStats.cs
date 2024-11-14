@@ -63,7 +63,7 @@ public class EntityStats : MonoBehaviour
     protected bool isVulnerable;
     protected bool isInvisible;
     protected float vulnerableRate;
-    [SerializeField] protected float currentHealth;
+    protected float currentHealth;
     protected float currentStamina;
     protected bool isCriticalAttack;
     private Coroutine rechargeCoroutine;
@@ -137,15 +137,16 @@ public class EntityStats : MonoBehaviour
     /// Handles to make physical damage.
     /// </summary>
     /// <param name="_targetStats"></param>
-    public virtual void DoPhysicalDamage(EntityStats _targetStats)
+    public virtual void DoPhysicalDamage(EntityStats _targetStats, float _damage = 0)
     {
         if (_targetStats == null || _targetStats.entity.IsDead || CanTargetEvadeAttack(_targetStats) || _targetStats.isInvisible)
         {
             PlayMissAttackSound();
+            fx.PlayPopupMissDamageText();
             return;
         }
 
-        float totalDamage = physicsDamage.GetValueWithModify();
+        float totalDamage = _damage == 0 ? physicsDamage.GetValueWithModify() : _damage;
         bool canCrit = CanDoCritDamage();
         isCriticalAttack = canCrit;
         if (canCrit)
@@ -181,7 +182,7 @@ public class EntityStats : MonoBehaviour
 
         fx.PlayHitFX(_isCriticalAttack);
         fx.PlayFlashFX();
-        fx.PlayPopupDamageText(_damage.ToString(), _isCriticalAttack);
+        fx.PlayPopupDamageText(Mathf.Round(_damage).ToString(), _isCriticalAttack);
         DecreaseHealth(_damage);
     }
 
@@ -268,11 +269,11 @@ public class EntityStats : MonoBehaviour
     /// </summary>
     /// <param name="_targetStats"></param>
     /// <param name="_type"></param>
-    public virtual void DoMagicDamage(EntityStats _targetStats, AilmentType _type)
+    public virtual void DoMagicDamage(EntityStats _targetStats, AilmentType _type, float damageAdd = 0)
     {
         if (_targetStats == null || _targetStats.entity.IsDead || CanTargetEvadeAttack(_targetStats)) return;
 
-        float totalDamage = magicDamage.GetValueWithModify();
+        float totalDamage = damageAdd == 0 ? magicDamage.GetValueWithModify() : damageAdd;
         totalDamage = CheckTargetResistance(_targetStats, totalDamage);
         _targetStats.TakeDamage(transform, totalDamage, false);
         _targetStats.ApplyAilement(_type);
@@ -325,13 +326,107 @@ public class EntityStats : MonoBehaviour
 
     #region Stats
     /// <summary>
-    /// Handles to initial current health.
+    /// Handles to calculate stat modify.
     /// </summary>
-    public float CalculateStatModify(StatType _type, float _point)
+    public float CalculateStatModify(StatType _type, float _point, bool _isInitStat = true)
     {
-        int maxHealthAdjust = 10;
-        int staminaAndPhysicsDamageAdjust = 2;
-        float critPowerAndResistanceAdjust = .25f;
+        float maxHealthAdjust = 20;
+        float maxStaminaAdjust = 10;
+        float physicsDamageAdjust = 5;
+        float cirtPowerAdjust = .5f;
+        float magicDamageAdjust = 4;
+        float resistanceAdjust = .5f;
+        float statAdjustDecreasePerct;
+        float maxHealthAdded = 0;
+        float maxStaminaAdded = 0;
+        float physicsDamageAdded = 0;
+        float magicDamageAdded = 0;
+
+
+        switch (_type)
+        {
+            case StatType.MaxHealth:
+                {
+                    if (_isInitStat)
+                    {
+                        _point = 0;
+                    }
+
+                    statAdjustDecreasePerct = .4f;
+                    float maxHealthPoint = vitality.GetValueWithModify() + _point;
+                    maxHealthAdded = CalculateStatAdd(maxHealthPoint, maxHealthAdjust, statAdjustDecreasePerct);
+                    if (_isInitStat)
+                    {
+                        maxHealthAdded += maxHealth.GetValueWithModify();
+                    }
+                    else
+                    {
+                        maxHealthAdded += maxHealth.DefaultValue;
+                    }
+                    break;
+                }
+            case StatType.Stamina:
+                {
+                    if (_isInitStat)
+                    {
+                        _point = 0;
+                    }
+
+                    statAdjustDecreasePerct = .4f;
+                    float maxStaminaPoint = endurance.GetValueWithModify() + _point;
+                    maxStaminaAdded = CalculateStatAdd(maxStaminaPoint, maxStaminaAdjust, statAdjustDecreasePerct);
+                    if (_isInitStat)
+                    {
+                        maxStaminaAdded += maxStamina.GetValueWithModify();
+                    }
+                    else
+                    {
+                        maxStaminaAdded += maxStamina.DefaultValue;
+                    }
+                    break;
+                }
+            case StatType.PhysicsDamage:
+                {
+                    if (_isInitStat)
+                    {
+                        _point = 0;
+                    }
+
+                    statAdjustDecreasePerct = .2f;
+                    float physicsDamagePoint = strength.GetValueWithModify() + _point;
+                    physicsDamageAdded = CalculateStatAdd(physicsDamagePoint, physicsDamageAdjust, statAdjustDecreasePerct);
+                    if (_isInitStat)
+                    {
+                        physicsDamageAdded += physicsDamage.GetValueWithModify();
+                    }
+                    else
+                    {
+                        physicsDamageAdded += physicsDamage.DefaultValue;
+                    }
+                    break;
+                }
+            case StatType.MagicDamage:
+                {
+                    if (_isInitStat)
+                    {
+                        _point = 0;
+                    }
+
+                    statAdjustDecreasePerct = .1f;
+                    float magicDamagePoint = intelligence.GetValueWithModify() + _point;
+                    magicDamageAdded = CalculateStatAdd(magicDamagePoint, magicDamageAdjust, statAdjustDecreasePerct);    
+                    if (_isInitStat)
+                    {
+                        magicDamageAdded += magicDamage.GetValueWithModify();
+                    }
+                    else
+                    {
+                        magicDamageAdded += magicDamage.DefaultValue;
+                    }
+                    break;
+                }
+            default: break;
+        }
 
         return _type switch
         {
@@ -341,17 +436,42 @@ public class EntityStats : MonoBehaviour
             StatType.Dexterity => dexterity.GetValueWithModify() + _point,
             StatType.Intelligence => intelligence.GetValueWithModify() + _point,
             StatType.Agility => agility.GetValueWithModify() + _point,
-            StatType.MaxHealth => maxHealth.GetValueWithModify() + _point * maxHealthAdjust,
-            StatType.Stamina => maxStamina.GetValueWithModify() + _point * staminaAndPhysicsDamageAdjust,
-            StatType.PhysicsDamage => physicsDamage.GetValueWithModify() + _point * staminaAndPhysicsDamageAdjust,
+            StatType.MaxHealth => maxHealthAdded,
+            StatType.Stamina => maxStaminaAdded,
+            StatType.PhysicsDamage => physicsDamageAdded,
             StatType.CritChance => critChance.GetValueWithModify() + _point,
-            StatType.CritPower => critPower.GetValueWithModify() + _point * critPowerAndResistanceAdjust,
-            StatType.MagicDamage => magicDamage.GetValueWithModify() + _point,
+            StatType.CritPower => critPower.GetValueWithModify() + _point * cirtPowerAdjust,
+            StatType.MagicDamage => magicDamageAdded,
             StatType.Evasion => evasion.GetValueWithModify() + _point,
             StatType.Armor => armor.GetValueWithModify(),
-            StatType.Resistance => resistance.GetValueWithModify() + _point * critPowerAndResistanceAdjust,
+            StatType.Resistance => resistance.GetValueWithModify() + _point * resistanceAdjust,
             _ => 0
         };
+    }
+
+    /// <summary>
+    /// Handles to caclulate stats add.
+    /// </summary>
+    /// <param name="_statPoint"></param>
+    /// <param name="_statAdjust"></param>
+    /// <param name="_statAdjustDecreasePerct"></param>
+    /// <returns></returns>
+    private float CalculateStatAdd(float _statPoint, float _statAdjust, float _statAdjustDecreasePerct)
+    {
+        float thresholdPoint = 10;
+        float minStatAdjust = 1;
+        float statAdded = 0;
+
+        while (_statPoint > 0)
+        {
+            float point = Mathf.Min(_statPoint, thresholdPoint);
+            statAdded += Mathf.Round(point * _statAdjust);
+            _statAdjust -= _statAdjust * _statAdjustDecreasePerct;
+            _statAdjust = Mathf.Clamp(_statAdjust, minStatAdjust, float.MaxValue);
+            _statPoint -= point;
+        }
+
+        return statAdded;
     }
 
     /// <summary>

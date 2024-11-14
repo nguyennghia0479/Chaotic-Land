@@ -6,13 +6,16 @@ using UnityEngine.UI;
 
 public class Checkpoint : MonoBehaviour
 {
+    [Header("Checkpoint info")]
+    [SerializeField] private string id;
+    [SerializeField] private bool isBurning;
+
     [SerializeField] private GameObject tooltip;
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI burnText;
     [SerializeField] private TextMeshProUGUI unBurnText;
 
     private Animator animator;
-    private bool isBurning;
     private bool isNearCheckpoint;
     private const string BURN = "Burn";
 
@@ -23,16 +26,19 @@ public class Checkpoint : MonoBehaviour
 
     private void Start()
     {
-        icon.gameObject.SetActive(false);
         tooltip.SetActive(false);
+
+        if (isBurning) return;
+        icon.gameObject.SetActive(false);
     }
 
-    private void Update()
+    /// <summary>
+    /// Handles to generate uuid.
+    /// </summary>
+    [ContextMenu("Generate UUID")]
+    private void GenerateUUID()
     {
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            Active();
-        }
+        id = System.Guid.NewGuid().ToString();
     }
 
     /// <summary>
@@ -58,7 +64,7 @@ public class Checkpoint : MonoBehaviour
     /// <summary>
     /// Handles to active checkpoint when boss died.
     /// </summary>
-    public void Active()
+    public void Activate()
     {
         if (animator == null) return;
 
@@ -79,6 +85,11 @@ public class Checkpoint : MonoBehaviour
         {
             SoundManager.Instance.PlayLightTorchSound(transform.position);
         }
+    }
+
+    public string Id
+    {
+        get { return id; }
     }
 
     public bool IsBurning

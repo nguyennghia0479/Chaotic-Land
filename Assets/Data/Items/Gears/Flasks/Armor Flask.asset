@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a94f5336908183b419a1f0c56a18aab6, type: 3}
+  m_Name: Armor Flask
+  m_EditorClassIdentifier: 
+  itemName: Armor Flask
+  sprite: {fileID: -753223669, guid: c6856cc3c11c2e04194736ac915afa00, type: 3}
+  dropChance: 0
+  type: 1
+  itemId: 093e36fbf23ed0e45a899f6bc1191b4c
+  gearType: 3
+  craftingMaterials:
+  - itemSO: {fileID: 11400000, guid: c74dad7096604c044a49c7d68ce090ec, type: 2}
+    quantity: 2
+  loseConditionSpeed: 1
+  maxHealth: 0
+  stamina: 0
+  physicsDamage: 0
+  critChance: 0
+  critPower: 0
+  magicDamage: 0
+  evasion: 0
+  armor: 0
+  resistance: 0
+  effects:
+  - {fileID: 11400000, guid: a1f7fcc7558c1e842989e336e82be0d1, type: 2}
+  cooldown: 0

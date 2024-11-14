@@ -79,10 +79,11 @@ public class StatUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     /// <param name="_point"></param>
     public void UpdateStatModify(int _point)
     {
+        bool isInitStat = false;
         InitStatUI();
         point = _point;
         modifyText.color = _point > 0 ? plusColor : defaultColor;
-        modify = playerStats.CalculateStatModify(statType, _point);
+        modify = playerStats.CalculateStatModify(statType, _point, isInitStat);
         modifyText.text = modify.ToString();
     }
 

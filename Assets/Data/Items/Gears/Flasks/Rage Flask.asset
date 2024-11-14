@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a94f5336908183b419a1f0c56a18aab6, type: 3}
+  m_Name: Rage Flask
+  m_EditorClassIdentifier: 
+  itemName: Rage Flask
+  sprite: {fileID: 995643561, guid: c6856cc3c11c2e04194736ac915afa00, type: 3}
+  dropChance: 0
+  type: 1
+  itemId: 2388ce9b3d3d83045bdd6b0cd27c8a98
+  gearType: 3
+  craftingMaterials:
+  - itemSO: {fileID: 11400000, guid: fc3449afe80a7984ba6ca915ef588ea8, type: 2}
+    quantity: 2
+  loseConditionSpeed: 1
+  physicsDamage: 0
+  critChance: 0
+  critPower: 0
+  magicDamage: 0
+  evasion: 0
+  armor: 0
+  resistance: 0
+  effects:
+  - {fileID: 11400000, guid: f03479ebc169bcf40b637a331cc41aa1, type: 2}
+  cooldown: 0

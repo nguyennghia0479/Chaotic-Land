@@ -169,11 +169,14 @@ public class FireSpinSkillController : MonoBehaviour
             Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, maxGrowSize);
             foreach (Collider2D collider in colliders)
             {
-                if (collider.TryGetComponent(out EnemyStats enemy))
+                if (collider.TryGetComponent(out EnemyStats enemyStats))
                 {
-                    if (enemy.GetComponent<Enemy>().IsDead) return;
+                    if (enemyStats.GetComponent<Enemy>().IsDead) return;
 
-                    player.Stats.DoMagicDamage(enemy, AilmentType.Ignite);
+                    float enemyResistance = enemyStats.resistance.GetValueWithModify();
+                    float damage = player.Stats.magicDamage.GetValueWithModify() * .1f;
+                    damage = damage - enemyResistance < enemyResistance ? Mathf.Clamp(damage, damage + enemyResistance, float.MaxValue) : damage;
+                    player.Stats.DoMagicDamage(enemyStats, AilmentType.Ignite, damage);
                 }
             }
         }

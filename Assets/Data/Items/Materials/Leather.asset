@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Leather
   m_EditorClassIdentifier: 
   itemName: Leather
-  sprite: {fileID: -1619131747, guid: c6856cc3c11c2e04194736ac915afa00, type: 3}
-  dropChance: 100
+  sprite: {fileID: 21300000, guid: 9ce4c5dac70c11a4ebc327b206df3841, type: 3}
+  dropChance: 70
   type: 0
+  itemId: 1432b10762a3e4a4cb19c1ed0fc8cc49

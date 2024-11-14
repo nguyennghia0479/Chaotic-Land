@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b7a0828fddf4414f980e6ac67ed3636, type: 3}
   m_Name: Banana
   m_EditorClassIdentifier: 
-  itemName: Apple
+  itemName: Banana
   sprite: {fileID: 1244446804, guid: c6856cc3c11c2e04194736ac915afa00, type: 3}
-  dropChance: 100
+  dropChance: 50
   type: 0
+  itemId: c74dad7096604c044a49c7d68ce090ec

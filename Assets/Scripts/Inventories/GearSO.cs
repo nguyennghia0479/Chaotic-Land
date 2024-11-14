@@ -16,10 +16,6 @@ public class GearSO : ItemSO
     public List<Inventory> craftingMaterials;
     [Range(0f, 1f)] public float loseConditionSpeed;
 
-    [Header("General stats info")]
-    public int maxHealth;
-    public int stamina;
-
     [Header("Offensive stats info")]
     public int physicsDamage;
     public int critChance;
@@ -92,8 +88,6 @@ public class GearSO : ItemSO
     {
         sb.Clear();
 
-        AddDescription(maxHealth, "Max health");
-        AddDescription(stamina, "Stamina");
         AddDescription(physicsDamage, "Physics damage");
         AddDescription(critChance, "Critical chance");
         AddDescription(critPower, "Critical power");

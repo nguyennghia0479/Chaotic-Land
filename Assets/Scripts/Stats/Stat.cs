@@ -8,16 +8,23 @@ public class Stat
     [SerializeField] private float baseValue;
     [SerializeField] private List<float> modifiers;
 
+    private float defaultValue;
+    private bool isSetDefaultVal;
+
     public void AddModify(int _modifier)
     {
         if (_modifier <= 0) return;
 
-        modifiers.Add(_modifier);
+        baseValue += _modifier;
+        defaultValue += _modifier;
     }
 
     public void RemoveModify(int _modifier)
     {
-        modifiers.Remove(_modifier);
+        if (_modifier <= 0) return;
+
+        baseValue -= _modifier;
+        defaultValue -= _modifier;
     }
 
     /// <summary>
@@ -38,6 +45,12 @@ public class Stat
 
     public void UpdateBaseValue(float _value)
     {
+        if (!isSetDefaultVal)
+        {
+            isSetDefaultVal = true;
+            defaultValue = baseValue;
+        }
+
         baseValue = _value;
     }
 
@@ -55,5 +68,10 @@ public class Stat
         }
 
         return value;
+    }
+
+    public float DefaultValue
+    {
+        get { return defaultValue; }
     }
 }

@@ -98,7 +98,7 @@ public class Enemy : Entity
             Checkpoint checkpoint = FindObjectOfType<Checkpoint>();
             if (checkpoint != null)
             {
-                checkpoint.Active();
+                checkpoint.Activate();
             }
 
             OnDie?.Invoke(this, EventArgs.Empty);
