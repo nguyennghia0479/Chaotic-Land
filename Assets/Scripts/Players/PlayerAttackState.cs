@@ -48,6 +48,11 @@ public class PlayerAttackState : PlayerState
         {
             stateMachine.ChangeState(player.IdleState);
         }
+
+        if (player.IsWallDetected() && !player.IsGroundDetected() && !player.IsSlopeDetected())
+        {
+            stateMachine.ChangeState(player.WallGrabState);
+        }
     }
 
     /// <summary>

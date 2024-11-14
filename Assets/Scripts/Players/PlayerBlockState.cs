@@ -48,7 +48,6 @@ public class PlayerBlockState : PlayerState
         if (playerStats.CurrentStamina <= 0)
         {
             player.CancelBlock();
-
         }
     }
 

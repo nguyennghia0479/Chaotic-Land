@@ -8,12 +8,15 @@ public class ItemDrop : MonoBehaviour
     [SerializeField] private int numberOfDrops;
     [SerializeField] private List<ItemSO> itemSOs;
     [SerializeField] private Vector2 velocity;
+    [SerializeField] private bool isBoss;
 
     private List<ItemSO> dropItems;
+    private int maxDropItemChance;
 
     private void Start()
     {
         dropItems = new List<ItemSO>();
+        maxDropItemChance = numberOfDrops;
     }
 
     /// <summary>
@@ -21,14 +24,19 @@ public class ItemDrop : MonoBehaviour
     /// </summary>
     public void GenerateItemDrop()
     {
-        while (itemSOs.Count > 0)
+        while (maxDropItemChance > 0 && itemSOs.Count > 0)
         {
             ItemSO itemCanDrop = itemSOs[Random.Range(0, itemSOs.Count)];
             if (Utils.RandomChance(itemCanDrop.dropChance))
             {
                 dropItems.Add(itemCanDrop);
             }
+
             itemSOs.Remove(itemCanDrop);
+            if (!isBoss)
+            {
+                maxDropItemChance--;
+            }
 
             if (dropItems.Count >= numberOfDrops)
             {

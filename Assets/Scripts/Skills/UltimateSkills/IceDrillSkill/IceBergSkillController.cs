@@ -30,7 +30,8 @@ public class IceBergSkillController : MonoBehaviour
     {
         if (playerStats == null || enemyStats == null) return;
 
-        playerStats.DoMagicDamage(enemyStats, AilmentType.None);
+        float damage = playerStats.magicDamage.GetValueWithModify() * 2;
+        playerStats.DoMagicDamage(enemyStats, AilmentType.None, damage);
     }
 
     private void AnimationIceBergEnd()

@@ -100,7 +100,9 @@ public class SwordSkillController : MonoBehaviour
             {
                 if (enemy.IsDead) return;
 
-                SwordSkillDamage(enemy);
+                float damage = player.Stats.physicsDamage.GetValueWithModify();
+                damage = isBounceSword ? damage * .5f : damage * Random.Range(1f, 1.5f);
+                SwordSkillDamage(enemy, damage);
             }
         }
 
@@ -238,7 +240,8 @@ public class SwordSkillController : MonoBehaviour
             {
                 if (enemyTargets[enemyIndex].TryGetComponent(out Enemy enemy))
                 {
-                    SwordSkillDamage(enemy);
+                    float damage = player.Stats.physicsDamage.GetValueWithModify() * .5f;
+                    SwordSkillDamage(enemy, damage);
                     if (enemy.IsDead)
                     {
                         enemyTargets.Remove(enemyTargets[enemyIndex]);
@@ -320,7 +323,8 @@ public class SwordSkillController : MonoBehaviour
                         {
                             if (enemy.IsDead) return;
 
-                            SwordSkillDamage(enemy);
+                            float damage = player.Stats.physicsDamage.GetValueWithModify() * .5f;
+                            SwordSkillDamage(enemy, damage);
                         }
                     }
                 }
@@ -398,7 +402,7 @@ public class SwordSkillController : MonoBehaviour
     /// Handles to do physics damage by sword.
     /// </summary>
     /// <param name="_enemy"></param>
-    private void SwordSkillDamage(Enemy _enemy)
+    private void SwordSkillDamage(Enemy _enemy, float _damage)
     {
         if (_enemy.Stats.IsInvisible) return;
 
@@ -412,7 +416,7 @@ public class SwordSkillController : MonoBehaviour
             _enemy.Stats.MakeVulnerable(vulnerableDuration, vulnerableRate);
         }
 
-        player.Stats.DoPhysicalDamage(_enemy.Stats);
+        player.Stats.DoPhysicalDamage(_enemy.Stats, _damage);
     }
 
     #region Play sound

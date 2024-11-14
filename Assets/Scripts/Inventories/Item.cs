@@ -26,6 +26,7 @@ public class Item : MonoBehaviour
             {
                 InventoryManager.Instance.AddMaterialToInventory(itemSO);
                 PlayPickupItemSound(player.transform.position);
+                player.FX.PlayPopupPickItemText("+ 1 " + itemSO.itemName);
                 Destroy(gameObject);
             }
         }

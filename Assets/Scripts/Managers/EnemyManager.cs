@@ -16,7 +16,7 @@ public class EnemyManager : MonoBehaviour
         int playerLevel = playerManager.CurrentLevel;
         foreach (Enemy enemy in enemies)
         {
-            if (enemy.IsCombat) continue;
+            if (enemy.IsCombat || enemy.IsDead) continue;
 
             if (enemy.TryGetComponent(out EnemyStats enemyStats))
             {

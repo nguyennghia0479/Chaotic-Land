@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a94f5336908183b419a1f0c56a18aab6, type: 3}
+  m_Name: Heal Flask Advance
+  m_EditorClassIdentifier: 
+  itemName: Heal Flask Advance
+  sprite: {fileID: -378691770, guid: c6856cc3c11c2e04194736ac915afa00, type: 3}
+  dropChance: 0
+  type: 1
+  itemId: 163ff45aacd3fa1489b9b8eb7d3fb913
+  gearType: 3
+  craftingMaterials:
+  - itemSO: {fileID: 11400000, guid: f4286f9ae4777d346ae949a0e9311414, type: 2}
+    quantity: 2
+  - itemSO: {fileID: 11400000, guid: a94f4f64de1b7734a9d8bc1a687d04d2, type: 2}
+    quantity: 1
+  - itemSO: {fileID: 11400000, guid: 21f0b9c22025f5a42b55858107a065ad, type: 2}
+    quantity: 1
+  loseConditionSpeed: 0.2
+  maxHealth: 0
+  stamina: 0
+  physicsDamage: 0
+  critChance: 0
+  critPower: 0
+  magicDamage: 0
+  evasion: 0
+  armor: 0
+  resistance: 0
+  effects:
+  - {fileID: 11400000, guid: d6ad419c92dee4043b8526a88977522f, type: 2}
+  cooldown: 0

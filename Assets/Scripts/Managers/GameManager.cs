@@ -3,13 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : Singleton<GameManager>
+public class GameManager : Singleton<GameManager>, ISaveManager
 {
     [SerializeField] private InGameUI inGameUI;
     [SerializeField] private BossInfoUI bossInfoUI;
     [SerializeField] private TooltipUI[] tooltipUIs;
     [SerializeField] private Checkpoint[] checkpoints;
-    [SerializeField] private MapSelectionUI mapSelectionUI;
 
     private PlayerController playerController;
     private bool isOpenTab;
@@ -213,6 +212,40 @@ public class GameManager : Singleton<GameManager>
             SoundManager.Instance.PlayOpenPanelSound();
         }
     }
+
+    #region Save and load
+    public void SaveData(ref GameData _gameData)
+    {
+        if (checkpoints == null || checkpoints.Length == 0) return;
+
+        foreach (Checkpoint checkpoint in checkpoints)
+        {
+            if (_gameData.checkpoints.TryGetValue(checkpoint.Id, out _))
+            {
+               _gameData.checkpoints.Remove(checkpoint.Id);
+            }
+
+            _gameData.checkpoints.Add(checkpoint.Id, checkpoint.IsBurning);
+        }
+    }
+
+    public void LoadData(GameData _gameData)
+    {
+        if (checkpoints == null || checkpoints.Length == 0) return;
+
+        foreach (KeyValuePair<string, bool> pair in _gameData.checkpoints)
+        {
+            foreach (Checkpoint checkpoint in checkpoints)
+            {
+                if (pair.Key.Equals(checkpoint.Id) && pair.Value)
+                {
+                    checkpoint.Activate();
+                    break;
+                }
+            }
+        }
+    }
+    #endregion
 
     public bool IsGamePaused
     {

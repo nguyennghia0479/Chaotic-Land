@@ -8,8 +8,10 @@ public class GamePausedUI : MonoBehaviour
     [SerializeField] private Button resumeBtn;
     [SerializeField] private Button mainMenuBtn;
     [SerializeField] private Button optionsBtn;
+    [SerializeField] private Button guideBtn;
     [SerializeField] private Button quitBtn;
     [SerializeField] private OptionsUI optionsUI;
+    [SerializeField] private GuideUI guideUI;
 
     private LevelManager levelManager;
 
@@ -32,6 +34,13 @@ public class GamePausedUI : MonoBehaviour
             PlayMenuSound();
             HideGamePausedUI();
             optionsUI.ShowOptionsUI();
+        });
+
+        guideBtn.onClick.AddListener(() =>
+        {
+            PlayMenuSound();
+            HideGamePausedUI();
+            guideUI.ShowGuideUI();
         });
 
         quitBtn.onClick.AddListener(() =>

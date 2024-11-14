@@ -12,7 +12,11 @@ public class ThunderStrikeSkill : MonoBehaviour
 
     private void Update()
     {
-        if (target == null) return;
+        if (target == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         float moveDelta = moveSpeed * Time.deltaTime;
         transform.position = Vector2.MoveTowards(transform.position, target.position, moveDelta);

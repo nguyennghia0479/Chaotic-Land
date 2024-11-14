@@ -85,7 +85,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -310,7 +310,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1178,6 +1178,7 @@ MonoBehaviour:
   igniteFX: {fileID: 6756389829123857213}
   chilledFX: {fileID: 8208979739909555433}
   popupTextPrefab: {fileID: 3222331702893993281, guid: 8b2c5f1ad52695c4f8a031325bfb3f1f, type: 3}
+  missText: Miss
 --- !u!114 &5493252070425728213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1209,19 +1210,19 @@ MonoBehaviour:
     baseValue: 0
     modifiers: []
   maxHealth:
-    baseValue: 50
+    baseValue: 100
     modifiers: []
   maxStamina:
     baseValue: 0
     modifiers: []
   physicsDamage:
-    baseValue: 10
+    baseValue: 20
     modifiers: []
   critChance:
-    baseValue: 0
+    baseValue: 10
     modifiers: []
   critPower:
-    baseValue: 0
+    baseValue: 100
     modifiers: []
   magicDamage:
     baseValue: 0
@@ -1230,7 +1231,7 @@ MonoBehaviour:
     baseValue: 0
     modifiers: []
   armor:
-    baseValue: 0
+    baseValue: 3
     modifiers: []
   resistance:
     baseValue: 0
@@ -1246,9 +1247,14 @@ MonoBehaviour:
   rechargeRate: 10
   level: 1
   exp:
-    baseValue: 100
+    baseValue: 50
     modifiers: []
-  percentageModify: 0.3
+  healthPerctModify: 0.2
+  physicsDamagePerctModify: 0.15
+  magicDamagePerctModify: 0
+  armorPerctModify: 0.2
+  resistancePerctModify: 0
+  expPerctModify: 0.35
 --- !u!114 &9020428909836297146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1264,8 +1270,16 @@ MonoBehaviour:
   itemPrefab: {fileID: 7809576743879626327, guid: c43796a53ead0424c896d5b4b50bf0fa, type: 3}
   numberOfDrops: 2
   itemSOs:
+  - {fileID: 11400000, guid: f4286f9ae4777d346ae949a0e9311414, type: 2}
+  - {fileID: 11400000, guid: 21f0b9c22025f5a42b55858107a065ad, type: 2}
+  - {fileID: 11400000, guid: a94f4f64de1b7734a9d8bc1a687d04d2, type: 2}
+  - {fileID: 11400000, guid: cddfc48fa60268041b1bb1cfb16725fb, type: 2}
+  - {fileID: 11400000, guid: 1432b10762a3e4a4cb19c1ed0fc8cc49, type: 2}
+  - {fileID: 11400000, guid: fc3449afe80a7984ba6ca915ef588ea8, type: 2}
   - {fileID: 11400000, guid: 968d188910803274080f46bc08f94567, type: 2}
-  velocity: {x: 0, y: 0}
+  - {fileID: 11400000, guid: 69213c0dfac89be4aa5cdab406efa11b, type: 2}
+  velocity: {x: 5, y: 10}
+  isBoss: 0
 --- !u!1 &6329385833081478318
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +9,6 @@ public class AttributeUI : MonoBehaviour
     [SerializeField] private Button increaseBtn;
     [SerializeField] private Color disableColor;
     [Header("Modify info")]
-    [SerializeField] private TextMeshProUGUI modifyText;
     [SerializeField] private Color plusColor;
     [SerializeField] private StatUI[] referenceStatUIs;
 
@@ -22,6 +17,7 @@ public class AttributeUI : MonoBehaviour
     private CharacterUI characterUI;
     private StatUI statUI;
     private int point;
+    private Stat stat;
 
     private void Awake()
     {
@@ -44,6 +40,7 @@ public class AttributeUI : MonoBehaviour
         if (playerManager != null)
         {
             playerStats = playerManager.Player.GetComponent<PlayerStats>();
+            stat = playerStats.GetStatByType(statType);
         }
 
         statUI = GetComponentInChildren<StatUI>();
@@ -120,7 +117,7 @@ public class AttributeUI : MonoBehaviour
             decreaseBtn.image.color = disableColor;
         }
 
-        if (playerManager.CanAddPoint())
+        if (playerManager.CanAddPoint() && stat != null && (stat.GetValueWithModify() + point) < 60)
         {
             increaseBtn.enabled = true;
             increaseBtn.image.color = Color.white;
@@ -128,7 +125,7 @@ public class AttributeUI : MonoBehaviour
         else
         {
             increaseBtn.enabled = false;
-            increaseBtn.image.color = disableColor; 
+            increaseBtn.image.color = disableColor;
         }
     }
 

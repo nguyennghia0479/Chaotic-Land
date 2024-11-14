@@ -24,6 +24,7 @@ public class PlayerWallGrabState : PlayerState
         rb.gravityScale = 0;
         stateTimer = grabWallTime;
         isJumping = false;
+        player.IsWallGrab = true;
     }
 
     public override void Exit()
@@ -37,6 +38,8 @@ public class PlayerWallGrabState : PlayerState
 
         rb.gravityScale = defaultGravityScale;
         isJumping = false;
+
+        player.IsWallGrab = false;
     }
 
     public override void FixedUpdate()

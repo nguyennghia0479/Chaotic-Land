@@ -22,8 +22,14 @@ public class CraftUI : MonoBehaviour
             if (InventoryManager.Instance != null)
             {
                 InventoryManager.Instance.CraftItem(craftItem);
+                UpdateCraftButton(craftItem);
             }
         });
+    }
+
+    private void OnEnable()
+    {
+        UpdateCraftButton(null);
     }
 
     /// <summary>
@@ -32,6 +38,7 @@ public class CraftUI : MonoBehaviour
     /// <param name="_item"></param>
     public void SetupCraftUI(GearSO _item)
     {
+        UpdateCraftButton(_item);
         ClearRequiredMaterialSlot();
 
         for (int i = 0; i < _item.craftingMaterials.Count; i++)
@@ -78,6 +85,28 @@ public class CraftUI : MonoBehaviour
             material.itemIcon.color = Color.clear;
             material.itemIcon.sprite = null;
             material.itemText.text = "";
+        }
+    }
+
+    /// <summary>
+    /// Handles to update craft button ui.
+    /// </summary>
+    /// <param name="_item"></param>
+    private void UpdateCraftButton(GearSO _item)
+    {
+        TextMeshProUGUI craftText = craftBtn.GetComponentInChildren<TextMeshProUGUI>();
+
+        if (_item != null && InventoryManager.Instance.CanCraft(_item))
+        {
+            craftText.color = Color.white;
+            craftBtn.enabled = true;
+        }
+        else
+        {
+            float alpha = 100;
+            Color color = craftText.color;
+            craftText.color = new Color(color.r, color.g, color.b, alpha / 255);
+            craftBtn.enabled = false;
         }
     }
 }

@@ -37,7 +37,7 @@ public class BrightFireSkillController : MonoBehaviour
         {
             if (enemy.GetComponent<Enemy>().IsDead) return;
 
-            player.Stats.DoMagicDamage(enemy, ailementType);
+            player.Stats.DoMagicDamage(enemy, ailementType, player.Stats.magicDamage.GetValueWithModify() * .4f);
         }
 
         PlayBrightFireSound();

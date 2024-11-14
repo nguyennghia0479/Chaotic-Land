@@ -161,6 +161,7 @@ public class InventoryManager : Singleton<InventoryManager>, ISaveManager
                 flaskGear.ExecuteItemEffects(null);
 
                 DecreaseGearDurability(GearType.Flask);
+                SoundManager.Instance.PlayUsePotionSound(PlayerManager.Instance.Player.transform.position);
             }
         }
     }
@@ -219,7 +220,7 @@ public class InventoryManager : Singleton<InventoryManager>, ISaveManager
     /// </summary>
     /// <param name="_itemToCraft"></param>
     /// <returns>True if found enough required material. False if not.</returns>
-    private bool CanCraft(GearSO _itemToCraft)
+    public bool CanCraft(GearSO _itemToCraft)
     {
         if (_itemToCraft == null)
             return false;

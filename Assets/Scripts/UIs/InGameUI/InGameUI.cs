@@ -34,6 +34,8 @@ public class InGameUI : MonoBehaviour
     private float staminaTargetWidth;
     private readonly float smoothTime = .5f;
     private readonly int staminaMultiplier = 2;
+    private readonly float minBarSize = 200;
+    private readonly float maxBarSize = 600;
     #endregion
 
     private void OnEnable()
@@ -150,7 +152,7 @@ public class InGameUI : MonoBehaviour
 
         isHealthUpgraded = true;
         healthTargetWidth = healthSlider.maxValue;
-        healthText.text = healthSlider.value.ToString() + "/" + healthSlider.maxValue;
+        healthText.text = healthSlider.value + "/" + healthSlider.maxValue;
     }
 
     /// <summary>
@@ -180,8 +182,9 @@ public class InGameUI : MonoBehaviour
     {
         healthSlider.maxValue = playerStats.CurrentHealth;
         healthSlider.value = playerStats.CurrentHealth;
-        healthBar.sizeDelta = new Vector2(healthSlider.maxValue, healthBar.sizeDelta.y);
-        healthText.text = healthSlider.value.ToString() + "/" + healthSlider.maxValue;
+        float healthBarSize = Mathf.Clamp(healthSlider.maxValue, minBarSize, maxBarSize);
+        healthBar.sizeDelta = new Vector2(healthBarSize, healthBar.sizeDelta.y);
+        healthText.text = healthSlider.value + "/" + healthSlider.maxValue;
     }
 
     /// <summary>
@@ -196,7 +199,7 @@ public class InGameUI : MonoBehaviour
         {
             healthBarShrinkUI.DecreaseHealth(healthBarAmount);
             healthSlider.value = playerStats.CurrentHealth;
-            healthText.text = healthSlider.value.ToString() + "/" + healthSlider.maxValue;
+            healthText.text = healthSlider.value + "/" + healthSlider.maxValue;
         }
         else
         {
@@ -211,7 +214,8 @@ public class InGameUI : MonoBehaviour
     {
         staminaSlider.maxValue = playerStats.CurrentStamina;
         staminaSlider.value = playerStats.CurrentStamina;
-        staminaBar.sizeDelta = new Vector2(staminaSlider.maxValue * staminaMultiplier, staminaBar.sizeDelta.y);
+        float staminaBarSize = Mathf.Clamp(staminaSlider.maxValue, minBarSize, maxBarSize);
+        staminaBar.sizeDelta = new Vector2(staminaBarSize, staminaBar.sizeDelta.y);
     }
 
     /// <summary>
@@ -253,12 +257,14 @@ public class InGameUI : MonoBehaviour
         if (isHealthUpgraded)
         {
             float newWidth = Mathf.Lerp(healthBar.sizeDelta.x, healthTargetWidth, Time.deltaTime / smoothTime);
-            healthBar.sizeDelta = new Vector2(newWidth, healthBar.sizeDelta.y);
+            float healthBarSize = Mathf.Clamp(newWidth, minBarSize, maxBarSize);
+            healthBar.sizeDelta = new Vector2(healthBarSize, healthBar.sizeDelta.y);
 
             if (Mathf.Abs(newWidth - healthTargetWidth) < .01f)
             {
                 isHealthUpgraded = false;
-                healthBar.sizeDelta = new Vector2(healthTargetWidth, healthBar.sizeDelta.y);
+                healthBarSize = Mathf.Clamp(healthTargetWidth, minBarSize, maxBarSize);
+                healthBar.sizeDelta = new Vector2(healthBarSize, healthBar.sizeDelta.y);
             }
         }
     }
@@ -271,12 +277,14 @@ public class InGameUI : MonoBehaviour
         if (isStamainaUpgraded)
         {
             float newWidth = Mathf.Lerp(staminaBar.sizeDelta.x, staminaTargetWidth, Time.deltaTime / smoothTime);
-            staminaBar.sizeDelta = new Vector2(newWidth, staminaBar.sizeDelta.y);
+            float staminaBarSize = Mathf.Clamp(newWidth, minBarSize, maxBarSize);
+            staminaBar.sizeDelta = new Vector2(staminaBarSize, staminaBar.sizeDelta.y);
 
             if (Mathf.Abs(newWidth - staminaTargetWidth) < .01f)
             {
                 isStamainaUpgraded = false;
-                staminaBar.sizeDelta = new Vector2(staminaTargetWidth, staminaBar.sizeDelta.y);
+                staminaBarSize = Mathf.Clamp(staminaTargetWidth, minBarSize, maxBarSize);
+                staminaBar.sizeDelta = new Vector2(staminaBarSize, staminaBar.sizeDelta.y);
             }
         }
     }
@@ -321,11 +329,9 @@ public class InGameUI : MonoBehaviour
     private void PlayerController_OnSpellCastAction(object sender, System.EventArgs e)
     {
         CrystalSkill crystalSkill = skillManager.CrystalSkill;
-        if (playerStats.CurrentStamina < crystalSkill.SkillStaminaAmount || !crystalSkill.IsSpellCrystalUnlocked)
-            return;
+        if (playerStats.CurrentStamina < crystalSkill.SkillStaminaAmount || !crystalSkill.IsSpellCrystalUnlocked || player.IsAiming || player.IsWallGrab) return;
 
-        if (crystalSkill.IsMultipleCrystalsUnlocked && crystalSkill.CrystalLeft.Count > 1)
-            return;
+        if (crystalSkill.IsMultipleCrystalsUnlocked && crystalSkill.CrystalLeft.Count > 1) return;
 
         SetImageFillAmount(crystalCooldownImg);
     }
@@ -333,7 +339,7 @@ public class InGameUI : MonoBehaviour
     private void PlayerController_OnDashAction(object sender, System.EventArgs e)
     {
         DashSkill dashSkill = skillManager.DashSkill;
-        if (playerStats.CurrentStamina < dashSkill.SkillStaminaAmount || !dashSkill.IsDashUnlocked) return;
+        if (playerStats.CurrentStamina < dashSkill.SkillStaminaAmount || !dashSkill.IsDashUnlocked || player.IsAiming || player.IsWallGrab) return;
 
         SetImageFillAmount(dashCooldownImg);
     }
@@ -341,7 +347,7 @@ public class InGameUI : MonoBehaviour
     private void PlayerController_OnBlockActionEnd(object sender, System.EventArgs e)
     {
         ParrySkill parrySkill = skillManager.ParrySkill;
-        if (playerStats.CurrentStamina < parrySkill.SkillStaminaAmount || !parrySkill.IsParryUnlocked) return;
+        if (playerStats.CurrentStamina < parrySkill.SkillStaminaAmount || !parrySkill.IsParryUnlocked || player.IsAiming || player.IsWallGrab) return;
 
         SetImageFillAmount(parryCooldownImg);
     }
@@ -349,7 +355,7 @@ public class InGameUI : MonoBehaviour
     private void PlayerController_OnUltimateAction(object sender, System.EventArgs e)
     {
         UltimateSkill ultimateSkill = skillManager.UltimateSkill;
-        if (playerStats.CurrentStamina < ultimateSkill.SkillStaminaAmount || !ultimateSkill.IsUltimateUnlocked) return;
+        if (playerStats.CurrentStamina < ultimateSkill.SkillStaminaAmount || !ultimateSkill.IsUltimateUnlocked || player.IsAiming || player.IsWallGrab) return;
 
         if (ultimateSkill.Type == UltimateType.FireSpin && player.FireSpin != null) return;
 

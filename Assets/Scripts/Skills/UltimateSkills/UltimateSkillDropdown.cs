@@ -180,6 +180,8 @@ public class UltimateSkillDropdown : MonoBehaviour, ISaveManager
         ultimateDropdown.RefreshShownValue();
         ultimateDropdown.enabled = true;
         ultimateDropdown.value = gameData.ultimateIdSelected;
+        isSkillReseted = false;
+        UpdateUltimateSkill(ultimateDropdown.value);
     }
     #endregion
 }

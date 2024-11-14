@@ -151,6 +151,7 @@ public class BanditAggroState : EnemyState
             }
             else
             {
+                float speed = bandit.IsSlopeDetected() ? bandit.AggroSpeed * 1.5f : bandit.AggroSpeed;
                 bandit.SetVelocityWithFlip(bandit.AggroSpeed * facingDir, rb.velocity.y);
                 PlayFootstepsSound();
             }

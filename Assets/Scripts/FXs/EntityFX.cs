@@ -39,6 +39,7 @@ public class EntityFX : MonoBehaviour
 
     [Header("Popup text info")]
     [SerializeField] private GameObject popupTextPrefab;
+    [SerializeField] private string missText = "Miss";
 
     protected SpriteRenderer sr;
     protected Material defaultMat;
@@ -242,6 +243,13 @@ public class EntityFX : MonoBehaviour
         newPopupText.GetComponent<TextMeshPro>().text = _text;
     }
 
+    public void PlayPopupPickItemText(string _text)
+    {
+        Vector3 offset = new(0, Random.Range(1f, 3f));
+        GameObject newPopupText = Instantiate(popupTextPrefab, transform.position + offset, Quaternion.identity);
+        newPopupText.GetComponent<TextMeshPro>().text = _text;
+    }
+
     /// <summary>
     /// Handles to play popup damage text.
     /// </summary>
@@ -249,12 +257,10 @@ public class EntityFX : MonoBehaviour
     /// <param name="_isCriticalHit"></param>
     public void PlayPopupDamageText(string _damageText, bool _isCriticalHit)
     {
-        float xPosition = Random.Range(-2f, 2f);
-        float yPosition = Random.Range(1f, 3f);
-        Vector3 offset = new(xPosition, yPosition);
-
+        Vector3 offset = GetOffset();
         GameObject newPopupText = Instantiate(popupTextPrefab, transform.position + offset, Quaternion.identity);
         newPopupText.GetComponent<TextMeshPro>().text = _damageText;
+        
         if (_isCriticalHit )
         {
             newPopupText.GetComponent<TextMeshPro>().color = Color.red;
@@ -263,6 +269,20 @@ public class EntityFX : MonoBehaviour
         {
             newPopupText.GetComponent<TextMeshPro>().color = Color.yellow;
         }
+    }
+
+    public void PlayPopupMissDamageText()
+    {
+        Vector3 offset = GetOffset();
+        GameObject newPopupText = Instantiate(popupTextPrefab, transform.position + offset, Quaternion.identity);
+        newPopupText.GetComponent<TextMeshPro>().text = missText;
+    }
+
+    private Vector3 GetOffset()
+    {
+        float xPosition = Random.Range(-2f, 2f);
+        float yPosition = Random.Range(1f, 3f);
+        return new(xPosition, yPosition);
     }
     #endregion
 

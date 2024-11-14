@@ -30,6 +30,7 @@ public class Player : Entity
     private GameObject crystal;
     private bool isAiming;
     private bool hasThrown;
+    private bool isWallGrab;
 
 
     private PlayerStateMachine stateMachine;
@@ -264,7 +265,7 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnAttackAction(object sender, EventArgs e)
     {
-        if (gameManager.IsGamePaused || playerStats.CurrentStamina < attackStaminaAmount) return;
+        if (gameManager.IsGamePaused || playerStats.CurrentStamina < attackStaminaAmount || isAiming) return;
 
         int staminaPenalty = 1;
         if (!IsGroundDetected() && !IsSlopeDetected())
@@ -283,7 +284,7 @@ public class Player : Entity
     private void PlayerController_OnDashAction(object sender, EventArgs e)
     {
         int dashStaminaAmount = skillManager.DashSkill.SkillStaminaAmount;
-        if (IsWallDetected() || isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < dashStaminaAmount) return;
+        if (IsWallDetected() || isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < dashStaminaAmount || isAiming) return;
 
         if (skillManager.DashSkill.CanUseSkill())
         {
@@ -297,7 +298,7 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnBlockActionStart(object sender, EventArgs e)
     {
-        if (isDead || gameManager.IsGamePaused) return;
+        if (isDead || gameManager.IsGamePaused || isAiming || isWallGrab) return;
 
         isBlocking = true;
         stateMachine.ChangeState(blockState);
@@ -308,9 +309,7 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnBlockActionEnd(object sender, EventArgs e)
     {
-        if (isDead || gameManager.IsGamePaused) return;
-
-        CancelBlock();
+        if (!isDead && !gameManager.IsGamePaused && !isAiming && !isWallGrab) CancelBlock();
     }
 
     /// <summary>
@@ -329,7 +328,7 @@ public class Player : Entity
         }
 
         int throwSwordStaminaAmount = skillManager.SwordSkill.SkillStaminaAmount;
-        if (isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < throwSwordStaminaAmount) return;
+        if (isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < throwSwordStaminaAmount || isAiming || isWallGrab) return;
 
         if (skillManager.SwordSkill.CanUseSkill() && sword == null)
         {
@@ -352,7 +351,7 @@ public class Player : Entity
         }
 
         int ultimateStaminaAmount = skillManager.UltimateSkill.SkillStaminaAmount;
-        if (isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < ultimateStaminaAmount) return;
+        if (isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < ultimateStaminaAmount || isAiming || isWallGrab) return;
 
         if (skillManager.UltimateSkill.CanUseSkill())
         {
@@ -367,7 +366,7 @@ public class Player : Entity
     private void PlayerController_OnSpellCastAction(object sender, EventArgs e)
     {
         int spellCastStaminaAmount = skillManager.CrystalSkill.SkillStaminaAmount;
-        if (isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < spellCastStaminaAmount) return;
+        if (isDead || gameManager.IsGamePaused || playerStats.CurrentStamina < spellCastStaminaAmount || isAiming || isWallGrab) return;
 
         if (skillManager.CrystalSkill.CanUseSkill())
         {
@@ -381,10 +380,9 @@ public class Player : Entity
     /// </summary>
     private void PlayerController_OnUseFlaskAction(object sender, EventArgs e)
     {
-        if (isDead || gameManager.IsGamePaused) return;
+        if (isDead || gameManager.IsGamePaused || isAiming || isWallGrab) return;
 
         InventoryManager.UseFlask();
-        soundManager.PlayUsePotionSound(transform.position);
     }
     #endregion
 
@@ -475,6 +473,12 @@ public class Player : Entity
     {
         get { return hasThrown; }
         set { hasThrown = value; }
+    }
+
+    public bool IsWallGrab
+    {
+        get { return isWallGrab; }
+        set { isWallGrab = value; }
     }
 
     public PlayerIdleState IdleState

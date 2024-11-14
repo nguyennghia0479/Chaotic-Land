@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Apple
   sprite: {fileID: 395386254, guid: c6856cc3c11c2e04194736ac915afa00, type: 3}
-  dropChance: 100
+  dropChance: 70
   type: 0
+  itemId: f4286f9ae4777d346ae949a0e9311414

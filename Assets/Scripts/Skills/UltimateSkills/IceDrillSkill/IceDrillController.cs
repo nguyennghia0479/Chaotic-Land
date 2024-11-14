@@ -63,9 +63,11 @@ public class IceDrillController : MonoBehaviour
     /// </summary>
     private void HitTarget()
     {
+        float damage = playerStats.magicDamage.GetValueWithModify() * 2;
+
         canMove = false;
         animator.SetTrigger(HIT);
-        playerStats.DoMagicDamage(enemyStats, AilmentType.None);
+        playerStats.DoMagicDamage(enemyStats, AilmentType.None, damage);
         enemyStats.GetComponent<Enemy>().FreezingEffect(freezingDuration);
         PlayIceDrillHitSound();
     }
